@@ -1,3 +1,3 @@
 //File used for configurable constants used in the application
 
-export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
+export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";

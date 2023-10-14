@@ -11,7 +11,7 @@
 
   const drivetrainTopic = new ROSLIB.Topic({
     ros : $connectionHandler.getROSInstance(),
-    name : '/CAN_DTS/Drive_Train',
+    name : '/Drive/Drive_Command',
     messageType : 'mavric/Drivetrain'
   });
 
@@ -23,7 +23,7 @@
 
   const steertrainTopic = new ROSLIB.Topic({
     ros : $connectionHandler.getROSInstance(),
-    name : '/CAN_DTS/Steer_Train',
+    name : '/Drive/Steer_Command',
     messageType : 'mavric/Steertrain'
   });
 
