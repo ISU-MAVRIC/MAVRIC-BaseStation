@@ -2,22 +2,31 @@
 
 ## Basic setup
 
-Install NodeJS 
-Install yarn
+Install ```NodeJS v18.18.2 LTS``` and ```yarn``` with the method according to your OS
 
-git clone
+Clone this repository:
+```bash:
+git clone https://github.com/ISU-MAVRIC/MAVRIC-BaseStation
+```
 
-navigate into directory
+Navigate into directory
 
-run
-```yarn```
+Install all yarn packages:
+```bash:
+yarn
+```
 
-# Run development environment
-```yarn electron-dev```
+The development environment is now ready to be used.
 
-# Raspberry Pi Setup
+## Run development environment
+```bash:
+yarn electron-dev
+```
 
-## Quick Setup
+
+## Raspberry Pi Setup
+
+### Quick Setup
 Run these: 
 
 ```bash:
@@ -25,7 +34,9 @@ bash raspi-scripts/nodejs_setup.bash
 bash raspi-scripts/fuse_setup.bash
 ```
 
-## Script Details
+Follow [Basic Setup](#basic-setup), skipping the nodejs step
+
+### Script Details
 
 Two scripts are provided for raspberry pi in [raspi-scripts](https://github.com/ISU-MAVRIC/MAVRIC-BaseStation/tree/main/raspi-scripts).
 
