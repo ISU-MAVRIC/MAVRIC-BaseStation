@@ -15,7 +15,11 @@
       "preload.js"
     ],
     "win": {},
-    "linux": {},
+    "linux": {
+      "category": "Utility",
+      "target": "AppImage",
+      "compression": "normal"
+    },
     "mac": {}
   },
   "scripts": {
