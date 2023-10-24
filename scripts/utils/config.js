@@ -2,6 +2,11 @@
 
 import { DRIVE_STATES } from '../utils/driveMath.js';
 
+import homeSVG from '../../public/icons/home.svelte';
+import OverviewPage from '../../src/pages/Overview.svelte';
+import AutonomousDebugPage from '../../src/pages/AutonomousDebug.svelte';
+import TopicDebugPage from '../../src/pages/TopicDebug.svelte';
+import ScaleTunerPage from '../../src/pages/ScaleTuner.svelte';
 
 export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";
 
@@ -16,15 +21,39 @@ export const CONTROLLER_BINDS = {
   }
 }
 
+export const PAGES = [
+  {
+    label: "Overview",
+    icon: homeSVG,
+    component: OverviewPage
+  },
+  {
+    label: "Autonomous Debug",
+    icon: homeSVG,
+    component: AutonomousDebugPage
+  },
+  {
+    label: "Topic Debug",
+    icon: homeSVG,
+    component: TopicDebugPage
+  },
+  {
+    label: "Scale Tuner",
+    icon: homeSVG,
+    component: ScaleTunerPage
+  }
+];
+
 
 
 export const DEFAULTS = {
   CONTROLLER: {
     BIND: CONTROLLER_BINDS.DRIVE
   },
-  ARM: {
+  DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
-  }
+  },
+  HOME_PAGE: PAGES[0]
 }
 
 
@@ -44,3 +73,8 @@ export const TOPICS = {
     WRIST_ROTATION: TOPIC_BASE.ARM + "/WristRot",
   }
 }
+
+
+
+
+

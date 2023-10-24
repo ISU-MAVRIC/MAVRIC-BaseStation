@@ -59,8 +59,8 @@
     WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
   }
 
-  const publishArmCommand = (joint, value) => {
-    let message = new ROSLIB.Message(value);
+  const publishArmCommand = (joint, data) => {
+    let message = new ROSLIB.Message({data});
     armtrainTopics[joint].publish(message);
   }
 
@@ -69,7 +69,6 @@
   }
 
   const publishDriveSteerCommand = data => {
-    leftAxis = data;
     let driveValues = calculateDriveValues(driveState, leftAxis.y, leftAxis.x, leftAxis.y, leftAxis.x, leftAxis.x, [0,0,0,0,0,0,0,0,0,0], leftAxis.y, leftAxis.x, sensdrive, senssteer)
 
     let {
@@ -85,9 +84,8 @@
     strRb
     } = driveValues
 
-    publishDrivetrain({lf, lm, lb, rf, rm, rb})
-    publishSteertrain({strLf, strLb, strRf, strRb})
-    console.log(driveValues);
+    publishDrivetrain({lf, lm, lb, rf, rm, rb});
+    publishSteertrain({strLf, strLb, strRf, strRb});
   }
 
 
@@ -98,6 +96,7 @@
   }
 
   function LeftStick(event) {
+    leftAxis = event.detail;
     if (controllerBind == CONTROLLER_BINDS.DRIVE) {
       publishDriveSteerCommand(event.detail);
     } else if (controllerBind == CONTROLLER_BINDS.ARM) {
@@ -109,6 +108,7 @@
   }
 
   function RightStick(event) {
+    rightAxis = event.detail;
     if (controllerBind == CONTROLLER_BINDS.ARM) {
       let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
       publishArmCommand("WRIST_ROTATION", shoulderRot);
@@ -144,18 +144,13 @@
 
 
 
-<div>
-  <Gamepad
-    gamepadIndex={0}
-    on:A={buttonA}
-    on:RT={RightTrigger}
-    on:LT={LeftTrigger}
-    on:LeftStick={LeftStick}
-    on:RightStick={RightStick}
-    on:DPadRight={cycleControllerBind}
-  />
-  <p>{controllerBind}</p>
 
-  <p on:click={cycleControllerBind}>Left Axis: {JSON.stringify(leftAxis)}</p>
-  <p on:click={cycleControllerBind}>Right Axis: {JSON.stringify(rightAxis)}</p>
-</div>
+<Gamepad
+  gamepadIndex={0}
+  on:A={buttonA}
+  on:RT={RightTrigger}
+  on:LT={LeftTrigger}
+  on:LeftStick={LeftStick}
+  on:RightStick={RightStick}
+  on:DPadRight={cycleControllerBind}
+/>
