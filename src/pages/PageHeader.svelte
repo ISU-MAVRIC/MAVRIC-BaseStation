@@ -1,6 +1,6 @@
 <script>
-  import {PAGES} from '../../scripts/utils/config';
   export let selected;
+  export let PAGES;
 
 </script>
 

@@ -1,5 +1,5 @@
 <script>
-  import {PAGES} from '../../scripts/utils/config.js';
+  export let PAGES;
   export let selected;
 
   const setPage = page => {

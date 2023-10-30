@@ -7,23 +7,54 @@
   import PageNavBar from './pages/PageNavBar.svelte';
   import PageHeader from './pages/PageHeader.svelte';
 
+  import homeSVG from '../public/icons/home.svelte';
+  import OverviewPage from './pages/Overview.svelte';
+  import AutonomousDebugPage from './pages/AutonomousDebug.svelte';
+  import TopicDebugPage from './pages/TopicDebug.svelte';
+  import ScaleTunerPage from './pages/ScaleTuner.svelte';
+
   let driveState = DEFAULTS.DRIVE.DRIVE_STATE;
-  let selected  = DEFAULTS.HOME_PAGE.label;
+  let selected  = DEFAULTS.HOME_PAGE;
+
+  
+  const PAGES = [
+    {
+      label: "Overview",
+      icon: homeSVG,
+      component: OverviewPage
+    },
+    {
+      label: "Autonomous Debug",
+      icon: homeSVG,
+      component: AutonomousDebugPage
+    },
+    {
+      label: "Topic Debug",
+      icon: homeSVG,
+      component: TopicDebugPage
+    },
+    {
+      label: "Scale Tuner",
+      icon: homeSVG,
+      component: ScaleTunerPage
+    }
+  ];
+
 
 </script>
 
 
 
 <div class="container">
-  <DriveController bind:driveState />
-  <PageNavBar bind:selected />
+  <DriveController bind:driveState/>
+  <PageNavBar bind:selected  PAGES={PAGES}/>
   <div class="content">
     <div class="page-header">
-      <PageHeader bind:selected />
+      <PageHeader bind:selected PAGES={PAGES}/>
     </div>
     <div class="break"/>
     <div class="page-display">
-      <PageDisplay bind:selected />
+      <PageDisplay bind:selected bind:driveState PAGES={PAGES}/>
     </div>
   </div>
 </div>

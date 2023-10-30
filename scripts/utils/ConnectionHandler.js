@@ -2,7 +2,9 @@ import ROSLIB from 'roslib';
 
 
 // TODO: Add comments for connection Handler wrapper
-
+/**
+ * Testing
+ */
 class ConnectionHandler  {
 
 

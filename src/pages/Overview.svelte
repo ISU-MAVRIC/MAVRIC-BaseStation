@@ -1,8 +1,7 @@
-<p>Overview page content</p>
+<script>
+  import CommonDisplay from '../components/CommonDisplay.svelte';
+  export let driveState;
+</script>
 
-<style>
-  p {
-    margin: 0;
-    padding: 0;
-  }
-</style>
+<CommonDisplay driveState={driveState}/>
+<p>Overview</p>
