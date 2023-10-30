@@ -3,10 +3,10 @@
   import ROSLIB from 'roslib/src/RosLib';
 
   import connectionHandler from '../stores/connectionHandlerStore';
-  import { calculateDriveValues, DRIVE_STATES } from '../../scripts/utils/driveMath';
+  import { calculateDriveValues, DRIVE_STATES } from '../utils/driveMath';
   import Gamepad from './gamepad/Gamepad.svelte';
-  import { DEFAULTS, TOPICS, CONTROLLER_BINDS } from '../../scripts/utils/config.js'
-  import mapRange from '../../scripts/utils/mapRange';
+  import { DEFAULTS, TOPICS, CONTROLLER_BINDS } from '../utils/config.js'
+  import mapRange from '../utils/mapRange';
 
   // Svelte Parameters
   export let driveState;

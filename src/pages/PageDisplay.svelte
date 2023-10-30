@@ -1,5 +1,5 @@
 <script>
-  import { DEFAULTS} from '../../scripts/utils/config.js';
+  import { DEFAULTS} from '../utils/config.js';
 
   export let selected;
   export let driveState;

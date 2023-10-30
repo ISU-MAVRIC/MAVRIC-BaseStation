@@ -1,7 +1,7 @@
 <script>
   import ROSLIB from "roslib/src/RosLib";
   import connectionHandler from "../stores/connectionHandlerStore";
-  import {TOPICS} from '../../scripts/utils/config.js';
+  import {TOPICS} from '../utils/config.js';
   export let driveState;
 
   let gpsLatitude = 0;

@@ -1,6 +1,6 @@
 
 <script>
-  import { DEFAULTS } from '../scripts/utils/config.js';
+  import { DEFAULTS } from './utils/config.js';
 
   import DriveController from './components/DriveController.svelte';
   import PageDisplay from './pages/PageDisplay.svelte';
