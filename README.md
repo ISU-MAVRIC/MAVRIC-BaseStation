@@ -1,10 +1,21 @@
 # MAVRIC Base Station
 
 ## Table of Contents
+- [Useful Documentation](#useful-documentation)
 - [Basic Setup](#basic-setup)
 - [Development Environment](#run-development-environment)
 - [Raspberry Pi Setup](#raspberry-pi-setup)
 - [Basic Project Structure](#basic-project-structure)
+- [Basic GUI Layout](#basic-gui-layout)
+
+
+## Useful Documentation
+- [Svelte Documentation](https://svelte.dev/docs/introduction)
+- [Basic Yarn Usage](https://classic.yarnpkg.com/en/docs/usage)
+- [Javascript Arrow Functions](https://www.w3schools.com/js/js_arrow_function.asp)
+- [Electron Documentation](https://www.electronjs.org/docs/latest)
+- [Electron Builder Documentation](https://www.electron.build/)
+
 
 ## Basic setup
 
@@ -58,6 +69,7 @@ Two scripts are provided for raspberry pi in [raspi-scripts](https://github.com/
 ├── README.md 
 ├── main.js
 ├── dist
+├── docs
 ├── node_modules
 ├── package.json
 ├── preload.js
@@ -79,6 +91,9 @@ This file contains the basic setup for the electron app. This code is mostly boi
 ### dist folder
 This folder is generated after you run ```yarn electron-pack``` and contains the installer built after running the yarn command. This folder is in the .gitignore so we don't commit installers to the GitHub Repository. 
 
+### docs folder
+This folder is used for storing images used in this documentation.
+
 ### node_modules
 This folder is downloaded after you run ```yarn``` to install all needed dependancies and libraries. This folder is in the .gitignore so we don't push all of our libraries and dependencies to our GitHub Repository. 
 
@@ -99,13 +114,10 @@ This folder contains scripts needed for setup and building the electron app on a
 This file handles the configuration for the rollup development dependancy. This handles setting up live reload, building the web page bundle with our needed dependancies, and other settings for compiling our web page.
 
 ### scripts
+Currently unused
+
+### src
+This folder contains the main svelte and javascript code for our GUI implementation. The utils folder contains useful helper functions/classes that we have created. For example, mapRange exports a function that takes a value and maps it between two vector spaces. The component folder contains svelte components that we have created and can be reused. For example, the CommonDisplay component is used to display telemetry and other data on all pages. The main.js file sets up our basic svelte web page, importing the App.svelte component. The pages directory contains the main component for each page, as well as the top level header, navbar, and display area. The stores directory contains svelte stores for sharing data between components without prop drilling.
 
 
-├── rollup.config.js
-├── scripts
-│   └── utils
-└── src
-    ├── components
-    ├── main.js
-    ├── pages
-    └── stores
+## Basic GUI Layout

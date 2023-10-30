@@ -2,7 +2,7 @@
  * @file Main configuration file used for setting topic names, connection strings, defaults, etc.
  */
 
-import { DRIVE_STATES } from '../utils/driveMath.js';
+import { DRIVE_STATES } from './driveMath.js';
 
 /**
  * Connection string for connecting to the websocket server hosted by rosbridge_server.

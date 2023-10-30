@@ -1,7 +1,7 @@
 // This file sends the updated state to Gamepad.svelte.
 // Does a rAF loop when gamepad connected.
 
-import mapRange from "../../../scripts/utils/mapRange.js";
+import mapRange from "../../utils/mapRange.js";
 
 let frame = null;
 let gamepads = {
