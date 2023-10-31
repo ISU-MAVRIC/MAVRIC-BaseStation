@@ -1,6 +1,7 @@
 //This utility helps for calculating drive and steer values to be published to their respective ros topics on the rover.
 //Also exports an enum containing drive states
 
+// Variables
 const wheel_length = 37.5;
 const wheel_width = 28.5;
 
@@ -53,6 +54,7 @@ export const DRIVE_STATES = {
 // c parameter prefix = car
 // p parameter prefx = point
 // m parameter prefix = manual
+// This function was not created new, it was ported from our previous python GUI
 export const calculateDriveValues = (DRIVE_STATE, tdrive, tsteer, cdrive, csteer, pdrive, motors, mdrive, msteer, sensdrive, senssteer) => {
 
     if (DRIVE_STATE == DRIVE_STATES.TANK) {

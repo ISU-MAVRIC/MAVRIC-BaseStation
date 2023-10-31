@@ -3,7 +3,10 @@
 
 import mapRange from "../../utils/mapRange.js";
 
+//Variable for storing the animation frame
 let frame = null;
+
+// Variable for holding the custom layouts for each gamepad (up to 4 supported by Gamepad API)
 let gamepads = {
   0: { layout: null },
   1: { layout: null },
@@ -11,6 +14,7 @@ let gamepads = {
   3: { layout: null }
 };
 
+//Variable to keep track if gamepad watcher is running
 let watcherRunning = false;
 
 /**
@@ -19,6 +23,7 @@ let watcherRunning = false;
 function loop() {
   const pads = navigator.getGamepads();
 
+  //for each gamepad, if updated since last frame, get new mapped state and call onChange function
   for (let i = 0; i <= pads.length; i++) {
     const pad = pads[i];
     const gamepad = gamepads[i];
@@ -32,6 +37,9 @@ function loop() {
   frame = requestAnimationFrame(loop);
 }
 
+/**
+ * Function for mapping a generic javascript gamepad to custom event layout
+ */
 function mapLayout(gamepad, layout, stickThreshold) {
   const mappedValues = {};
   mappedValues.buttons = mapButtons(gamepad, layout);
@@ -39,6 +47,9 @@ function mapLayout(gamepad, layout, stickThreshold) {
   return mappedValues;
 }
 
+/**
+ * Function for mapping buttons of generic javascript gamepad to custom event layout
+ */
 function mapButtons(gamepad, layout) {
   const buttons = {};
   for (let i = 0; i < layout.buttons.length; i++) {
@@ -48,6 +59,9 @@ function mapButtons(gamepad, layout) {
   return buttons;
 }
 
+/**
+ * Function for mapping joystick axis of generic javascript gamepad to custom event layout
+ */
 function mapAxes(gamepad, layout, stickThreshold) {
   const leftStick = { x: 0, y: 0 };
   const rightStick = { x: 0, y: 0 };
@@ -96,14 +110,6 @@ function fixThreshold(value, threshold) {
 
   if (value < 0 && value < -threshold)
     return mapRange(value, -1, -threshold, -1, 0);
-
-  // add tests dummy.
-  // console.log(mapRange(0.2, 0.2, 1, 0, 1));
-  // console.log(mapRange(1, 0.2, 1, 0, 1));
-  // console.log(mapRange(1, 0.2, 1, 0, 1));
-  // console.log(50, mapRange(0.6, 0.2, 1, 0, 1));
-  // console.log(25, mapRange(0.4, 0.2, 1, 0, 1));
-  // console.log(75, mapRange(0.8, 0.2, 1, 0, 1));
 }
 
 /**
@@ -119,12 +125,14 @@ function startGamepadWatcher() {
   if (pads[0] || pads[1] || pads[2] || pads[3]) {
     loop();
   } else {
+    //wait .5 seconds, try again
     setTimeout(startGamepadWatcher, 500);
   }
 }
 
 export function addGamepad(gamepadIndex, args) {
   console.log("add");
+  //Store args including layout
   gamepads[gamepadIndex] = args;
 
   if (!watcherRunning) startGamepadWatcher();

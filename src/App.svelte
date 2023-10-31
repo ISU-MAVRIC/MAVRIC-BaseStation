@@ -1,4 +1,6 @@
+<!-- Basic Svelte App file. The GUI component could be used as the base instead, but this has been kept since its the default for svelte -->
 <script>
+	//Project imports
 	import GUI from './GUI.svelte';
 
 </script>

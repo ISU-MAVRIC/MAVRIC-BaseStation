@@ -1,9 +1,9 @@
+//Library Imports
 import ROSLIB from 'roslib';
 
 
-// TODO: Add comments for connection Handler wrapper
 /**
- * Testing
+ * This class is a wrapper for handling our connecting to the rover through rosbridge_server and roslibjs
  */
 class ConnectionHandler  {
 

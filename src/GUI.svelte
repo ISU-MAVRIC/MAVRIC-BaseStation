@@ -1,5 +1,6 @@
 
 <script>
+  //Project Imports
   import { DEFAULTS } from './utils/config.js';
 
   import DriveController from './components/DriveController.svelte';
@@ -13,10 +14,13 @@
   import TopicDebugPage from './pages/TopicDebug.svelte';
   import ScaleTunerPage from './pages/ScaleTuner.svelte';
 
+  //Variables
   let driveState = DEFAULTS.DRIVE.DRIVE_STATE;
   let selected  = DEFAULTS.HOME_PAGE;
 
-  
+  //List of all accessible pages, including the label, icon, and component
+  //Used by PageHeader, PageNavBar, and PageDisplay
+  //Anything added to this list will automatically be added to the nav bar
   const PAGES = [
     {
       label: "Overview",

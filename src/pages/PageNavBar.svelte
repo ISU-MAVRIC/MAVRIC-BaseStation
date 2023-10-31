@@ -1,14 +1,21 @@
+<!-- This component is responsible for displaying the PageNavBar section of the GUI layout. If you don't know the basic layout of the GUI, see the "Basic GUI Layout" section of the README-->
+
 <script>
+  //Component properties
   export let PAGES;
   export let selected;
 
+  //Function for switching the page when someone clicks on an item in the nav bar
   const setPage = page => {
     selected = page;
   };
 </script>
 
+<!-- Create nav bar to be displayed -->
 <ul>
+  <!-- Element for displaying MAVRIC Logo in top left -->
   <li class="mavric-icon"> MAVRIC ICON</li>
+  <!-- for each of the defined pages, add the corresponding icon and link to the nav bar -->
   {#each PAGES as page}
     <li class={page.label == selected ? 'selected' : ""} on:click={setPage.bind(this, page.label)}>
       <div class="nav-item">

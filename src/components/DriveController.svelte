@@ -1,38 +1,40 @@
-
+<!-- This component doesn't visually display anything on screen, however it handles setting up controllers and publishing drive and arm commands -->
 <script>
+  //Library Imports
   import ROSLIB from 'roslib/src/RosLib';
 
+  //Project Imports
   import connectionHandler from '../stores/connectionHandlerStore';
   import { calculateDriveValues, DRIVE_STATES } from '../utils/driveMath';
   import Gamepad from './gamepad/Gamepad.svelte';
   import { DEFAULTS, TOPICS, CONTROLLER_BINDS } from '../utils/config.js'
   import mapRange from '../utils/mapRange';
 
-  // Svelte Parameters
+  // Svelte Component Properties
   export let driveState;
   
-  //Variables
 
-  //ROS
+  //Variables
+  /// ROS
   let ros = $connectionHandler.getROSInstance();
+
+  /// Drive Math
   let sensdrive = 1; // 0 to 1 
   let senssteer = 1; // 0 to 1
   
-  //CONTROLLER
+  /// Controller
   let leftAxis = { x: 0, y: 0 };
   let rightAxis = { x: 0, y: 0 };
-
   let controllerBind = DEFAULTS.CONTROLLER.BIND;
 
-  // ROS TOPICS SETUP
 
 
+  // ROS Topics and Publishers
   const drivetrainTopic = new ROSLIB.Topic({
     ros,
     name : '/Drive/Drive_Command',
     messageType : 'mavric/Drivetrain'
   });
-
 
   const publishDrivetrain = data => {
     let message = new ROSLIB.Message(data);
@@ -45,32 +47,16 @@
     messageType : 'mavric/Steertrain'
   });
 
-
   const publishSteertrain = data => {
     let message = new ROSLIB.Message(data);
     steertrainTopic.publish(message);
   }
-
-  const armtrainTopics = {
-    SHOULDER_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    SHOULDER_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    ELBOW_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.ELBOW_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    WRIST_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-  }
-
-  const publishArmCommand = (joint, data) => {
-    let message = new ROSLIB.Message({data});
-    armtrainTopics[joint].publish(message);
-  }
-
-  const cycleDriveState = () => {
-    driveState = DRIVE_STATES.getNext(driveState);
-  }
-
+  
   const publishDriveSteerCommand = data => {
+    //Calculate drive values to be published to drivetrain and steertrain topics
     let driveValues = calculateDriveValues(driveState, leftAxis.y, leftAxis.x, leftAxis.y, leftAxis.x, leftAxis.x, [0,0,0,0,0,0,0,0,0,0], leftAxis.y, leftAxis.x, sensdrive, senssteer)
 
+    //Destructure elements from returned driveValues into their own variables
     let {
     lf,
     lm,
@@ -84,17 +70,43 @@
     strRb
     } = driveValues
 
+    //Publish drivetrain commands
     publishDrivetrain({lf, lm, lb, rf, rm, rb});
+    //Publish steertrain commands
     publishSteertrain({strLf, strLb, strRf, strRb});
   }
+
+  //Create a new object for all the armtrain topics
+  //Each joint is its own topic, so for code cleanliness store in an object instead of separate variables
+  const armtrainTopics = {
+    SHOULDER_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
+    SHOULDER_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
+    ELBOW_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.ELBOW_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
+    WRIST_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
+    WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
+  }
+
+  //Function to publish data value to specific joint ("SHOULDER_ROTATION" | "SHOULDER_PITCH" | ...)
+  const publishArmCommand = (joint, data) => {
+    let message = new ROSLIB.Message({data});
+    armtrainTopics[joint].publish(message);
+  }
+
+  //Function to switch drive state to next drive state
+  const cycleDriveState = () => {
+    driveState = DRIVE_STATES.getNext(driveState);
+  }
+
 
 
   //CONTROLLER HANDLING
 
+  //Function for switching what the controller is connected to (Currently ARM or DRIVE)
   function cycleControllerBind() {
     controllerBind = CONTROLLER_BINDS.getNext(controllerBind);
   }
 
+  //Callback function for when the left joystick is moved
   function LeftStick(event) {
     leftAxis = event.detail;
     if (controllerBind == CONTROLLER_BINDS.DRIVE) {
@@ -107,6 +119,7 @@
     } 
   }
 
+  //Callback function for when the right joystick is moved
   function RightStick(event) {
     rightAxis = event.detail;
     if (controllerBind == CONTROLLER_BINDS.ARM) {
@@ -117,6 +130,7 @@
     }
   }
 
+  //Callback function for when the left trigger is moved
   function LeftTrigger(event) {
     if (event.detail == null) event.detail = 0;
     if (controllerBind == CONTROLLER_BINDS.ARM) {
@@ -125,6 +139,7 @@
     }
   }
 
+  //Callback function for when the right trigger is moved
   function RightTrigger(event) {
     if (event.detail == null) event.detail = 0;
     if (controllerBind == CONTROLLER_BINDS.ARM) {
@@ -133,6 +148,7 @@
     }
   }
 
+  //Callback function for when the A button is pressed
   function buttonA(event) {
     if (controllerBind == CONTROLLER_BINDS.DRIVE) {
       cycleDriveState();
