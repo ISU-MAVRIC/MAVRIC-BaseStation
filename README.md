@@ -7,6 +7,7 @@
 - [Raspberry Pi Setup](#raspberry-pi-setup)
 - [Basic Project Structure](#basic-project-structure)
 - [Basic GUI Layout](#basic-gui-layout)
+- [Tutorials](#tutorials)
 
 
 ## Useful Documentation
@@ -121,3 +122,9 @@ This folder contains the main svelte and javascript code for our GUI implementat
 
 
 ## Basic GUI Layout
+![Basic GUI Layout Image](https://raw.githubusercontent.com/ISU-MAVRIC/MAVRIC-BaseStation/5cea1e0df5b49515a725a1ae6215be0fd9c43ff5/docs/GUI%20Base%20Layout.png?raw=true)\
+The GUI was designed with the intention of not needing to update PageHeader and PageNavBar often. These two elements appear at all times on left and top of the GUI. The PageDisplay portion is what differs between different pages/tabs. To add a new page, see [Tutorials - Adding a page](#adding-a-page) 
+
+## Tutorials
+### Adding a page
+TODO
