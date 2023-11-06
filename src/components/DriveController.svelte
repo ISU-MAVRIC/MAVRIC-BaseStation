@@ -25,6 +25,8 @@
   /// Controller
   let leftAxis = { x: 0, y: 0 };
   let rightAxis = { x: 0, y: 0 };
+  let lTrigger = 0;
+  let rTrigger = 0;
   let controllerBind = DEFAULTS.CONTROLLER.BIND;
 
 
@@ -132,18 +134,28 @@
 
   //Callback function for when the left trigger is moved
   function LeftTrigger(event) {
-    if (event.detail == null) event.detail = 0;
+    let value;
+    if (event == null) {
+      value = 0;
+    } else {
+      value = event.detail;
+    }
     if (controllerBind == CONTROLLER_BINDS.ARM) {
-      let shoulderRot = mapRange(event.detail, 0, 1, 0, 100);
+      let shoulderRot = mapRange(value, 0, 1, 0, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
     }
   }
 
   //Callback function for when the right trigger is moved
   function RightTrigger(event) {
-    if (event.detail == null) event.detail = 0;
+    let value;
+    if (event == null) {
+      value = 0;
+    } else {
+      value = event.detail;
+    }
     if (controllerBind == CONTROLLER_BINDS.ARM) {
-      let shoulderRot = mapRange(event.detail, 0, 1, -100, 0);
+      let shoulderRot = mapRange(value, 0, 1, -100, 0);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
     }
   }
