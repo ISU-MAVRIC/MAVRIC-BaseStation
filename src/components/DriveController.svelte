@@ -134,28 +134,27 @@
 
   //Callback function for when the left trigger is moved
   function LeftTrigger(event) {
-    let value;
-    if (event == null) {
-      value = 0;
+    if (event.detail == null) {
+      lTrigger = 0;
     } else {
-      value = event.detail;
+      lTrigger = event.detail.value;
     }
+    console.log(value);
     if (controllerBind == CONTROLLER_BINDS.ARM) {
-      let shoulderRot = mapRange(value, 0, 1, 0, 100);
+      let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
     }
   }
 
   //Callback function for when the right trigger is moved
   function RightTrigger(event) {
-    let value;
-    if (event == null) {
-      value = 0;
+    if (event.detail == null) {
+      rTrigger = 0;
     } else {
-      value = event.detail;
+      rTrigger = event.detail.value;
     }
     if (controllerBind == CONTROLLER_BINDS.ARM) {
-      let shoulderRot = mapRange(value, 0, 1, -100, 0);
+      let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
     }
   }
