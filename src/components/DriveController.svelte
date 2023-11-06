@@ -166,8 +166,17 @@
 
   //Callback function for when the A button is pressed
   function buttonA(event) {
-    if (controllerBind == CONTROLLER_BINDS.DRIVE) {
-      cycleDriveState();
+    if (event.detail) {
+      if (controllerBind == CONTROLLER_BINDS.DRIVE) {
+        cycleDriveState();
+      }
+    }
+  }
+
+  //Callback function for when the DPad right button is pressed
+  function DPadRight(event) {
+    if (event.detail) {
+      cycleControllerBind();
     }
   }
 
@@ -184,5 +193,5 @@
   on:LT={LeftTrigger}
   on:LeftStick={LeftStick}
   on:RightStick={RightStick}
-  on:DPadRight={cycleControllerBind}
+  on:DPadRight={DPadRight}
 />
