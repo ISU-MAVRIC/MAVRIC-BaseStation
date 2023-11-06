@@ -25,7 +25,7 @@
     Object.keys(newGamepadState.buttons).forEach(key => {
       const button = newGamepadState.buttons[key];
       //If the button isnt null and it is pressed
-      if (button && button.pressed) {
+      if (button && button.pressed && !gamepadState.buttons[key].pressed) {
         //Dispatch event
         dispatch(key, button); // e.g. "RT" , {pressed: true, value: 0.2}
       }
