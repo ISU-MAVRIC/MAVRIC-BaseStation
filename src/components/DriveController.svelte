@@ -139,7 +139,6 @@
     } else {
       lTrigger = event.detail.value;
     }
-    console.log(value);
     if (controllerBind == CONTROLLER_BINDS.ARM) {
       let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
