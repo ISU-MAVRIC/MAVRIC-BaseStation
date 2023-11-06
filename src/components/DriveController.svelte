@@ -134,12 +134,15 @@
 
   //Callback function for when the left trigger is moved
   function LeftTrigger(event) {
+    //Controller will return null when button is no longer pressed, set to zero 
     if (event.detail == null) {
       lTrigger = 0;
     } else {
       lTrigger = event.detail.value;
     }
+    //If controller is bound to arm, send as arm command
     if (controllerBind == CONTROLLER_BINDS.ARM) {
+      //Map the two trigger values to between -100 and 100
       let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
     }
@@ -147,12 +150,15 @@
 
   //Callback function for when the right trigger is moved
   function RightTrigger(event) {
+    //Controller will return null when button is no longer pressed, set to zero 
     if (event.detail == null) {
       rTrigger = 0;
     } else {
       rTrigger = event.detail.value;
     }
+    //If controller is bound to arm, send as arm command
     if (controllerBind == CONTROLLER_BINDS.ARM) {
+      //Map the two trigger values to between -100 and 100
       let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
     }
