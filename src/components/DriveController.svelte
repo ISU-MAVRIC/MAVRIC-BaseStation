@@ -166,18 +166,14 @@
 
   //Callback function for when the A button is pressed
   function buttonA(event) {
-    if (event.detail) {
-      if (controllerBind == CONTROLLER_BINDS.DRIVE) {
-        cycleDriveState();
-      }
+    if (controllerBind == CONTROLLER_BINDS.DRIVE) {
+      cycleDriveState();
     }
   }
 
   //Callback function for when the DPad right button is pressed
   function DPadRight(event) {
-    if (event.detail) {
-      cycleControllerBind();
-    }
+    cycleControllerBind();
   }
 
 
@@ -188,10 +184,10 @@
 
 <Gamepad
   gamepadIndex={0}
-  on:A={buttonA}
+  on:A_PRESS={buttonA}
   on:RT={RightTrigger}
   on:LT={LeftTrigger}
   on:LeftStick={LeftStick}
   on:RightStick={RightStick}
-  on:DPadRight={DPadRight}
+  on:DPadRight_PRESS={DPadRight}
 />

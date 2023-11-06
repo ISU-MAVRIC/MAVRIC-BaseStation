@@ -25,10 +25,16 @@
     Object.keys(newGamepadState.buttons).forEach(key => {
       const button = newGamepadState.buttons[key];
       //If the button isnt null and it is pressed
-      if (button && button.pressed && !gamepadState.buttons[key].pressed) {
+      if (button && button.pressed) {
         //Dispatch event
         dispatch(key, button); // e.g. "RT" , {pressed: true, value: 0.2}
       }
+
+      if (button && button.pressed && !gamepadState.buttons[key].pressed) {
+        //Dispatch event
+        dispatch(key + "_PRESS", button); // e.g. "RT" , {pressed: true, value: 0.2}
+      }
+
 
       // Send null when player stops pressing button
       // Needs to check if the previous state is marked as pressed
