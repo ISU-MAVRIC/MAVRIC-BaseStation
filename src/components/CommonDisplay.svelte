@@ -22,29 +22,29 @@
 
   //ROS Topics and subscribers
   /// GPS
-  const gpsTopic = new ROSLIB.Topic({
-    ros : $connectionHandler.getROSInstance(),
-    name : TOPICS.SENSORS.GPS,
-    messageType : TOPICS.SENSORS.GPS_MSG_TYPE
-  });
+  // const gpsTopic = new ROSLIB.Topic({
+  //   ros : $connectionHandler.getROSInstance(),
+  //   name : TOPICS.SENSORS.GPS,
+  //   messageType : TOPICS.SENSORS.GPS_MSG_TYPE
+  // });
 
-  gpsTopic.subscribe(message => {
-    //TODO: update gpsLatitude and gpsLongitude parameters
-    console.log(message);
-  });
+  // gpsTopic.subscribe(message => {
+  //   //TODO: update gpsLatitude and gpsLongitude parameters
+  //   console.log(message);
+  // });
 
 
-  /// IMU
-  const imuTopic = new ROSLIB.Topic({
-    ros : $connectionHandler.getROSInstance(),
-    name : TOPICS.SENSORS.IMU,
-    messageType : TOPICS.SENSORS.IMU_MSG_TYPE
-  });
+  // /// IMU
+  // const imuTopic = new ROSLIB.Topic({
+  //   ros : $connectionHandler.getROSInstance(),
+  //   name : TOPICS.SENSORS.IMU,
+  //   messageType : TOPICS.SENSORS.IMU_MSG_TYPE
+  // });
 
-  imuTopic.subscribe(message => {
-    //TODO: update imuHeading
-    console.log(message);
-  });
+  // imuTopic.subscribe(message => {
+  //   //TODO: update imuHeading
+  //   console.log(message);
+  // });
 
   /// Battery Voltage
   //TODO: Add battery voltage display once implemented on rover
