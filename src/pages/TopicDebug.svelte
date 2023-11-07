@@ -1,9 +1,10 @@
+<script>
+  import LoadingDisplay from "./LoadingDisplay.svelte";
+</script>
+
 <!-- Component to be loaded into PageDisplay component when Topic Debug is selected in PageNavBar-->
-<p> topic debug contents </p>
+<LoadingDisplay />
 
 <style>
-  p {
-    margin: 0;
-    padding: 0;
-  }
+
 </style>

@@ -1,5 +1,9 @@
 # MAVRIC Base Station
 
+## Undocumented Files
+ - ScaleTuner.svelte
+ - LoadingDisplay.svelte
+
 ## Table of Contents
 - [Useful Documentation](#useful-documentation)
 - [Basic Setup](#basic-setup)

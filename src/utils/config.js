@@ -35,7 +35,7 @@ export const DEFAULTS = {
   DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
   },
-  HOME_PAGE: "Overview"
+  HOME_PAGE: "Scale Tuner"
 }
 
 
@@ -72,6 +72,70 @@ export const TOPICS = {
   }
 }
 
+/** 
+ *  Object containing the minimums, maximums, and increments for scale tuner page
+ */
+export const SCALES = {
+  DRIVE : {
+    LF: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    LM: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    LB: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    RF: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    RM: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    RB: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+  },
+  ARM : {
+    SHOULDER_ROTATION: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    SHOULDER_PITCH: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    ELBOW_PITCH: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    WRIST_PITCH: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    },
+    WRIST_ROTATION: {
+      MIN: 0,
+      MAX: 1,
+      STEP: .01
+    }
+  }
+}
 
 
 
