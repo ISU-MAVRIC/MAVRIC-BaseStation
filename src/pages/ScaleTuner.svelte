@@ -29,6 +29,12 @@
 
   
   let scalesInitialized = scalesContainNull();
+
+
+  let publishScales = () => {
+    //This function is where we will publish the scales to the rover using roslibjs
+    console.log({...driveScaleData, ...armScaleData});
+  }
 </script>
 
 {#if !scalesInitialized}
@@ -64,8 +70,8 @@
       <input bind:value={armScaleData.WRIST_PITCH} id="wrist-rotation-scale" type="range" min={SCALES.ARM.WRIST_PITCH.MIN} max={SCALES.ARM.WRIST_PITCH.MAX} step={SCALES.ARM.WRIST_PITCH.STEP} />
     </div>
   </div>
-  <div class="send-container">
-    <p>Test</p>
+  <div class="send-container" on:click={publishScales}>
+    <label>Test</label>
   </div>
 </div>
 {/if}
@@ -115,6 +121,12 @@
 
   .arm-tuner-container {
     background-color: crimson;
+  }
+
+  label {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
   }
 
   /* The slider itself */
