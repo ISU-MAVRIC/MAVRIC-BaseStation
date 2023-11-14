@@ -1,6 +1,7 @@
 <script>
   import ROSLIB from 'roslib/src/RosLib';
 
+  import TopicDisplay from '../components/TopicDisplay.svelte';
   import connectionHandler from '../stores/connectionHandlerStore';
 
   let topicList = [
@@ -35,6 +36,7 @@
     if (topicSelected) {
       let newTopic = {
           id: id += 1,
+          display_name: "",
           topic_name: topicSelected.topic_name,
           topic_msg_type: topicSelected.topic_msg_type,
           data_log: [],
@@ -55,17 +57,34 @@
     topicList = topicList;
   }
 
-  let deleteTopic = (index) => {
-    console.log(index)
+  let getIndexByID = (desiredId) => {
+    return topicList.findIndex(topic => desiredId == topic.id);
+  }
+
+  let deleteTopic = (id) => {
+    console.log(id)
+    let index = getIndexByID(id);
     topicList.splice(index, 1)
     topicList = topicList;
   }
 
-  let scrollDataElementByIndex = (_, index) => {
-    console.log(topicDataElement)
+  let moveTopicAbsolute = (id, newIndex) => {
+    let index = getIndexByID(id);
+    let topic = topicList[index];
+    topicList.splice(index, 1);
+    topicList.splice(newIndex, 0, topic);
+    topicList = topicList;
+  }
+
+  let moveTopicRelative = (id, offset) => {
+    let index = getIndexByID(id);
     console.log(index)
-    topicDataElement[index].scroll({ top: topicDataElement[index].scrollHeight, behavior: 'smooth' });
-  };
+    console.log(id, index + offset)
+    moveTopicAbsolute(id, index + offset);
+    console.log(topicList);
+  }
+
+
 
 
   refreshTopics();
@@ -84,18 +103,14 @@
     <p class="selector-topic">{topicSelected ? topicSelected.topic_msg_type : "Select Topic to add"}</p>
     <p class="selector-add" on:click={addTopic}>add</p>
   </div>
-  {#each topicList as topic, index}
-    <div class="topic-container">
-      <div class="topic-header">
-        <input class="topic-name" placeholder={topic.topic_name}>
-        <div class="topic-delete" on:click={deleteTopic.bind(this, index)}>Delete</div>
-      </div>
-      <div bind:this={topicDataElement[index]} class="topic-data">
-        {#each topic.data_log as data_segment}
-          <p use:scrollDataElementByIndex={index}>{JSON.stringify(data_segment)}</p>
-        {/each}
-      </div>
-    </div>
+  {#each topicList as topic}
+    <TopicDisplay 
+      deleteFunction={deleteTopic.bind(this, topic.id)} 
+      moveUp={moveTopicRelative.bind(this, topic.id, -1)} 
+      moveDown={moveTopicRelative.bind(this, topic.id, 1)} 
+      moveStart={moveTopicAbsolute.bind(this, topic.id, 0)} 
+      topic={topic} 
+    />
   {/each}
 </div>
 
