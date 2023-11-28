@@ -4,10 +4,19 @@
   
   let element;
 
-  let scrollBottom = () => element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+  let scrollBottom = () => {
+    topic.autoscroll && element.scroll({ top: element.scrollHeight });
+  }
 
   let handleScroll = () => {
-    console.log(element.scrollHeight)
+    if ((element.scrollTop / (element.scrollHeight - element.clientHeight)) != 1) {
+      topic.autoscroll = false;
+    }
+  }
+
+  let scrollToBottomButton = () => {
+    topic.autoscroll = true;
+    scrollBottom();
   }
 </script>
 
@@ -27,7 +36,7 @@
       <p use:scrollBottom class="topic-data-element">{JSON.stringify(data_segment)}</p>
     {/each}
   </div>
-  <div class="topic-data-scroll">scroll</div>
+  <div on:click={scrollToBottomButton} class={topic.autoscroll ? "hidden" : ""}>scroll</div>
 </div>
 
 
@@ -52,6 +61,10 @@
     margin-left: auto;
   }
 
+  .hidden {
+    display: none;
+  }
+
   .topic-data {
     background-color: cadetblue;
     width: 100%;
@@ -60,9 +73,6 @@
     overflow-y: auto;
   }
 
-  .topic-data-scroll {
-    margin-top: -20px;
-  }
 
   .topic-name {
     flex-grow: 1;

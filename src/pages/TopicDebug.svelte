@@ -36,6 +36,7 @@
     if (topicSelected) {
       let newTopic = {
           id: id += 1,
+          autoscroll: true,
           topic_name: topicSelected.topic_name,
           topic_msg_type: topicSelected.topic_msg_type,
           data_log: [],
