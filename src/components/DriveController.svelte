@@ -27,7 +27,19 @@
   let rightAxis = { x: 0, y: 0 };
   let lTrigger = 0;
   let rTrigger = 0;
+  let rBumperPressed = false;
+  let lBumperPressed = false;
   let controllerBind = DEFAULTS.CONTROLLER.BIND;
+
+  ///Intervals
+  let clawInterval;
+  let clawPosition = 255;
+
+  /// Could be moved to config
+  let CLAW_POSITION_INTERVAL = 5;
+  let CLAW_INTERVAL_PER_SECOND = 10;
+  let CLAW_MAXIMUM = 255;
+  let CLAW_MINIMUM = 0;
 
 
 
@@ -86,6 +98,7 @@
     ELBOW_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.ELBOW_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
     WRIST_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
     WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
+    CLAW: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CLAW, messageType : TOPICS.ARM.ARM_MSG_TYPE })
   }
 
   //Function to publish data value to specific joint ("SHOULDER_ROTATION" | "SHOULDER_PITCH" | ...)
@@ -176,6 +189,70 @@
     cycleControllerBind();
   }
 
+  //Callback function for when the RB button is pressed
+  function RB(event) {
+    //If button released
+    if (event.detail == null) {
+      rBumperPressed = false;
+      //If the other bumper isnt pressed, stop the wrist interval
+      !lBumperPressed && stopWristInterval();
+    // else if button is pressed
+    } else {
+      //If it wasnt previously pressed, update and start wrist interval
+      if (!rBumperPressed) {
+        rBumperPressed = true;
+        //Start wrist runnable
+        !lBumperPressed && startWristInterval();
+      } 
+    }
+  }
+
+  //Callback function for when the LB button is pressed
+  function LB(event) {
+    //If button released
+    if (event.detail == null) {
+      lBumperPressed = false;
+      //If the other bumper isnt pressed, stop the wrist interval
+      !rBumperPressed && stopClawInterval();
+    // else if button is pressed
+    } else {
+      //If it wasnt previously pressed, update and start wrist interval
+      if (!lBumperPressed) {
+        lBumperPressed = true;
+        //Start wrist runnable
+        !rBumperPressed && startClawInterval();
+      } 
+    }
+  }
+  
+
+  // Claw Handling
+  /// Function to stop setInterval handling claw opening/closing
+  function stopClawInterval() {
+    clearInterval(clawInterval);
+  }
+
+  /// Function to start setInterval handling claw opening/closing
+  function startClawInterval() {
+    clawInterval = setInteral(() => {
+      //If both bumpers are pressed, we dont want to increase or decrease claw position
+      if (rBumperPressed && lBumperPressed) return;
+      //If the left bumper is pressed, decrement clawInterval
+      if (lBumperPressed) {
+        clawInterval -= CLAW_POSITION_INTERVAL;
+      } else if (rBumperPressed) {
+      //If the right bumper is pressed, increment clawInterval
+        clawInterval += CLAW_POSITION_INTERVAL;
+      }
+      //Adjust for over/under shooting domain of clawInterval [0-255]
+      if (clawInterval < CLAW_MINIMUM) clawInterval = CLAW_MINIMUM;
+      if (clawInterval > CLAW_MAXIMUM) clawInterval = CLAW_MAXIMUM;
+      //Send claw update
+      publishArmCommand("CLAW", clawPosition);
+    }, 1000 / CLAW_INTERVAL_PER_SECOND);
+  }
+
+
 
 </script>
 
@@ -187,6 +264,8 @@
   on:A_PRESS={buttonA}
   on:RT={RightTrigger}
   on:LT={LeftTrigger}
+  on:RB={RB}
+  on:LB={LB}
   on:LeftStick={LeftStick}
   on:RightStick={RightStick}
   on:DPadRight_PRESS={DPadRight}
