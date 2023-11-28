@@ -4,13 +4,17 @@
   
   let element;
 
-  let scroll = () => element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+  let scrollBottom = () => element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+
+  let handleScroll = () => {
+    console.log(element.scrollHeight)
+  }
 </script>
 
 
 <div class="topic-container">
   <div class="topic-header">
-    <input class="topic-name" placeholder={topic.topic_name} value={topic.display_name}>
+    <p class="topic-name">{topic.topic_name}</p>
     <div class="topic-options">
       <div class="topic-delete" on:click={deleteFunction}>Delete</div>
       <div class="topic-delete" on:click={moveUp}>Up</div>
@@ -18,11 +22,12 @@
       <div class="topic-delete" on:click={moveStart}>Top</div>
     </div>
   </div>
-  <div bind:this={element} class="topic-data">
+  <div bind:this={element} class="topic-data" on:scroll={handleScroll}>
     {#each topic.data_log as data_segment}
-      <p use:scroll >{JSON.stringify(data_segment)}</p>
+      <p use:scrollBottom class="topic-data-element">{JSON.stringify(data_segment)}</p>
     {/each}
   </div>
+  <div class="topic-data-scroll">scroll</div>
 </div>
 
 
@@ -50,16 +55,30 @@
   .topic-data {
     background-color: cadetblue;
     width: 100%;
-    height: 100px;
+    height: 200px;
     margin-bottom: 10px;
     overflow-y: auto;
   }
 
+  .topic-data-scroll {
+    margin-top: -20px;
+  }
+
   .topic-name {
-    border: none;
-    background-color: inherit;
-    outline: none;
     flex-grow: 1;
-    opacity: 1;
+  }
+
+  .topic-data-element:nth-of-type(odd) {
+    background-color: gray;
+  }
+
+  
+  .topic-data-element:nth-of-type(even) {
+    background-color: lightgray;
+  }
+
+  p {
+    margin: 0;
+    padding: 0;
   }
 </style>
