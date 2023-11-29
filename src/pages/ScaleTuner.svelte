@@ -78,10 +78,6 @@
 
 
 <style>
-  p {
-    margin: 0;
-    padding: 0;
-  }
   .scales-column {
     width: 50%;
     padding: 10px 10px;

@@ -195,14 +195,14 @@
     if (event.detail == null) {
       rBumperPressed = false;
       //If the other bumper isnt pressed, stop the wrist interval
-      !lBumperPressed && stopWristInterval();
+      !lBumperPressed && stopClawInterval();
     // else if button is pressed
     } else {
       //If it wasnt previously pressed, update and start wrist interval
       if (!rBumperPressed) {
         rBumperPressed = true;
         //Start wrist runnable
-        !lBumperPressed && startWristInterval();
+        !lBumperPressed && startClawInterval();
       } 
     }
   }
@@ -234,7 +234,7 @@
 
   /// Function to start setInterval handling claw opening/closing
   function startClawInterval() {
-    clawInterval = setInteral(() => {
+    clawInterval = setInterval(() => {
       //If both bumpers are pressed, we dont want to increase or decrease claw position
       if (rBumperPressed && lBumperPressed) return;
       //If the left bumper is pressed, decrement clawInterval
