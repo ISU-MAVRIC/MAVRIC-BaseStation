@@ -84,7 +84,7 @@
 .page-display {
   width: 100%;
   height: 90%;
-  background-color: aqua;
+  background-color: gray;
 }
 
 .break {

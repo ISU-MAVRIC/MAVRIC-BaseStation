@@ -38,7 +38,7 @@
 
   width: 20%;
   min-width: 75px;
-  background-color: #f1f1f1;
+  background-color: lightgray;
   height: 100%;
   overflow: auto;
   }
@@ -85,21 +85,23 @@
     width: 100%;
     display: flex;
   }
-
+  
   .nav-label {
     flex-grow: 1;
     font-size: 1.5vw;
     padding-left: 5px;
   }
-
   
-
+  
+  
   li:hover {
-  background-color: #555;
-  color: white;
+    background-color: #555;
+    color: white;
+    transition: all .2s ease-in;
   }
-
+  
   .selected {
-    background-color: red;
+    background-color: rgb(250, 36, 36);
+    
   }
 </style>

@@ -84,7 +84,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    background-color: blueviolet;
+    background-color: gray;
     width: 100%;
   }
 
@@ -93,7 +93,8 @@
     margin: 10px;
     border-radius: 10px;
     display: block;
-    background-color: yellow;
+    flex-grow: 1;
+    background-color: lightgray;
   }
 
   p {

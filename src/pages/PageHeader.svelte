@@ -22,7 +22,7 @@ more to the header in the future. -->
     padding: 0;
     height: 100%;
     flex-grow: 1;
-    background: green;
+    background: lightgray;
   }
 
   @media only screen and (min-height: 600px) {

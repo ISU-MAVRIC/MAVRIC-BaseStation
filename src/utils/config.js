@@ -36,7 +36,7 @@ export const DEFAULTS = {
   DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
   },
-  HOME_PAGE: "Topic Debug"
+  HOME_PAGE: "Overview"
 }
 
 
