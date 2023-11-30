@@ -239,14 +239,14 @@
       if (rBumperPressed && lBumperPressed) return;
       //If the left bumper is pressed, decrement clawInterval
       if (lBumperPressed) {
-        clawInterval -= CLAW_POSITION_INTERVAL;
+        clawPosition -= CLAW_POSITION_INTERVAL;
       } else if (rBumperPressed) {
       //If the right bumper is pressed, increment clawInterval
-        clawInterval += CLAW_POSITION_INTERVAL;
+        clawPosition += CLAW_POSITION_INTERVAL;
       }
       //Adjust for over/under shooting domain of clawInterval [0-255]
-      if (clawInterval < CLAW_MINIMUM) clawInterval = CLAW_MINIMUM;
-      if (clawInterval > CLAW_MAXIMUM) clawInterval = CLAW_MAXIMUM;
+      if (clawPosition < CLAW_MINIMUM) clawPosition = CLAW_MINIMUM;
+      if (clawPosition > CLAW_MAXIMUM) clawPosition = CLAW_MAXIMUM;
       //Send claw update
       publishArmCommand("CLAW", clawPosition);
     }, 1000 / CLAW_INTERVAL_PER_SECOND);

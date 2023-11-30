@@ -31,7 +31,7 @@
       }
 
       //Event that is called once per button hold
-      if (button && button.pressed && !gamepadState.buttons[key].pressed) {
+      if (button && button.pressed && gamepadState && gamepadState.buttons && !gamepadState.buttons[key].pressed) {
         //Dispatch event
         dispatch(key + "_PRESS", button); // e.g. "RT" , {pressed: true, value: 0.2}
       }
