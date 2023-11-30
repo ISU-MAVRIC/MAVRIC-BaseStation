@@ -64,13 +64,12 @@ export const TOPICS = {
     CLAW: "/SlowPWM/CH3",
   },
   SENSORS: {
-    GPS: '',
-    GPS_MSG_TYPE: '',
-    IMU: '',
-    IMU_MSG_TYPE: '',
-    BATTERY_VOLTAGE_SYSTEMS: '',
-    BATTERY_VOLTAGE_DRIVE: '',
-    BATTERY_VOLTAGE_MSG_TYPE: '',
+    GPS: '/HW/GPS_Data',
+    GPS_MSG_TYPE: '/mavric/GPS',
+    IMU: '/HW/IMU/FusedAngle',
+    IMU_MSG_TYPE: '/geometry_msgs/Vector3',
+    BATTERY_VOLTAGE: '/HW/ADC',
+    BATTERY_VOLTAGE_MSG_TYPE: '/mavric/Voltage',
   }
 }
 
