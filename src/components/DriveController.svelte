@@ -36,17 +36,21 @@
   let clawPosition = 0;
   let luminometerPosition = 5;
   let lumiButtonPosition = 90;
+  let lumiLidPosition = 0;
+  let lumiLidState = 0;
+  let lumiLidToggle = false;
 
   /// Could be moved to config
   let CLAW_POSITION_INTERVAL = 5;
   let CLAW_INTERVAL_PER_SECOND = 10;
   let CLAW_MAXIMUM = 100;
   let CLAW_MINIMUM = -100;
-  let LUMI_POSITION_INTERVAL = 1;
-  let LUMI_MAXIMUM = 100;
-  let LUMI_MINIMUM = -100;
+  let LUMI_STRAIGHT = 5;
+  let LUMI_DUMP = -36;
   let LUMIBUTTON_MAXIMUM = 90;
   let LUMIBUTTON_MINIMUM = -10;
+  let LUMILID_CLOSED = -82;
+  let LUMILID_OPEN = 20;
 
 
 
@@ -108,6 +112,7 @@
     CLAW: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CLAW, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
     LUMINOMETER: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMINOMETER, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
     LUMIBUTTON: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMIBUTTON, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
+    LUMILID: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMILID, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
   }
 
   //Function to publish data value to specific joint ("SHOULDER_ROTATION" | "SHOULDER_PITCH" | ...)
@@ -236,41 +241,50 @@
 
   //Callback function whenever Dpad Left is pressed
   function DPadLeft(event) {
-    luminometerPosition -= LUMI_POSITION_INTERVAL;
-    if (luminometerPosition < LUMI_MINIMUM) {
-      luminometerPosition = LUMI_MINIMUM; }
+    luminometerPosition = LUMI_STRAIGHT;
     publishArmCommand("LUMINOMETER", luminometerPosition);
   }
 
   //Callback function whenever Dpad Right is pressed
   function DPadRight(event) {
-    luminometerPosition += LUMI_POSITION_INTERVAL;
-    if (luminometerPosition > LUMI_MAXIMUM) {
-      luminometerPosition = LUMI_MAXIMUM; }
+    luminometerPosition += LUMI_DUMP;
     publishArmCommand("LUMINOMETER", luminometerPosition);
   }
 
-    //Callback function whenever Dpad Left is pressed
+  //Callback function whenever Luminometer button is pressed
   function LumiButton(event) {
-    console.log(event.detail);
-    // lumiButtonPosition -= LUMI_POSITION_INTERVAL;
-    // if (lumiButtonPosition < LUMI_MINIMUM) {
-    //   lumiButtonPosition = LUMI_MINIMUM; }
-    lumiButtonPosition = LUMIBUTTON_MINIMUM;
+    if (event.detail == null) {
+      lumiButtonPosition = LUMIBUTTON_MAXIMUM;
+    }
+    else {
+      lumiButtonPosition = LUMIBUTTON_MINIMUM;
+    }
     publishArmCommand("LUMIBUTTON", lumiButtonPosition);
   }
 
-  //Callback function whenever Dpad Right is pressed
-  function DPadDown(event) {
-    // lumiButtonPosition += LUMI_POSITION_INTERVAL;
-    // if (lumiButtonPosition > LUMI_MAXIMUM) {
-    //   lumiButtonPosition = LUMI_MAXIMUM; }
-    lumiButtonPosition = LUMIBUTTON_MAXIMUM;
-    publishArmCommand("LUMIBUTTON", lumiButtonPosition);
+  function LumiLid(event) {
+    if (event.detail == null) {
+      lumiLidToggle = false;
+    }
+    else {
+      if (lumiLidToggle == false) {
+        if (lumiLidState == 0) {
+          lumiLidState = 1;
+          lumiLidPosition = LUMILID_CLOSED;
+        }
+        else if (lumiLidState == 1) {
+          lumiLidState = 0;
+          lumiLidPosition = LUMILID_OPEN;
+        }
+        lumiLidToggle = true;
+      }
+      else {
+        return
+      }
+    }
+    publishArmCommand("LUMILID", lumiLidPosition);
   }
-
   
-
   // Claw Handling
   /// Function to stop setInterval handling claw opening/closing
   function stopClawInterval() {
@@ -314,6 +328,6 @@
   on:RightStick={RightStick}
   on:DPadLeft_PRESS={DPadLeft}
   on:DPadRight_PRESS={DPadRight}
-  on:Y_PRESS={LumiButton}
-  on:X_PRESS={DPadDown}
+  on:Y={LumiButton}
+  on:X={LumiLid}
 />
