@@ -34,12 +34,19 @@
   ///Intervals
   let clawInterval;
   let clawPosition = 0;
+  let luminometerPosition = 5;
+  let lumiButtonPosition = 90;
 
   /// Could be moved to config
   let CLAW_POSITION_INTERVAL = 5;
   let CLAW_INTERVAL_PER_SECOND = 10;
   let CLAW_MAXIMUM = 100;
   let CLAW_MINIMUM = -100;
+  let LUMI_POSITION_INTERVAL = 1;
+  let LUMI_MAXIMUM = 100;
+  let LUMI_MINIMUM = -100;
+  let LUMIBUTTON_MAXIMUM = 90;
+  let LUMIBUTTON_MINIMUM = -10;
 
 
 
@@ -98,7 +105,9 @@
     ELBOW_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.ELBOW_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
     WRIST_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
     WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    CLAW: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CLAW, messageType : TOPICS.ARM.ARM_MSG_TYPE })
+    CLAW: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CLAW, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
+    LUMINOMETER: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMINOMETER, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
+    LUMIBUTTON: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMIBUTTON, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
   }
 
   //Function to publish data value to specific joint ("SHOULDER_ROTATION" | "SHOULDER_PITCH" | ...)
@@ -224,6 +233,42 @@
       } 
     }
   }
+
+  //Callback function whenever Dpad Left is pressed
+  function DPadLeft(event) {
+    luminometerPosition -= LUMI_POSITION_INTERVAL;
+    if (luminometerPosition < LUMI_MINIMUM) {
+      luminometerPosition = LUMI_MINIMUM; }
+    publishArmCommand("LUMINOMETER", luminometerPosition);
+  }
+
+  //Callback function whenever Dpad Right is pressed
+  function DPadRight(event) {
+    luminometerPosition += LUMI_POSITION_INTERVAL;
+    if (luminometerPosition > LUMI_MAXIMUM) {
+      luminometerPosition = LUMI_MAXIMUM; }
+    publishArmCommand("LUMINOMETER", luminometerPosition);
+  }
+
+    //Callback function whenever Dpad Left is pressed
+  function LumiButton(event) {
+    console.log(event.detail);
+    // lumiButtonPosition -= LUMI_POSITION_INTERVAL;
+    // if (lumiButtonPosition < LUMI_MINIMUM) {
+    //   lumiButtonPosition = LUMI_MINIMUM; }
+    lumiButtonPosition = LUMIBUTTON_MINIMUM;
+    publishArmCommand("LUMIBUTTON", lumiButtonPosition);
+  }
+
+  //Callback function whenever Dpad Right is pressed
+  function DPadDown(event) {
+    // lumiButtonPosition += LUMI_POSITION_INTERVAL;
+    // if (lumiButtonPosition > LUMI_MAXIMUM) {
+    //   lumiButtonPosition = LUMI_MAXIMUM; }
+    lumiButtonPosition = LUMIBUTTON_MAXIMUM;
+    publishArmCommand("LUMIBUTTON", lumiButtonPosition);
+  }
+
   
 
   // Claw Handling
@@ -244,15 +289,13 @@
       //If the right bumper is pressed, increment clawInterval
         clawPosition += CLAW_POSITION_INTERVAL;
       }
-      //Adjust for over/under shooting domain of clawInterval [0-255]
+      //Adjust for over/under shooting domain of clawInterval [-100 to 100]
       if (clawPosition < CLAW_MINIMUM) clawPosition = CLAW_MINIMUM;
       if (clawPosition > CLAW_MAXIMUM) clawPosition = CLAW_MAXIMUM;
       //Send claw update
       publishArmCommand("CLAW", clawPosition);
     }, 1000 / CLAW_INTERVAL_PER_SECOND);
   }
-
-
 
 </script>
 
@@ -262,11 +305,15 @@
 <Gamepad
   gamepadIndex={0}
   on:A_PRESS={buttonA}
+  on:B_PRESS={buttonB}
   on:RT={RightTrigger}
   on:LT={LeftTrigger}
   on:RB={RB}
   on:LB={LB}
   on:LeftStick={LeftStick}
   on:RightStick={RightStick}
-  on:B_PRESS={buttonB}
+  on:DPadLeft_PRESS={DPadLeft}
+  on:DPadRight_PRESS={DPadRight}
+  on:Y_PRESS={LumiButton}
+  on:X_PRESS={DPadDown}
 />

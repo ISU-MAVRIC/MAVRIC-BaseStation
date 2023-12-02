@@ -63,7 +63,7 @@ export const TOPICS = {
     WRIST_ROTATION: TOPIC_BASE.ARM + "/WristRot",
     CLAW: "/Servo/ClawActuation",
     LUMINOMETER: "/Servo/Luminometer",
-    LID: "/Servo/Lid",
+    LUMIBUTTON: "/Servo/LumiButton",
   },
   SENSORS: {
     GPS: '/HW/GPS_Data',
