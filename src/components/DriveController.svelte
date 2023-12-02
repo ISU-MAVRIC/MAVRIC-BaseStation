@@ -38,8 +38,8 @@
   /// Could be moved to config
   let CLAW_POSITION_INTERVAL = 5;
   let CLAW_INTERVAL_PER_SECOND = 10;
-  let CLAW_MAXIMUM = 255;
-  let CLAW_MINIMUM = 0;
+  let CLAW_MAXIMUM = 35;
+  let CLAW_MINIMUM = -60;
 
 
 
