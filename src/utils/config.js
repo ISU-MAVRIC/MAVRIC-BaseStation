@@ -61,7 +61,9 @@ export const TOPICS = {
     ELBOW_PITCH: TOPIC_BASE.ARM  + "/ElbowPitch",
     WRIST_PITCH: TOPIC_BASE.ARM  + "/WristPitch",
     WRIST_ROTATION: TOPIC_BASE.ARM + "/WristRot",
-    CLAW: "/Arm/ClawActuation",
+    CLAW: "/Servo/ClawActuation",
+    LUMINOMETER: "/Servo/Luminometer",
+    LID: "/Servo/Lid",
   },
   SENSORS: {
     GPS: '/HW/GPS_Data',

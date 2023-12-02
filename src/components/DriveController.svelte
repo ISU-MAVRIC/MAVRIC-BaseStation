@@ -33,13 +33,13 @@
 
   ///Intervals
   let clawInterval;
-  let clawPosition = 255;
+  let clawPosition = 0;
 
   /// Could be moved to config
   let CLAW_POSITION_INTERVAL = 5;
   let CLAW_INTERVAL_PER_SECOND = 10;
-  let CLAW_MAXIMUM = 35;
-  let CLAW_MINIMUM = -60;
+  let CLAW_MAXIMUM = 100;
+  let CLAW_MINIMUM = -100;
 
 
 
@@ -185,7 +185,7 @@
   }
 
   //Callback function for when the DPad right button is pressed
-  function DPadRight(event) {
+  function buttonB(event) {
     cycleControllerBind();
   }
 
@@ -268,5 +268,5 @@
   on:LB={LB}
   on:LeftStick={LeftStick}
   on:RightStick={RightStick}
-  on:DPadRight_PRESS={DPadRight}
+  on:B_PRESS={buttonB}
 />
