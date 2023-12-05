@@ -42,9 +42,8 @@ export const DRIVE_STATES = {
 
   getNext: (state) => {
     return {
-      'TANK': 'POINT',
+      'CAR': 'POINT',
       'POINT': 'CAR',
-      'CAR': 'TANK'
     }[state];
   }
 }

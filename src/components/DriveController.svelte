@@ -47,8 +47,8 @@
   let CLAW_MINIMUM = -100;
   let LUMI_STRAIGHT = 5;
   let LUMI_DUMP = -36;
-  let LUMIBUTTON_MAXIMUM = 90;
-  let LUMIBUTTON_MINIMUM = -10;
+  let LUMIBUTTON_RELEASED = 90;
+  let LUMIBUTTON_PRESSED = -10;
   let LUMILID_CLOSED = -82;
   let LUMILID_OPEN = 20;
 
@@ -239,35 +239,45 @@
     }
   }
 
-  //Callback function whenever Dpad Left is pressed
-  function DPadLeft(event) {
+  //Callback function to set luminometer to upright position
+  function LuminometerStraight(event) {
+    // set position to straight up and down position
     luminometerPosition = LUMI_STRAIGHT;
     publishArmCommand("LUMINOMETER", luminometerPosition);
   }
 
-  //Callback function whenever Dpad Right is pressed
-  function DPadRight(event) {
-    luminometerPosition += LUMI_DUMP;
+  //Callback function to set luminometer to dump position
+  function LuminometerDump(event) {
+    // set position to dump position
+    luminometerPosition = LUMI_DUMP;
     publishArmCommand("LUMINOMETER", luminometerPosition);
   }
 
   //Callback function whenever Luminometer button is pressed
   function LumiButton(event) {
+    //if button is released or not pressed, set servo is released position
     if (event.detail == null) {
-      lumiButtonPosition = LUMIBUTTON_MAXIMUM;
+      lumiButtonPosition = LUMIBUTTON_RELEASED;
     }
+    // if button is pressed, set servo to pressed position
     else {
-      lumiButtonPosition = LUMIBUTTON_MINIMUM;
+      lumiButtonPosition = LUMIBUTTON_PRESSED;
     }
+    // publish the button position
     publishArmCommand("LUMIBUTTON", lumiButtonPosition);
   }
 
+  //Callback function that toggles the lid open and closed
   function LumiLid(event) {
+    // if button isn't being pressed or is released
     if (event.detail == null) {
+      //toggle is turned off, meaning button can be pressed again
       lumiLidToggle = false;
     }
     else {
+      // if the button isn't currently being pressed
       if (lumiLidToggle == false) {
+        // if in one state, switch to next state. 0 is open, 1 is closed
         if (lumiLidState == 0) {
           lumiLidState = 1;
           lumiLidPosition = LUMILID_CLOSED;
@@ -276,12 +286,14 @@
           lumiLidState = 0;
           lumiLidPosition = LUMILID_OPEN;
         }
-        lumiLidToggle = true;
+        lumiLidToggle = true; // button is being pressed/held down
       }
-      else {
+      else { // lumiLidToggle is true
+        // if button is still being held down, exit function
         return
       }
     }
+    // publish the lid position
     publishArmCommand("LUMILID", lumiLidPosition);
   }
   
@@ -326,8 +338,8 @@
   on:LB={LB}
   on:LeftStick={LeftStick}
   on:RightStick={RightStick}
-  on:DPadLeft_PRESS={DPadLeft}
-  on:DPadRight_PRESS={DPadRight}
+  on:DPadLeft_PRESS={LuminometerStraight}
+  on:DPadRight_PRESS={LuminometerDump}
   on:Y={LumiButton}
   on:X={LumiLid}
 />

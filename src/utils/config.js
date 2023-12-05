@@ -140,7 +140,3 @@ export const SCALES = {
     }
   }
 }
-
-
-
-

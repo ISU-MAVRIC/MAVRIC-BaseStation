@@ -55,8 +55,7 @@
 <div class="common-display">
   <!-- Telemetry Display Div -->
   <div class="flex-block telemetry-display">
-    <p>Latitude: {gpsLatitude.toFixed(7)}</p>
-    <p>Longitude: {gpsLongtude.toFixed(7)}</p>
+    <p>Controller Mode: TODO</p>
     <p>Drive State: {driveState}</p>
   </div>
   <!-- Battery Voltage Display Div -->
