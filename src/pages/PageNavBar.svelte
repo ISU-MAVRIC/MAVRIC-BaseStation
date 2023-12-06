@@ -14,7 +14,7 @@
 <!-- Create nav bar to be displayed -->
 <ul>
   <!-- Element for displaying MAVRIC Logo in top left -->
-  <li class="mavric-icon"> MAVRIC ICON</li>
+  <li class="mavric-icon"> <img alt="Mavric Logo" src="favicon.png" height=100% width=100% /></li>
   <!-- for each of the defined pages, add the corresponding icon and link to the nav bar -->
   {#each PAGES as page}
     <li class={page.label == selected ? 'selected' : ""} on:click={setPage.bind(this, page.label)}>

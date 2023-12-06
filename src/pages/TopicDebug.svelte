@@ -124,7 +124,7 @@
   .container {
     width: 100%;
     height: 100%;
-    background-color: rebeccapurple;
+    background-color:  gray;
     overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
@@ -134,7 +134,7 @@
   .selector-container {
     width: 100%;
     height: 50px;
-    background-color: orange;
+    background-color: darkgrey;
     display: flex;
   }
 
@@ -152,6 +152,7 @@
 
   .selector-add {
     width: 10%;
+    padding-left: 10px;
   }
 
   .topic-container {

@@ -5,12 +5,13 @@
   export let selected;
   export let driveState;
   export let PAGES;
+  export let controllerBind;
 
 </script>
 
 <!-- For each of the possible pages, display the component with the correct label matching the selected property -->
 {#each PAGES as page}
   {#if selected == page.label}
-    <svelte:component bind:driveState this={page.component} />
+    <svelte:component bind:driveState bind:controllerBind this={page.component} />
   {/if}
 {/each}

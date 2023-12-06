@@ -21,6 +21,7 @@ export const CONTROLLER_BINDS = {
     let keys = Object.keys(CONTROLLER_BINDS);
     let nextIndex = keys.indexOf(currentBind) + 1;
     return keys[nextIndex % (keys.length - 1)];
+  // TODO Please document more :)
   }
 }
 

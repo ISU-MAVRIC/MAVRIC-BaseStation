@@ -11,10 +11,11 @@
 
   //Component Property Declarations
   export let driveState;
+  export let controllerBind;
 
   //Variables used to store and display values
   let gpsLatitude = 0;
-  let gpsLongtude = 0;
+  let gpsLongitude = 0;
   let imuHeading = 0;
   let driveBatteryVoltage = 0;
   let systemBatteryVoltage = 0;
@@ -22,32 +23,42 @@
 
   //ROS Topics and subscribers
   /// GPS
-  // const gpsTopic = new ROSLIB.Topic({
-  //   ros : $connectionHandler.getROSInstance(),
-  //   name : TOPICS.SENSORS.GPS,
-  //   messageType : TOPICS.SENSORS.GPS_MSG_TYPE
-  // });
+  const gpsTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.SENSORS.GPS,
+    messageType : TOPICS.SENSORS.GPS_MSG_TYPE
+  });
 
-  // gpsTopic.subscribe(message => {
-  //   //TODO: update gpsLatitude and gpsLongitude parameters
-  //   console.log(message);
-  // });
+  gpsTopic.subscribe(message => {
+    //TODO: update gpsLatitude and gpsLongitude parameters
+    gpsLatitude = message.latitude
+    gpsLongitude = message.longitude
+  });
 
 
-  // /// IMU
-  // const imuTopic = new ROSLIB.Topic({
-  //   ros : $connectionHandler.getROSInstance(),
-  //   name : TOPICS.SENSORS.IMU,
-  //   messageType : TOPICS.SENSORS.IMU_MSG_TYPE
-  // });
+  /// IMU
+  const imuTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.SENSORS.IMU,
+    messageType : TOPICS.SENSORS.IMU_MSG_TYPE
+  });
 
-  // imuTopic.subscribe(message => {
-  //   //TODO: update imuHeading
-  //   console.log(message);
-  // });
+  imuTopic.subscribe(message => {
+    //TODO: update imuHeading
+    imuHeading = message.z;
+  });
 
   /// Battery Voltage
-  //TODO: Add battery voltage display once implemented on rover
+  const battVoltTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.SENSORS.BATTERY_VOLTAGE,
+    messageType : TOPICS.SENSORS.BATTERY_VOLTAGE_MSG_TYPE
+  });
+
+  battVoltTopic.subscribe(message => {
+    systemBatteryVoltage = message.batt1;
+    driveBatteryVoltage = message.batt2;
+  })
 
 </script>
 
@@ -55,23 +66,24 @@
 <div class="common-display">
   <!-- Telemetry Display Div -->
   <div class="flex-block telemetry-display">
-    <p>Controller Mode: TODO</p>
+    <p>Controller Mode: {controllerBind}</p>
+    {#if controllerBind == "DRIVE"}
     <p>Drive State: {driveState}</p>
+    {/if}
   </div>
   <!-- Battery Voltage Display Div -->
   <div class="flex-block telemetry-display">
-    <p>Drive Battery Voltage: {driveBatteryVoltage}</p>
-    <p>Systems Battery Voltage: {systemBatteryVoltage}</p>
+    <p>Systems Voltage: {systemBatteryVoltage.toFixed(2)} V ({(systemBatteryVoltage/6).toFixed(2)})</p>
+    <p>Drive Voltage: {driveBatteryVoltage.toFixed(2)} V ({(driveBatteryVoltage/4).toFixed(2)})</p>
+  </div>
+  <!-- Imu Heading Display Div -->
+  <div class="flex-block telemetry-display">
+    <p>Heading: {imuHeading.toFixed(1)}</p>
   </div>
   <!-- Extra divs for testing (until we add more data here) -->
   <div class="flex-block telemetry-display">
     <p>Latitude: {gpsLatitude.toFixed(7)}</p>
-    <p>Longitude: {gpsLongtude.toFixed(7)}</p>
-  </div>
-  <!-- Extra divs for testing (until we add more data here) -->
-  <div class="flex-block telemetry-display">
-    <p>Latitude: {gpsLatitude.toFixed(7)}</p>
-    <p>Longitude: {gpsLongtude.toFixed(7)}</p>
+    <p>Longitude: {gpsLongitude.toFixed(7)}</p>
   </div>
 </div>
 

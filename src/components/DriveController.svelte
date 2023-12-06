@@ -12,6 +12,7 @@
 
   // Svelte Component Properties
   export let driveState;
+  export let controllerBind;
   
 
   //Variables
@@ -29,7 +30,6 @@
   let rTrigger = 0;
   let rBumperPressed = false;
   let lBumperPressed = false;
-  let controllerBind = DEFAULTS.CONTROLLER.BIND;
 
   ///Intervals
   let clawInterval;

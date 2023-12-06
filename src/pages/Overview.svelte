@@ -5,7 +5,25 @@
 
   //Component Properties
   export let driveState;
+  export let controllerBind;
 </script>
 
-<CommonDisplay driveState={driveState}/>
-<p>Overview</p>
+<div class="container">
+  <CommonDisplay driveState={driveState} controllerBind={controllerBind}/>
+  <center>
+    <img alt="Controler Binds" class="controller-img" src="images/controller.png" />
+  </center>
+  
+</div>
+
+
+<style>
+  .container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .controller-img {
+    height: 400px;
+  }
+</style>
