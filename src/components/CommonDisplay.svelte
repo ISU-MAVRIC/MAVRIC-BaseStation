@@ -96,6 +96,7 @@
     flex-wrap: wrap;
     justify-content: space-around;
     background-color: gray;
+    height: 10%;
     width: 100%;
   }
 

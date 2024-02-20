@@ -37,7 +37,7 @@ export const DEFAULTS = {
   DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
   },
-  HOME_PAGE: "Overview"
+  HOME_PAGE: "Autonomous Debug"
 }
 
 
@@ -74,6 +74,16 @@ export const TOPICS = {
     IMU_MSG_TYPE: '/geometry_msgs/Vector3',
     BATTERY_VOLTAGE: '/HW/ADC',
     BATTERY_VOLTAGE_MSG_TYPE: '/mavric/Voltage',
+  },
+  AUTONOMOUS: {
+    STATE: '/Auto/State',
+    STATE_MSG_TYPE: 'std_msg/String',
+    ENABLE: '/Auto/Enable',
+    ENABLE_MSG_TYPE: 'std_msg/Bool',
+    WAYPOINTS: '/Auto/Waypoints',
+    WAYPOINTS_MSG_TYPE: 'std_msg/String',
+    DEBUG: '/Auto/Debug',
+    DEBUG_MSG_TYPE: "std_msg/String",
   }
 }
 
