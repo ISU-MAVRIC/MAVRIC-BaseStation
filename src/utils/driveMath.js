@@ -4,6 +4,7 @@
 // Variables
 const wheel_length = 37.5;
 const wheel_width = 28.5;
+const max_steer_angle = Math.atan(wheel_length/wheel_width) - 10*Math.PI/180;
 
 //Function to format calcDriveValues return into consistent object
 const formatReturn = (lf, lm, lb, rf, rm, rb, strLf, strLb, strRf, strRb) => {
@@ -61,48 +62,45 @@ export const calculateDriveValues = (DRIVE_STATE, tdrive, tsteer, cdrive, csteer
         let left = -100*(tdrive*sensdrive - tsteer*senssteer/2)
         let right = -100*(tdrive*sensdrive + tsteer*senssteer/2)
         return formatReturn(left, left, left, right, right, right, 0, 0, 0, 0);
+
     } else if (DRIVE_STATE == DRIVE_STATES.CAR) {
-        let in_angle = radians(Math.abs(csteer*100*senssteer))*0.9;
-        let out_angle, in_r, out_r, center_r, in_mid_r, out_mid_r, out_v, angle_v, in_v, in_mid_v, out_mid_v;
-        if (in_angle != 0) {
-          out_angle = Math.PI/2-Math.atan(1/Math.tan(in_angle)+2*wheel_width/wheel_length)
-          in_r = wheel_length / (2 * Math.sin(in_angle))
-          out_r = wheel_length / (2 * Math.sin(out_angle))
-          center_r = in_r * Math.cos(in_angle) + wheel_width / 2
-          in_mid_r = center_r - wheel_width / 2
-          out_mid_r = center_r + wheel_width / 2
-          out_v = -100*cdrive * sensdrive
-          angle_v = out_v / out_r
-          in_v = in_r * angle_v
-          in_mid_v = in_mid_r * angle_v
-          out_mid_v = out_mid_r * angle_v
-        } else {
-          out_angle = 0
-          in_v = 0
-          in_mid_v = 0
-          out_v = 0
-          out_mid_v = 0
-        }
-        if (csteer < 0) {
-            return formatReturn(in_v, in_mid_v, in_v, out_v, out_mid_v, out_v, degrees(in_angle), degrees(in_angle), degrees(out_angle), degrees(out_angle))
-        } else if (csteer > 0) {
-            return formatReturn(out_v, out_mid_v, out_v, in_v, in_mid_v, in_v, -degrees(out_angle), -degrees(out_angle), -degrees(in_angle), -degrees(in_angle))
-        } else {
-            return formatReturn(-cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100,  -cdrive*sensdrive*100, -cdrive*sensdrive*100, 0, 0, 0, 0)
-        }
+      let in_v=0, in_mid_v=0, out_mid_v=0, out_v=0, in_angle=0, out_angle=0;
+      if (csteer != 0) {
+        let steer_angle = Math.abs(csteer)*max_steer_angle;
+        let R = (wheel_length/2)/Math.tan(steer_angle);
+        let in_mid_radius = R - wheel_width/2;
+        let out_mid_radius = R + wheel_width/2;
+        out_angle = Math.atan(wheel_length/2 / out_mid_radius);
+        in_angle = Math.atan(wheel_length/2 / in_mid_radius);
+        let out_radius = Math.sqrt((wheel_length/2)**2 + out_mid_radius**2);
+        let in_radius = Math.sqrt((wheel_length/2)**2 + in_mid_radius**2);
+
+        out_v = -cdrive * 100;
+        out_mid_v = -cdrive * out_mid_radius / out_radius * 100;
+        in_mid_v = -cdrive * in_mid_radius / out_radius * 100;
+        in_v = -cdrive * in_radius / out_radius * 100;
+      } 
+      
+      if (csteer < 0) {
+          return formatReturn(in_v, in_mid_v, in_v, out_v, out_mid_v, out_v, -degrees(in_angle), degrees(in_angle), -degrees(out_angle), degrees(out_angle))
+      } else if (csteer > 0) {
+          return formatReturn(out_v, out_mid_v, out_v, in_v, in_mid_v, in_v, degrees(out_angle), -degrees(out_angle), degrees(in_angle), -degrees(in_angle))
+      } else {
+          return formatReturn(-cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100,  -cdrive*sensdrive*100, -cdrive*sensdrive*100, 0, 0, 0, 0)
+      }
     } else if (DRIVE_STATE == DRIVE_STATES.POINT) {
-        let str_angle = degrees(Math.atan(wheel_length/wheel_width))
-        let str_r = Math.sqrt(Math.pow(wheel_width/2, 2)+Math.pow(wheel_length/2, 2))
-        let mid_r = wheel_width/2
-        let str_v = Math.abs(pdrive*sensdrive*100)
-        let mid_v = str_v*mid_r/str_r
-        if (pdrive < 0) {
-            return formatReturn(-str_v, -mid_v, -str_v, str_v, mid_v, str_v, -str_angle, -str_angle, str_angle, str_angle)
-        } else if (pdrive > 0) {
-            return formatReturn(str_v, mid_v, str_v, -str_v, -mid_v, -str_v, -str_angle, -str_angle, str_angle, str_angle)
-        } else {
-            return formatReturn(0, 0, 0, 0, 0, 0, -str_angle, -str_angle, str_angle, str_angle)
-        }
+      let str_angle = degrees(Math.atan(wheel_length/wheel_width))
+      let str_r = Math.sqrt(Math.pow(wheel_width/2, 2)+Math.pow(wheel_length/2, 2))
+      let mid_r = wheel_width/2
+      let str_v = Math.abs(pdrive*sensdrive*100)
+      let mid_v = str_v*mid_r/str_r
+      if (pdrive < 0) {
+          return formatReturn(-str_v, -mid_v, -str_v, str_v, mid_v, str_v, -str_angle, -str_angle, str_angle, str_angle)
+      } else if (pdrive > 0) {
+          return formatReturn(str_v, mid_v, str_v, -str_v, -mid_v, -str_v, -str_angle, -str_angle, str_angle, str_angle)
+      } else {
+          return formatReturn(0, 0, 0, 0, 0, 0, -str_angle, -str_angle, str_angle, str_angle)
+      }
     } else if (DRIVE_STATE == DRIVE_STATES.MANUAL) {
       let m_v = mdrive*sensdrive*100
       let s_v = msteer*senssteer*100
