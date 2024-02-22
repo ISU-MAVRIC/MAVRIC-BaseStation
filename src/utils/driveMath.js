@@ -95,11 +95,11 @@ export const calculateDriveValues = (DRIVE_STATE, tdrive, tsteer, cdrive, csteer
       let str_v = Math.abs(pdrive*sensdrive*100)
       let mid_v = str_v*mid_r/str_r
       if (pdrive < 0) {
-          return formatReturn(-str_v, -mid_v, -str_v, str_v, mid_v, str_v, -str_angle, -str_angle, str_angle, str_angle)
+          return formatReturn(-str_v, -mid_v, -str_v, str_v, mid_v, str_v, str_angle, -str_angle, -str_angle, str_angle)
       } else if (pdrive > 0) {
-          return formatReturn(str_v, mid_v, str_v, -str_v, -mid_v, -str_v, -str_angle, -str_angle, str_angle, str_angle)
+          return formatReturn(str_v, mid_v, str_v, -str_v, -mid_v, -str_v, str_angle, -str_angle, -str_angle, str_angle)
       } else {
-          return formatReturn(0, 0, 0, 0, 0, 0, -str_angle, -str_angle, str_angle, str_angle)
+          return formatReturn(0, 0, 0, 0, 0, 0, str_angle, -str_angle, -str_angle, str_angle)
       }
     } else if (DRIVE_STATE == DRIVE_STATES.MANUAL) {
       let m_v = mdrive*sensdrive*100
