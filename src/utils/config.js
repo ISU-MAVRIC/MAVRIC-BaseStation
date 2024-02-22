@@ -17,11 +17,14 @@ export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
 export const CONTROLLER_BINDS = {
   ARM: "ARM",
   DRIVE: "DRIVE",
+  //Function to return next possible controller state (ie. ARM returns DRIVE...)
   getNext: (currentBind) => {
+    //Get all possible values for controller binds
     let keys = Object.keys(CONTROLLER_BINDS);
+    //Get index of current selected option and increment to next option
     let nextIndex = keys.indexOf(currentBind) + 1;
+    //Return value at nextIndex accounting for roll over 
     return keys[nextIndex % (keys.length - 1)];
-  // TODO Please document more :)
   }
 }
 
