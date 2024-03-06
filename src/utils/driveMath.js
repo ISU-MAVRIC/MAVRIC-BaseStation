@@ -49,6 +49,20 @@ export const DRIVE_STATES = {
   }
 }
 
+let FL_v = 0 // Front left angular velocity
+let FR_v = 0 // Front right angular velocity
+let ML_v = 0 // Mid left angular velocity
+let MR_v = 0 // Mid right angular velocity
+let BL_v = 0 // Back left angular velocity
+let BR_v = 0 // Back right angular velocity
+  
+let FL_a = 0 // Front left angle
+let FR_a = 0 // Front right angle
+let BL_a = 0 // Back left angle
+let BR_a = 0 // Back right angle
+
+let R = 0 // Turning radius
+
 //Function to convert controller axis ( -1.0 to 1.0 ) and drive state to drive and steer motor values
 // t parameter prefix = tank
 // c parameter prefix = car
