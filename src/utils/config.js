@@ -7,8 +7,8 @@ import { DRIVE_STATES } from './driveMath.js';
 /**
  * Connection string for connecting to the websocket server hosted by rosbridge_server.
  */
-// export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";
-export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
+export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";
+// export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
 
  /**
   * Object containing possible systems (ARM/DRIVE) for the controller to be bound to
@@ -17,11 +17,14 @@ export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
 export const CONTROLLER_BINDS = {
   ARM: "ARM",
   DRIVE: "DRIVE",
+  //Function to return next possible controller state (ie. ARM returns DRIVE...)
   getNext: (currentBind) => {
+    //Get all possible values for controller binds
     let keys = Object.keys(CONTROLLER_BINDS);
+    //Get index of current selected option and increment to next option
     let nextIndex = keys.indexOf(currentBind) + 1;
+    //Return value at nextIndex accounting for roll over 
     return keys[nextIndex % (keys.length - 1)];
-  // TODO Please document more :)
   }
 }
 
@@ -77,13 +80,13 @@ export const TOPICS = {
   },
   AUTONOMOUS: {
     STATE: '/Auto/State',
-    STATE_MSG_TYPE: 'std_msg/String',
+    STATE_MSG_TYPE: 'std_msgs/String',
     ENABLE: '/Auto/Enable',
-    ENABLE_MSG_TYPE: 'std_msg/Bool',
+    ENABLE_MSG_TYPE: 'std_msgs/Bool',
     WAYPOINTS: '/Auto/Waypoints',
-    WAYPOINTS_MSG_TYPE: 'std_msg/String',
+    WAYPOINTS_MSG_TYPE: 'std_msgs/String',
     DEBUG: '/Auto/Debug',
-    DEBUG_MSG_TYPE: "std_msg/String",
+    DEBUG_MSG_TYPE: "std_msgs/String",
   }
 }
 

@@ -23,7 +23,7 @@
   let autoCurrentHeading = null;
   let autoOffset = null;
   let autoState = null;
-  let waypoints = [[10,10]];
+  let waypoints = null;
   
 
   let setWaypoints = (waypointList) => {
@@ -56,7 +56,8 @@
   });
 
   let sendWaypoints = () => {
-    let message = new ROSLIB.Message({ data: waypoints.toString() });
+    let waypointString = JSON.stringify(waypoints);
+    let message = new ROSLIB.Message({ data: waypointString });
     autoWaypointTopic.publish(message);
   }
   
@@ -72,7 +73,7 @@
   
   let autoToggle = () => {
     autoEnabled = !autoEnabled;
-    let message = new ROSLIB.Message({ data: !autoEnabled });
+    let message = new ROSLIB.Message({ data: autoEnabled });
     autoEnableTopic.publish(message);
   }
   
