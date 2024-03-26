@@ -2,6 +2,7 @@
  * @file Main configuration file used for setting topic names, connection strings, defaults, etc.
  */
 
+import { zip } from 'rxjs';
 import { DRIVE_STATES } from './driveMath.js';
 
 /**
@@ -87,6 +88,12 @@ export const TOPICS = {
     WAYPOINTS_MSG_TYPE: 'std_msgs/String',
     DEBUG: '/Auto/Debug',
     DEBUG_MSG_TYPE: "std_msgs/String",
+  },
+  SCALES: {
+    DRIVE: '/Drive/Drive_Sensitivity',
+    DRIVE_MSG_TYPE: "std_msgs/Float64",
+    ARM: '/Arm/Arm_Sensitivity',
+    DRIVE_MSG_TYPE: "/mavric/armData",
   }
 }
 
@@ -95,36 +102,9 @@ export const TOPICS = {
  */
 export const SCALES = {
   DRIVE : {
-    LF: {
-      MIN: 0,
-      MAX: 1,
-      STEP: .01
-    },
-    LM: {
-      MIN: 0,
-      MAX: 1,
-      STEP: .01
-    },
-    LB: {
-      MIN: 0,
-      MAX: 1,
-      STEP: .01
-    },
-    RF: {
-      MIN: 0,
-      MAX: 1,
-      STEP: .01
-    },
-    RM: {
-      MIN: 0,
-      MAX: 1,
-      STEP: .01
-    },
-    RB: {
-      MIN: 0,
-      MAX: 1,
-      STEP: .01
-    },
+    MIN: 0,
+    MAX: 1,
+    STEP: .01,
   },
   ARM : {
     SHOULDER_ROTATION: {

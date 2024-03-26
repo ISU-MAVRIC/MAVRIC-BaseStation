@@ -1,17 +1,17 @@
 <script>
-  import { SCALES } from "../utils/config";
+
+  export let driveState;
+  export let controllerBind;
+  import { SCALES, TOPICS } from "../utils/config";
   import LoadingDisplay from "./LoadingDisplay.svelte";
+  import CommonDisplay from "../components/CommonDisplay.svelte";
+  import connectionHandler from "../stores/connectionHandlerStore";
+
+  import ROSLIB from "roslib/src/RosLib";
 
   //Switch to null by default when retreiving scales from rover is working
-  let driveScaleData = {
-    LF: 0,
-    LM: 0,
-    LB: 0,
-    RF: 0,
-    RM: 0,
-    RB: 0,
-  };
-
+  let driveScaleData = 0;
+  //Switch to null by default when retreiving scales from rover is working
   let armScaleData = {
     SHOULDER_ROTATION: 0,
     SHOULDER_PITCH: 0,
@@ -22,9 +22,8 @@
 
   
   const scalesContainNull = () => {
-    let driveNull = !Object.values(driveScaleData).some(el => el === null);
     let armNull = !Object.values(armScaleData).some(el => el === null);
-    return driveNull && armNull;
+    return !(driveScaleData == null) && armNull;
   }
 
   
@@ -33,8 +32,36 @@
 
   let publishScales = () => {
     //This function is where we will publish the scales to the rover using roslibjs
-    console.log({...driveScaleData, ...armScaleData});
+    // let message = new ROSLIB.Message({ data: driveScaleData });
+    // driveScaleTopic.publish(message);
+    //Figure out the armData message format...
+    console.log({DRIVE: driveScaleData, ...armScaleData});
   }
+
+
+  const driveScaleTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.SCALES.DRIVE,
+    messageType : TOPICS.SCALES.DRIVE_MSG_TYPE
+  });
+  
+  driveScaleTopic.subscribe(message => {
+    driveScaleData = message.data;
+    scalesInitialized = scalesContainNull();
+  });
+
+  const armScaleTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.SCALES.ARM,
+    messageType : TOPICS.SCALES.ARM_MSG_TYPE
+  });
+  
+  armScaleTopic.subscribe(message => {
+    //UPDATE LOCAL SCALES, I dont know the armData message format right now
+    scalesInitialized = scalesContainNull();
+  });
+
+
 </script>
 
 {#if !scalesInitialized}
@@ -44,18 +71,9 @@
 <div class="scale-tuner-container">
   <div class="scales-container">
     <div class="drive-tuner-container scales-column">
-      <label for="lf-scale">LF Scale: {driveScaleData.LF}</label>
-      <input bind:value={driveScaleData.LF} id="lf-scale" type="range" min={SCALES.DRIVE.LF.MIN} max={SCALES.DRIVE.LF.MAX} step={SCALES.DRIVE.LF.STEP} />
-      <label for="lm-scale">LM Scale: {driveScaleData.LM}</label>
-      <input bind:value={driveScaleData.LM} id="lm-scale" type="range" min={SCALES.DRIVE.LM.MIN} max={SCALES.DRIVE.LM.MAX} step={SCALES.DRIVE.LM.STEP} />
-      <label for="lb-scale">LB Scale: {driveScaleData.LB}</label>
-      <input bind:value={driveScaleData.LB} id="lb-scale" type="range" min={SCALES.DRIVE.LB.MIN} max={SCALES.DRIVE.LB.MAX} step={SCALES.DRIVE.LB.STEP} />
-      <label for="rf-scale">RF Scale: {driveScaleData.RF}</label>
-      <input bind:value={driveScaleData.RF} id="rf-scale" type="range" min={SCALES.DRIVE.RF.MIN} max={SCALES.DRIVE.RF.MAX} step={SCALES.DRIVE.RF.STEP} />
-      <label for="rm-scale">RM Scale: {driveScaleData.RM}</label>
-      <input bind:value={driveScaleData.RM} id="rm-scale" type="range" min={SCALES.DRIVE.RM.MIN} max={SCALES.DRIVE.RM.MAX} step={SCALES.DRIVE.RM.STEP} />
-      <label for="rb-scale">RB Scale: {driveScaleData.RB}</label>
-      <input bind:value={driveScaleData.RB} id="rb-scale" type="range" min={SCALES.DRIVE.RB.MIN} max={SCALES.DRIVE.RB.MAX} step={SCALES.DRIVE.RB.STEP} />
+      <label for="lf-scale">Drive Scale: {driveScaleData}</label>
+      <input bind:value={driveScaleData} id="lf-scale" type="range" min={SCALES.DRIVE.MIN} max={SCALES.DRIVE.MAX} step={SCALES.DRIVE.STEP} />
+
     </div>
     <div class="arm-tuner-container scales-column">
       <label for="shoulder-rotation-scale">Shoulder Rotation Scale: {armScaleData.SHOULDER_ROTATION}</label>
@@ -71,7 +89,7 @@
     </div>
   </div>
   <div class="send-container" on:click={publishScales}>
-    <label>Test</label>
+    <label>Publish Scales</label>
   </div>
 </div>
 {/if}
@@ -100,7 +118,7 @@
   }
 
   .send-container {
-    background-color: orange;
+    background-color: red;
     flex-grow: 1;
     margin: 10px;
     border-radius: 10px;
@@ -108,15 +126,15 @@
   }
 
   .send-container:hover {
-    background-color: cyan;
+    background-color: rgb(253, 117, 117);
   }
 
   .drive-tuner-container {
-    background-color: cornflowerblue;
+    background-color: lightgray;
   }
 
   .arm-tuner-container {
-    background-color: crimson;
+    background-color: lightgray;
   }
 
   label {
@@ -131,7 +149,7 @@
   appearance: none;
   width: 100%; /* Full-width */
   height: 25px; /* Specified height */
-  background: #d3d3d3; /* Grey background */
+  background: #8e8e8e; /* Grey background */
   outline: none; /* Remove outline */
   opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: .2s; /* 0.2 seconds transition on hover */
@@ -149,14 +167,14 @@ input::-webkit-slider-thumb {
   appearance: none;
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
-  background: #04AA6D; /* Green background */
+  background: red; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
 input::-moz-range-thumb {
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
-  background: #04AA6D; /* Green background */
+  background: red; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 </style>
