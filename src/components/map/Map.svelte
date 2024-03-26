@@ -15,15 +15,11 @@
 	import * as markerIcons from './markers.js';
 	let map;
 	
-	const markerLocations = [
-		[42.0267, -93.6465],
-		[42.0266, -93.6465],
-		[42.0264, -93.6465],
-		[42.0264, -93.6464],
-		[42.0262, -93.6463],
-		[42.0261, -93.6464],
-		[42.0260, -93.6463],
-	];
+
+	export let markerLocations = [];
+	export let roverCoords;
+	export let roverHeading;
+
 	
 	const initialView = [42.0267, -93.6465];
 	function createMap(container) {
@@ -104,9 +100,9 @@
 	}
 	
 
-	function createMarker(loc) {
-		let coords = [10, 10];
-		let icon = markerIcon("temp");
+	function createMarker(loc, iconText) {
+		let coords = loc;
+		let icon = markerIcon(iconText);
 		let marker = L.marker(loc, {icon});
 		bindPopup(marker, (m) => {
 			let c = new MarkerPopup({
@@ -124,7 +120,7 @@
 	}
 	
 	function createLines() {
-		return L.polyline(markerLocations, { color: '#FF0000', opacity: 0.2 });
+		return L.polyline([roverCoords].concat(markerLocations), { color: '#FF0000', opacity: 0.2 });
 	}
 
 	let markerLayers;
@@ -134,9 +130,14 @@
 		toolbar.addTo(map);
 		
 		markerLayers = L.layerGroup()
+		let roverMarker = createMarker(roverCoords, "🤖");
+		markerLayers.addLayer(roverMarker);
+		//https://stackoverflow.com/questions/37563811/leaflet-need-to-draw-range-radius-semi-circles add direction low opacity indicator?
+		let index = 1;
  		for(let location of markerLocations) {
- 			let m = createMarker(location);
+ 			let m = createMarker(location,index);
 			markerLayers.addLayer(m);
+			index++;
  		}
 		
 		lineLayers = createLines();
@@ -164,6 +165,33 @@
 	}
 	
 	$: if(lineLayers && map) {
+		if(lines) {
+			lineLayers.addTo(map);
+		} else {
+			lineLayers.remove();
+		}
+	}
+
+	$: if(markerLocations && roverCoords && roverHeading && map && markerLayers && lineLayers) {
+ 
+		markerLayers.clearLayers();
+		let roverMarker = createMarker(roverCoords, "🤖");
+		markerLayers.addLayer(roverMarker);
+		let index = 1;
+ 		for(let location of markerLocations) {
+ 			let m = createMarker(location, index);
+			markerLayers.addLayer(m);
+			index++;
+ 		}
+		
+		lineLayers.remove();
+		lineLayers = createLines();
+
+		if(eye) {
+			markerLayers.addTo(map);
+		} else {
+			markerLayers.remove();
+		}
 		if(lines) {
 			lineLayers.addTo(map);
 		} else {
