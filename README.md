@@ -41,6 +41,8 @@ Install all yarn packages:
 yarn
 ```
 
+Download "map_tiles.zip" from CyBox and place the _tiles_ directory in public/
+
 The development environment is now ready to be used.
 
 ## Run development environment
