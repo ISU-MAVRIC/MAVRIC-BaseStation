@@ -41,7 +41,15 @@ export const DEFAULTS = {
   DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
   },
-  HOME_PAGE: "Autonomous Debug"
+  HOME_PAGE: "Autonomous Debug",
+
+  MAP: {
+    START_COORDS:[42.0267, -93.6465],
+    MAX_ZOOM: 18,
+    MIN_ZOOM: 14,
+    SOUTHWEST_BOUND: [42, -93.68],
+    NORTHEAST_BOUND: [42.051, -93.59]
+  }
 }
 
 

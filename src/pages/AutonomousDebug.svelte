@@ -24,7 +24,7 @@
   let autoOffset = null;
   let autoState = null;
   // let waypoints = null;
-  let waypoints = [[42.0267, -93.6465],[42.0267, -93.6466],[42.0266, -93.6466]]
+  let waypoints = [[42.0267, -93.6445],[42.0247, -93.6466],[42.0266, -93.6476]]
   
 
   let setWaypoints = (waypointList) => {
@@ -87,7 +87,7 @@
   <div class={autoEnabled ? "auto-toggle bg-green" : "auto-toggle bg-red"} on:click={autoToggle}>{autoEnabled ? "AUTONOMOUS ENABLED" : "AUTONOMOUS DISABLED"}</div>
   <div class="auto-state">{autoState}</div>
   <div class="auto-debug">
-    <Map markerLocations={waypoints} roverHeading=0 roverCoords={[42.0267, -93.6464]}/>
+    <Map markerLocations={waypoints} roverHeading=45 roverCoords={[42.0267, -93.6464]}/>
   </div>
   <div class="auto-map">
     <WaypointEditor waypointsList={waypoints} setWaypoints={setWaypoints}></WaypointEditor>

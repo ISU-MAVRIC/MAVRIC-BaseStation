@@ -1,18 +1,20 @@
 <script>
 	/*
-	This is an example of using Svelte features with Leaflet. Original blog post here: https://imfeld.dev/writing/leaflet_with_svelte
-	
-	The toolbar and the marker popups are both implemented by embedding Svelte components inside Leaflet elements. The marker and lines are toggled by updating the map from reactive statements.
-	
-	Any questions? Ask me at dimfeld on Twitter!
-	
-	Thanks to heroicons.dev for all the icons used here.
+	Original blog post here: https://imfeld.dev/writing/leaflet_with_svelte
+
+	heroicons.dev for all the icons used here.
 	*/
 	
 	import L from 'leaflet';
+
+
 	import MapToolbar from './MapToolbar.svelte';
 	import MarkerPopup from './MarkerPopup.svelte';
+
 	import * as markerIcons from './markers.js';
+	import * as roverIcons from './roverMarker';
+
+	import { DEFAULTS } from '../../utils/config.js';
 	let map;
 	
 
@@ -21,7 +23,7 @@
 	export let roverHeading;
 
 	
-	const initialView = [42.0267, -93.6465];
+	const initialView = DEFAULTS.MAP.START_COORDS;
 	function createMap(container) {
 	  let m = L.map(container, {preferCanvas: true }).setView(initialView, 17);
     L.tileLayer(
@@ -29,10 +31,15 @@
 	    {
 	      attribution: `&copy;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>,
 	        &copy;<a href="https://carto.com/attributions" target="_blank">CARTO</a>`,
-	      maxZoom: 18,
-        minZoom: 9,
+	      maxZoom: DEFAULTS.MAP.MAX_ZOOM,
+        minZoom: DEFAULTS.MAP.MIN_ZOOM,
 	    }
 	  ).addTo(m);
+
+		let southWestBound = L.latLng(DEFAULTS.MAP.SOUTHWEST_BOUND[0], DEFAULTS.MAP.SOUTHWEST_BOUND[1]);
+		let northEastBound = L.latLng(DEFAULTS.MAP.NORTHEAST_BOUND[0], DEFAULTS.MAP.NORTHEAST_BOUND[1]);
+		let bounds = L.latLngBounds(southWestBound, northEastBound);
+		m.setMaxBounds(bounds);
 
     return m;
   }
@@ -52,7 +59,7 @@
 		toolbarComponent.$on('click-eye', ({ detail }) => eye = detail);
 		toolbarComponent.$on('click-lines', ({ detail }) => lines = detail);
 		toolbarComponent.$on('click-reset', () => {
-			map.setView(initialView, 17, { animate: true })
+			map.setView(roverCoords , 17, { animate: true })
 		})
 
 		return div;
@@ -97,11 +104,26 @@
 			className: 'map-marker'
 		});
 	}
+
+
+	function roverIcon(rotation) {
+		let html = `<div class="map-marker"><div style="transform-origin: center; transform: rotate(${rotation}deg);" >${roverIcons.library}</div></div>`;
+
+		return L.divIcon({
+			html,
+			className: 'map-marker'
+		})
+	}
 	
 
-	function createMarker(loc, iconText) {
+	function createMarker(type, loc, iconText) {
 		let coords = loc;
-		let icon = markerIcon(iconText);
+		let icon;
+		if (type == "ROVER") {
+			icon = roverIcon(roverHeading);
+		} else if (type == "WAYPOINT") {
+			icon = markerIcon(iconText);
+		}
 		let marker = L.marker(loc, {icon});
 		bindPopup(marker, (m) => {
 			let c = new MarkerPopup({
@@ -122,26 +144,28 @@
 		return L.polyline([roverCoords].concat(markerLocations), { color: '#FF0000', opacity: 0.2 });
 	}
 
-	let markerLayers;
+	let waypointLayers;
+	let roverLayer;
 	let lineLayers;
   function mapAction(container) {
     map = createMap(container); 
 		toolbar.addTo(map);
 		
-		markerLayers = L.layerGroup()
-		let roverMarker = createMarker(roverCoords, "🤖");
-		markerLayers.addLayer(roverMarker);
+		waypointLayers = L.layerGroup();
+		roverLayer = L.layerGroup();
+		let roverMarker = createMarker("ROVER", roverCoords);
+		roverLayer.addLayer(roverMarker);
 		//https://stackoverflow.com/questions/37563811/leaflet-need-to-draw-range-radius-semi-circles add direction low opacity indicator?
-		let index = 1;
- 		for(let location of markerLocations) {
- 			let m = createMarker(location,index);
-			markerLayers.addLayer(m);
-			index++;
+ 		for(let index = 1; index < markerLocations.length; index++) {
+			let location = markerLocations[index]
+ 			let m = createMarker("WAYPOINT", location,index);
+			 waypointLayers.addLayer(m);
  		}
 		
 		lineLayers = createLines();
 		
-		markerLayers.addTo(map);
+		roverLayer.addTo(map);
+		waypointLayers.addTo(map);
 		lineLayers.addTo(map);
 		
     return {
@@ -155,11 +179,11 @@
 	
 	// We could do these in the toolbar's click handler but this is an example
 	// of modifying the map with reactive syntax.
-	$: if(markerLayers && map) {
+	$: if(waypointLayers && map) {
 		if(eye) {
-			markerLayers.addTo(map);
+			waypointLayers.addTo(map);
 		} else {
-			markerLayers.remove();
+			waypointLayers.remove();
 		}
 	}
 	
@@ -171,25 +195,28 @@
 		}
 	}
 
-	$: if(markerLocations && roverCoords && roverHeading && map && markerLayers && lineLayers) {
+	$: if(markerLocations && roverCoords && roverHeading && map && waypointLayers && lineLayers) {
  
-		markerLayers.clearLayers();
-		let roverMarker = createMarker(roverCoords, "🤖");
-		markerLayers.addLayer(roverMarker);
+		waypointLayers.clearLayers();
+		let roverMarker = createMarker("ROVER", roverCoords);
+		roverLayer.addLayer(roverMarker);
 		let index = 1;
  		for(let location of markerLocations) {
- 			let m = createMarker(location, index);
-			markerLayers.addLayer(m);
+ 			let m = createMarker("WAYPOINT",location, index);
+			 waypointLayers.addLayer(m);
 			index++;
  		}
 		
 		lineLayers.remove();
 		lineLayers = createLines();
 
+		roverLayer.addTo(map);
+
 		if(eye) {
-			markerLayers.addTo(map);
+			waypointLayers.addTo(map);
 		} else {
-			markerLayers.remove();
+			waypointLayers.remove();
+
 		}
 		if(lines) {
 			lineLayers.addTo(map);
