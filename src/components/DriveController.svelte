@@ -136,22 +136,23 @@
   }
 
   //Callback function for when the left joystick is moved
-  function LeftStick(event) {
+  function LeftStick(event, TYPE=null) {
     leftAxis = event.detail;
-    if (controllerBind == CONTROLLER_BINDS.DRIVE) {
+    if (TYPE == "DRIVE" || (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)) {
       publishDriveSteerCommand(event.detail);
-    } else if (controllerBind == CONTROLLER_BINDS.ARM) {
+    } else if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
       publishArmCommand("SHOULDER_ROTATION", shoulderRot);
       let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
       publishArmCommand("SHOULDER_PITCH", shoulderPitch);
     } 
+    console.log(event, TYPE ? TYPE : controllerBind);
   }
 
   //Callback function for when the right joystick is moved
-  function RightStick(event) {
+  function RightStick(event, TYPE=null) {
     rightAxis = event.detail;
-    if (controllerBind == CONTROLLER_BINDS.ARM) {
+    if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
       publishArmCommand("WRIST_ROTATION", shoulderRot);
       let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
@@ -160,7 +161,7 @@
   }
 
   //Callback function for when the left trigger is moved
-  function LeftTrigger(event) {
+  function LeftTrigger(event, TYPE=null) {
     //Controller will return null when button is no longer pressed, set to zero 
     if (event.detail == null) {
       lTrigger = 0;
@@ -168,7 +169,7 @@
       lTrigger = event.detail.value;
     }
     //If controller is bound to arm, send as arm command
-    if (controllerBind == CONTROLLER_BINDS.ARM) {
+    if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       //Map the two trigger values to between -100 and 100
       let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
@@ -176,7 +177,7 @@
   }
 
   //Callback function for when the right trigger is moved
-  function RightTrigger(event) {
+  function RightTrigger(event, TYPE=null) {
     //Controller will return null when button is no longer pressed, set to zero 
     if (event.detail == null) {
       rTrigger = 0;
@@ -184,7 +185,7 @@
       rTrigger = event.detail.value;
     }
     //If controller is bound to arm, send as arm command
-    if (controllerBind == CONTROLLER_BINDS.ARM) {
+    if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       //Map the two trigger values to between -100 and 100
       let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
@@ -192,8 +193,8 @@
   }
 
   //Callback function for when the A button is pressed
-  function buttonA(event) {
-    if (controllerBind == CONTROLLER_BINDS.DRIVE) {
+  function buttonA(event, TYPE=null) {
+    if (TYPE == "DRIVE" || (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)) {
       cycleDriveState();
     }
   }
@@ -329,17 +330,26 @@
 
 
 <Gamepad
-  gamepadIndex={0}
+  gamepadIndex={1}
   on:A_PRESS={buttonA}
   on:B_PRESS={buttonB}
   on:RT={RightTrigger}
   on:LT={LeftTrigger}
-  on:RB={RB}
-  on:LB={LB}
   on:LeftStick={LeftStick}
   on:RightStick={RightStick}
   on:DPadLeft_PRESS={LuminometerStraight}
   on:DPadRight_PRESS={LuminometerDump}
   on:Y={LumiButton}
   on:X={LumiLid}
+/>
+
+<Gamepad
+  gamepadIndex={0}
+  on:A_PRESS={(event) => { buttonA(event, "ARM")}}
+  on:RT={(event) => { RightTrigger(event, "ARM")}}
+  on:LT={(event) => { LeftTrigger(event, "ARM")}}
+  on:RB={RB}
+  on:LB={LB}
+  on:LeftStick={(event) => { LeftStick(event, "ARM")}}
+  on:RightStick={(event) => { RightStick(event, "ARM")}}
 />
