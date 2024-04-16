@@ -1,3 +1,4 @@
+// Waypoint Icon for the map element
 // Icons from heroicons.dev
 export const library = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" viewBox="-4 0 36 36" version="1.1">
 <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->

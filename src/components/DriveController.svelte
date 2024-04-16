@@ -138,20 +138,22 @@
   //Callback function for when the left joystick is moved
   function LeftStick(event, TYPE=null) {
     leftAxis = event.detail;
+    //Controller logic, if its a drive command or there is no type and the controller bind is drive
     if (TYPE == "DRIVE" || (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)) {
       publishDriveSteerCommand(event.detail);
+    //Controller logic, if its a arm command or there is no type and the controller bind is arm
     } else if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
       publishArmCommand("SHOULDER_ROTATION", shoulderRot);
       let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
       publishArmCommand("SHOULDER_PITCH", shoulderPitch);
     } 
-    console.log(event, TYPE ? TYPE : controllerBind);
   }
 
   //Callback function for when the right joystick is moved
   function RightStick(event, TYPE=null) {
     rightAxis = event.detail;
+    //If its an arm command or there is no type and the controller bind is arm
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
       publishArmCommand("WRIST_ROTATION", shoulderRot);
@@ -329,6 +331,7 @@
 
 
 
+<!-- Add first controller, can be switched between controllerbinds to arm or drive -->
 <Gamepad
   gamepadIndex={1}
   on:A_PRESS={buttonA}
@@ -343,6 +346,7 @@
   on:X={LumiLid}
 />
 
+<!-- Add second controller, only bound to ARM commands -->
 <Gamepad
   gamepadIndex={0}
   on:A_PRESS={(event) => { buttonA(event, "ARM")}}

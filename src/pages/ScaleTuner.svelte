@@ -1,14 +1,21 @@
 <script>
-
+  //Svelte properties
   export let driveState;
   export let controllerBind;
+
+  //Import config
   import { SCALES, TOPICS } from "../utils/config";
+
+  //Import custom components
   import LoadingDisplay from "./LoadingDisplay.svelte";
   import CommonDisplay from "../components/CommonDisplay.svelte";
+
+  //Get the rosbriidge connection
   import connectionHandler from "../stores/connectionHandlerStore";
 
   import ROSLIB from "roslib/src/RosLib";
 
+  //Variables for holding scale data
   //Switch to null by default when retreiving scales from rover is working
   let driveScaleData = 0;
   //Switch to null by default when retreiving scales from rover is working
@@ -21,6 +28,7 @@
   }
 
   
+  //Checks if some of the scales havent been received from rover, used for dispalying loading page
   const scalesContainNull = () => {
     let armNull = !Object.values(armScaleData).some(el => el === null);
     return !(driveScaleData == null) && armNull;
@@ -39,17 +47,21 @@
   }
 
 
+  //Ros topic for the drive scale
   const driveScaleTopic = new ROSLIB.Topic({
     ros : $connectionHandler.getROSInstance(),
     name : TOPICS.SCALES.DRIVE,
     messageType : TOPICS.SCALES.DRIVE_MSG_TYPE
   });
   
+  //Add subscriber to update the drive scale when published
+  //Mainly used for getting the values on page load
   driveScaleTopic.subscribe(message => {
     driveScaleData = message.data;
     scalesInitialized = scalesContainNull();
   });
 
+  //Ros topic for the drive scales
   const armScaleTopic = new ROSLIB.Topic({
     ros : $connectionHandler.getROSInstance(),
     name : TOPICS.SCALES.ARM,
@@ -70,11 +82,13 @@
 <!-- Component to be loaded into PageDisplay component when Scale Tuner is selected in PageNavBar -->
 <div class="scale-tuner-container">
   <div class="scales-container">
+    <!-- drive scale tuner -->
     <div class="drive-tuner-container scales-column">
       <label for="lf-scale">Drive Scale: {driveScaleData}</label>
       <input bind:value={driveScaleData} id="lf-scale" type="range" min={SCALES.DRIVE.MIN} max={SCALES.DRIVE.MAX} step={SCALES.DRIVE.STEP} />
 
     </div>
+     <!-- arm scale tuner -->
     <div class="arm-tuner-container scales-column">
       <label for="shoulder-rotation-scale">Shoulder Rotation Scale: {armScaleData.SHOULDER_ROTATION}</label>
       <input bind:value={armScaleData.SHOULDER_ROTATION} id="shoulder-rotation-scale" type="range" min={SCALES.ARM.SHOULDER_ROTATION.MIN} max={SCALES.ARM.SHOULDER_ROTATION.MAX} step={SCALES.ARM.SHOULDER_ROTATION.STEP} />
@@ -88,6 +102,7 @@
       <input bind:value={armScaleData.WRIST_PITCH} id="wrist-rotation-scale" type="range" min={SCALES.ARM.WRIST_PITCH.MIN} max={SCALES.ARM.WRIST_PITCH.MAX} step={SCALES.ARM.WRIST_PITCH.STEP} />
     </div>
   </div>
+  <!-- Button that calls publishScales when clicked -->
   <div class="send-container" on:click={publishScales}>
     <label>Publish Scales</label>
   </div>

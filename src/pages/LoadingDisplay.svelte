@@ -1,4 +1,7 @@
+
+<!-- Component to display a loading screen or custom text with a rotating loading svg -->
 <script>
+  //Text to be displayed on LoadingDisplay, defaults to "Loading..."
   export let text = "Loading...";
 </script>
 
@@ -21,7 +24,7 @@
     color: white;
   }
 
-
+  /* Main loading container */
   .loading-container {
     width: 100%;
     height: 100%;
@@ -51,6 +54,8 @@
     stroke-width: 8px;
     stroke: rgb(161, 155, 155);
   }
+
+  /* Animation & Keyframes */
 
   .animate{
     stroke-dasharray: 242.6;
