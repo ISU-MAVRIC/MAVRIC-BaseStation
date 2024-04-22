@@ -16,7 +16,8 @@
 
   //Variables
   let driveState = DEFAULTS.DRIVE.DRIVE_STATE;
-  let controllerBind = DEFAULTS.CONTROLLER.BIND
+  let controllerBind = DEFAULTS.CONTROLLER.BIND;
+  let controllerEnabled = true;
   let selected  = DEFAULTS.HOME_PAGE;
 
   //List of all accessible pages, including the label, icon, and component
@@ -51,8 +52,8 @@
 
 
 <div class="container">
-  <DriveController bind:driveState bind:controllerBind/>
-  <PageNavBar bind:selected  PAGES={PAGES}/>
+  <DriveController bind:driveState bind:controllerEnabled bind:controllerBind/>
+  <PageNavBar bind:selected  bind:controllerEnabled PAGES={PAGES}/>
   <div class="content">
     <div class="page-header">
       <PageHeader bind:selected PAGES={PAGES}/>

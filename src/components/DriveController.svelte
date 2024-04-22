@@ -13,6 +13,7 @@
   // Svelte Component Properties
   export let driveState;
   export let controllerBind;
+  export let controllerEnabled;
   
 
   //Variables
@@ -52,7 +53,19 @@
   let LUMILID_CLOSED = -82;
   let LUMILID_OPEN = 20;
 
-
+  //Ros attribute change listener to send zeros when controller is disabled
+  $: !controllerEnabled &&  publishDrivetrain({
+    lf: 0,
+    lm: 0,
+    lb: 0,
+    rf: 0,
+    rm: 0,
+    rb: 0,
+    strLf: 0,
+    strLb: 0,
+    strRf: 0,
+    strRb: 0
+    });
 
   // ROS Topics and Publishers
   const drivetrainTopic = new ROSLIB.Topic({
@@ -137,6 +150,10 @@
 
   //Callback function for when the left joystick is moved
   function LeftStick(event, TYPE=null) {
+    //If controllerEnabled is false, return to not publish anything
+    if(!controllerEnabled) return;
+    console.log("SDLKJSD")
+
     leftAxis = event.detail;
     //Controller logic, if its a drive command or there is no type and the controller bind is drive
     if (TYPE == "DRIVE" || (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)) {
@@ -152,6 +169,7 @@
 
   //Callback function for when the right joystick is moved
   function RightStick(event, TYPE=null) {
+    
     rightAxis = event.detail;
     //If its an arm command or there is no type and the controller bind is arm
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
@@ -164,6 +182,7 @@
 
   //Callback function for when the left trigger is moved
   function LeftTrigger(event, TYPE=null) {
+    
     //Controller will return null when button is no longer pressed, set to zero 
     if (event.detail == null) {
       lTrigger = 0;
