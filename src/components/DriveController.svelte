@@ -54,18 +54,7 @@
   let LUMILID_OPEN = 20;
 
   //Ros attribute change listener to send zeros when controller is disabled
-  $: !controllerEnabled &&  publishDrivetrain({
-    lf: 0,
-    lm: 0,
-    lb: 0,
-    rf: 0,
-    rm: 0,
-    rb: 0,
-    strLf: 0,
-    strLb: 0,
-    strRf: 0,
-    strRb: 0
-    });
+  $: !controllerEnabled && setZeros()
 
   // ROS Topics and Publishers
   const drivetrainTopic = new ROSLIB.Topic({
@@ -112,7 +101,7 @@
     publishDrivetrain({lf, lm, lb, rf, rm, rb});
     //Publish steertrain commands
     publishSteertrain({strLf, strLb, strRf, strRb});
-  }
+  } 
 
   //Create a new object for all the armtrain topics
   //Each joint is its own topic, so for code cleanliness store in an object instead of separate variables
@@ -139,7 +128,28 @@
     driveState = DRIVE_STATES.getNext(driveState);
   }
 
-
+  // function that sets all drive, steer, and arm values to zero
+  const setZeros = () => {
+    publishDrivetrain({
+      lf: 0,
+      lm: 0,
+      lb: 0,
+      rf: 0,
+      rm: 0,
+      rb: 0
+    });
+    publishSteertrain({
+      strLf: 0,
+      strLb: 0,
+      strRf: 0,
+      strRb: 0
+    });
+    publishArmCommand("SHOULDER_ROTATION", 0);
+    publishArmCommand("SHOULDER_PITCH", 0);
+    publishArmCommand("ELBOW_PITCH", 0);
+    publishArmCommand("WRIST_PITCH", 0);
+    publishArmCommand("WRIST_ROTATION", 0);
+  }
 
   //CONTROLLER HANDLING
 
@@ -152,7 +162,6 @@
   function LeftStick(event, TYPE=null) {
     //If controllerEnabled is false, return to not publish anything
     if(!controllerEnabled) return;
-    console.log("SDLKJSD")
 
     leftAxis = event.detail;
     //Controller logic, if its a drive command or there is no type and the controller bind is drive
@@ -352,7 +361,7 @@
 
 <!-- Add first controller, can be switched between controllerbinds to arm or drive -->
 <Gamepad
-  gamepadIndex={1}
+  gamepadIndex={0}
   on:A_PRESS={buttonA}
   on:B_PRESS={buttonB}
   on:RT={RightTrigger}
@@ -367,7 +376,7 @@
 
 <!-- Add second controller, only bound to ARM commands -->
 <Gamepad
-  gamepadIndex={0}
+  gamepadIndex={1}
   on:A_PRESS={(event) => { buttonA(event, "ARM")}}
   on:RT={(event) => { RightTrigger(event, "ARM")}}
   on:LT={(event) => { LeftTrigger(event, "ARM")}}
