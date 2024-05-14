@@ -95,7 +95,9 @@ export const TOPICS = {
     WAYPOINTS: '/Auto/Waypoints',
     WAYPOINTS_MSG_TYPE: 'std_msgs/String',
     DEBUG: '/Auto/Debug',
-    DEBUG_MSG_TYPE: "std_msgs/String",
+    DEBUG_MSG_TYPE: 'std_msgs/String',
+    TELEOP: '/Auto/Teleop',
+    TELEOP_MSG_TYPE: 'std_msgs/Bool',
   },
   SCALES: {
     DRIVE: '/Drive/Drive_Sensitivity',

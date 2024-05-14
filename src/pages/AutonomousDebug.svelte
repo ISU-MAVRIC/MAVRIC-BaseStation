@@ -23,6 +23,7 @@
   let autoCurrentHeading = null;
   let autoOffset = null;
   let autoState = null;
+  let teleopEnabled = false;
   // let waypoints = null;
   //For testing:
   let waypoints = [[42.0267, -93.6445],[42.0247, -93.6466],[42.0266, -93.6476]]
@@ -87,6 +88,26 @@
     let message = new ROSLIB.Message({ data: autoEnabled });
     autoEnableTopic.publish(message);
   }
+
+  //Ros topic for teleop enabled topic
+  const teleopEnableTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.AUTONOMOUS.TELEOP,
+    messageType : TOPICS.AUTONOMOUS.TELEOP_MSG_TYPE
+  });
+
+  //Listener to update teleopEnabled when topic message is recieved
+  teleopEnableTopic.subscribe(message => {
+    teleopEnabled = message.data;
+  });
+
+  //function to toggle teleop enabled
+  let teleopToggle = () => {
+    teleopEnabled = !teleopEnabled;
+    let message = new ROSLIB.Message({ data: teleopEnabled});
+    teleopEnableTopic.publish(message)
+    
+  }
   
 </script>
 
@@ -99,6 +120,8 @@
   <div class={autoEnabled ? "auto-toggle bg-green" : "auto-toggle bg-red"} on:click={autoToggle}>{autoEnabled ? "AUTONOMOUS ENABLED" : "AUTONOMOUS DISABLED"}</div>
   <!-- autonomous state section -->
   <div class="auto-state">{autoState}</div>
+  <!-- Teleoperation state section -->
+  <div class={teleopEnabled ? "teleop-toggle bg-green" : "teleop-toggle bg-red"} on:click={teleopToggle}>{teleopEnabled ? "TELEOP ENABLED" : "TELEOP DISABLED"}</div>
   <!-- autonomous debug section -->
   <div class="auto-map">
     <Map markerLocations={waypoints} roverHeading=45 roverCoords={[42.0267, -93.6464]}/>
@@ -122,7 +145,7 @@
     /* Container layout */
     grid-template-areas: 
       'common-display common-display common-display common-display'
-      'auto-toggle auto-state auto-none auto-waypoint'
+      'auto-toggle auto-state teleop-toggle auto-waypoint'
       'auto-map auto-map auto-map auto-waypoint'
       'auto-map auto-map auto-map auto-waypoint';
 }
@@ -134,6 +157,15 @@
 
 .auto-toggle {
   grid-area: auto-toggle;
+  background: red;
+  border-radius: 20px;
+  margin: 10px 10px;
+  user-select: none;
+  text-align: center;
+}
+
+.teleop-toggle {
+  grid-area: teleop-toggle;
   background: red;
   border-radius: 20px;
   margin: 10px 10px;
