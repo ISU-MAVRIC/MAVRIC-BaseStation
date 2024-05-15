@@ -123,12 +123,7 @@
     gpsCoords = gpsCoords;
   });
 
-  setInterval(() => {
-    console.log("test")
-    gpsCoords[0] = gpsCoords[0] + .00001;
-    gpsCoords = gpsCoords
-  }, 200);
-  
+
 </script>
 
 <div class="container">
