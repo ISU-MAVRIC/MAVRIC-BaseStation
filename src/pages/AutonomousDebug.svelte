@@ -23,10 +23,11 @@
   let autoCurrentHeading = null;
   let autoOffset = null;
   let autoState = null;
+  let gpsCoords = [42.0267, -93.6445];
   let teleopEnabled = false;
   // let waypoints = null;
   //For testing:
-  let waypoints = [[42.0267, -93.6445],[42.0247, -93.6466],[42.0266, -93.6476]]
+  let waypoints = [[42.0267, -93.6445],[42.0247, -93.6466],[42.0266, -93.6476]];
   
 
   //Function to force update to waypoints and send new waypoint list to rover
@@ -105,9 +106,28 @@
   let teleopToggle = () => {
     teleopEnabled = !teleopEnabled;
     let message = new ROSLIB.Message({ data: teleopEnabled});
-    teleopEnableTopic.publish(message)
-    
+    teleopEnableTopic.publish(message);
   }
+
+  /// Ros Topic - GPS
+  const gpsTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.SENSORS.GPS,
+    messageType : TOPICS.SENSORS.GPS_MSG_TYPE
+  });
+
+  gpsTopic.subscribe(message => {
+    //TODO: update gpsLatitude and gpsLongitude parameters
+    gpsCoords[0] = message.latitude;
+    gpsCoords[1] = message.longitude;
+    gpsCoords = gpsCoords;
+  });
+
+  setInterval(() => {
+    console.log("test")
+    gpsCoords[0] = gpsCoords[0] + .00001;
+    gpsCoords = gpsCoords
+  }, 200);
   
 </script>
 
@@ -124,7 +144,7 @@
   <div class={teleopEnabled ? "teleop-toggle bg-green" : "teleop-toggle bg-red"} on:click={teleopToggle}>{teleopEnabled ? "TELEOP ENABLED" : "TELEOP DISABLED"}</div>
   <!-- autonomous debug section -->
   <div class="auto-map">
-    <Map markerLocations={waypoints} roverHeading=0 roverCoords={[42.0267, -93.6464]}/>
+    <Map markerLocations={waypoints} roverHeading=0 roverCoords={gpsCoords}/>
   </div>
   <!-- Autonomous waypoint section -->
   <div class="auto-waypoint">

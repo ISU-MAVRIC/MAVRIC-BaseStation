@@ -203,6 +203,7 @@
 	$: if(markerLocations && roverCoords && roverHeading && map && waypointLayers && lineLayers) {
  
 		waypointLayers.clearLayers();
+		roverLayer.clearLayers();
 		let roverMarker = createMarker("ROVER", roverCoords);
 		roverLayer.addLayer(roverMarker);
 		let index = 1;
