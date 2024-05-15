@@ -1,6 +1,8 @@
 # MAVRIC Base Station
 
 ## Undocumented Files
+ - New layout and nav
+
 
 ## Table of Contents
 - [Useful Documentation](#useful-documentation)

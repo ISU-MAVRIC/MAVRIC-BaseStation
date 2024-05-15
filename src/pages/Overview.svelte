@@ -24,6 +24,6 @@
   }
 
   .controller-img {
-    height: 400px;
+    height: 250px;
   }
 </style>

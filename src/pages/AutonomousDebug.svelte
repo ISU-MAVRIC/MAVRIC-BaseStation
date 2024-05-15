@@ -101,7 +101,7 @@
   <div class="auto-state">{autoState}</div>
   <!-- autonomous debug section -->
   <div class="auto-map">
-    <Map markerLocations={waypoints} roverHeading=45 roverCoords={[42.0267, -93.6464]}/>
+    <Map markerLocations={waypoints} roverHeading=0 roverCoords={[42.0267, -93.6464]}/>
   </div>
   <!-- Autonomous waypoint section -->
   <div class="auto-waypoint">
