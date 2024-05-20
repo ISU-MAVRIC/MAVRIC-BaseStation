@@ -8,12 +8,13 @@
   import PageNavBar from './pages/PageNavBar.svelte';
   import PageHeader from './pages/PageHeader.svelte';
 
-  import { scaleTunerIcon, overviewIcon, topicDebugIcon, autoDebugIcon } from './utils/navIcons.js';
+  import { scaleTunerIcon, overviewIcon, topicDebugIcon, autoDebugIcon, cameraIcon } from './utils/navIcons.js';
 
   import OverviewPage from './pages/Overview.svelte';
   import AutonomousDebugPage from './pages/AutonomousDebug.svelte';
   import TopicDebugPage from './pages/TopicDebug.svelte';
   import ScaleTunerPage from './pages/ScaleTuner.svelte';
+  import CameraPage from './pages/Camera.svelte';
 
   //Variables
   let driveState = DEFAULTS.DRIVE.DRIVE_STATE;
@@ -40,6 +41,11 @@
       label: "Topic Debug",
       icon: topicDebugIcon,
       component: TopicDebugPage
+    },
+    {
+      label: "Camera Control",
+      icon: cameraIcon,
+      component: CameraPage
     },
     {
       label: "Scale Tuner",

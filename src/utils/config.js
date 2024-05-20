@@ -8,8 +8,8 @@ import { DRIVE_STATES } from './driveMath.js';
 /**
  * Connection string for connecting to the websocket server hosted by rosbridge_server.
  */
-export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";
-// export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
+// export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";
+export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
 
  /**
   * Object containing possible systems (ARM/DRIVE) for the controller to be bound to
@@ -41,7 +41,7 @@ export const DEFAULTS = {
   DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
   },
-  HOME_PAGE: "Autonomous Debug",
+  HOME_PAGE: "Camera Control",
 
   MAP: {
     START_COORDS:[42.0267, -93.6465],
@@ -103,7 +103,11 @@ export const TOPICS = {
     DRIVE: '/Drive/Drive_Sensitivity',
     DRIVE_MSG_TYPE: "std_msgs/Float64",
     ARM: '/Arm/Arm_Sensitivity',
-    DRIVE_MSG_TYPE: "/mavric/armData",
+    DRIVE_MSG_TYPE: "/mavric/ArmData",
+  },
+  CAMERAS: {
+    MAST: '/Camera/Mast',
+    MAST_MSG_TYPE: '/mavric/Cam',
   }
 }
 
