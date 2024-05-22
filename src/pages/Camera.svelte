@@ -11,12 +11,14 @@
   export let driveState;
   export let controllerBind;
 
+  //ros publisher for Mast topic
   const mastTopic = new ROSLIB.Topic({
     ros : $connectionHandler.getROSInstance(),
     name : TOPICS.CAMERAS.MAST,
     messageType : TOPICS.CAMERAS.MAST_MSG_TYPE
   });
-
+  
+  // function to take in an array of [x,y] and publish it
   const moveMast = (data, _) => {
     let message = new ROSLIB.Message(data);
     mastTopic.publish(message);
@@ -28,6 +30,10 @@
   <div class="common-display">
     <CommonDisplay driveState={driveState} controllerBind={controllerBind}/>
   </div>
+  <!--
+    Each one of these buttons calls the moveMast function. To add a new button, just copy
+    the examples provided below and change the x: and y: objects.
+  -->
   <div class="camera-button" on:click={moveMast.bind(null,{x:-0.5, y:0.518222})}>
     <label>90 Left</label>
   </div>
