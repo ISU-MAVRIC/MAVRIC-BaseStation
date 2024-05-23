@@ -8,6 +8,7 @@
   //Project Imports
   import connectionHandler from "../stores/connectionHandlerStore";
   import {TOPICS} from '../utils/config.js';
+  import {uptime} from '../utils/ubiquitiData.js';
 
   //Component Property Declarations
   export let driveState;
@@ -60,6 +61,7 @@
     driveBatteryVoltage = message.batt2;
   })
 
+
 </script>
 
 <!-- Container flex div -->
@@ -84,6 +86,11 @@
   <div class="flex-block telemetry-display">
     <p>Latitude: {gpsLatitude.toFixed(7)}</p>
     <p>Longitude: {gpsLongitude.toFixed(7)}</p>
+  </div>
+  <div class="flex-block telemetry-display">
+    <p>Radio Quality: </p>
+    <p>Radio Capacity: </p>
+    <p>Radio RSSI: </p>
   </div>
 </div>
 
