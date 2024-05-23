@@ -372,6 +372,8 @@
   on:DPadRight_PRESS={LuminometerDump}
   on:Y={LumiButton}
   on:X={LumiLid}
+  on:RB={RB}
+  on:LB={LB}
 />
 
 <!-- Add second controller, only bound to ARM commands -->
