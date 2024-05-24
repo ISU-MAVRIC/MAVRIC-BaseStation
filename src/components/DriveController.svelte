@@ -34,7 +34,7 @@
 
   ///Intervals
   let clawInterval;
-  let clawPosition = 0;
+  let clawPosition = -60;
   let luminometerPosition = 5;
   let lumiButtonPosition = 90;
   let lumiLidPosition = 0;
@@ -186,6 +186,12 @@
       publishArmCommand("WRIST_ROTATION", shoulderRot);
       let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
       publishArmCommand("WRIST_PITCH", shoulderPitch);
+    }
+  }
+
+  function DriveSensitivity(event, TYPE=null) {
+    if (TYPE == "DRIVE" || (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)) {
+      sensdrive = (1 - event.detail.x)/2;
     }
   }
 
@@ -359,31 +365,26 @@
 
 
 
-<!-- Add first controller, can be switched between controllerbinds to arm or drive -->
+<!-- Add first controller, only for DRIVE commands -->
 <Gamepad
   gamepadIndex={0}
   on:A_PRESS={buttonA}
-  on:B_PRESS={buttonB}
-  on:RT={RightTrigger}
-  on:LT={LeftTrigger}
-  on:LeftStick={LeftStick}
-  on:RightStick={RightStick}
-  on:DPadLeft_PRESS={LuminometerStraight}
-  on:DPadRight_PRESS={LuminometerDump}
-  on:Y={LumiButton}
-  on:X={LumiLid}
-  on:RB={RB}
-  on:LB={LB}
+  on:LeftStick={(event) => { LeftStick(event, "DRIVE")}}
+  on:RightStick={DriveSensitivity}
 />
 
 <!-- Add second controller, only bound to ARM commands -->
 <Gamepad
   gamepadIndex={1}
   on:A_PRESS={(event) => { buttonA(event, "ARM")}}
+  on:LeftStick={(event) => { LeftStick(event, "ARM")}}
+  on:RightStick={(event) => { RightStick(event, "ARM")}}
   on:RT={(event) => { RightTrigger(event, "ARM")}}
   on:LT={(event) => { LeftTrigger(event, "ARM")}}
   on:RB={RB}
   on:LB={LB}
-  on:LeftStick={(event) => { LeftStick(event, "ARM")}}
-  on:RightStick={(event) => { RightStick(event, "ARM")}}
+  on:DPadLeft_PRESS={LuminometerStraight}
+  on:DPadRight_PRESS={LuminometerDump}
+  on:Y={LumiButton}
+  on:X={LumiLid}
 />

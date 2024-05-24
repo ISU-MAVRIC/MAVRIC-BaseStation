@@ -41,7 +41,7 @@ export const DEFAULTS = {
   DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
   },
-  HOME_PAGE: "Camera Control",
+  HOME_PAGE: "Overview",
 
   MAP: {
     START_COORDS:[42.0267, -93.6465],

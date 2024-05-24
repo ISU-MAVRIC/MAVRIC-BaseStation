@@ -96,11 +96,11 @@ export const calculateDriveValues = (DRIVE_STATE, tdrive, tsteer, cdrive, csteer
       } 
       
       if (csteer < 0) {
-          return formatReturn(in_v, in_mid_v, in_v, out_v, out_mid_v, out_v, -degrees(in_angle), degrees(in_angle), -degrees(out_angle), degrees(out_angle))
+          return formatReturn(in_v*sensdrive, in_mid_v*sensdrive, in_v*sensdrive, out_v*sensdrive, out_mid_v*sensdrive, out_v*sensdrive, -degrees(in_angle), degrees(in_angle), -degrees(out_angle), degrees(out_angle))
       } else if (csteer > 0) {
-          return formatReturn(out_v, out_mid_v, out_v, in_v, in_mid_v, in_v, degrees(out_angle), -degrees(out_angle), degrees(in_angle), -degrees(in_angle))
+          return formatReturn(out_v*sensdrive, out_mid_v*sensdrive, out_v*sensdrive, in_v*sensdrive, in_mid_v*sensdrive, in_v*sensdrive, degrees(out_angle), -degrees(out_angle), degrees(in_angle), -degrees(in_angle))
       } else {
-          return formatReturn(-cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100,  -cdrive*sensdrive*100, -cdrive*sensdrive*100, 0, 0, 0, 0)
+          return formatReturn(-cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100, -cdrive*sensdrive*100, 0, 0, 0, 0)
       }
     } else if (DRIVE_STATE == DRIVE_STATES.POINT) {
       let str_angle = degrees(Math.atan(wheel_length/wheel_width))
