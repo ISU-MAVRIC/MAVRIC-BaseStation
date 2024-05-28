@@ -74,6 +74,8 @@ export const TOPICS = {
     ELBOW_PITCH: TOPIC_BASE.ARM  + "/ElbowPitch",
     WRIST_PITCH: TOPIC_BASE.ARM  + "/WristPitch",
     WRIST_ROTATION: TOPIC_BASE.ARM + "/WristRot",
+    DRILL: "/Science/Drill",
+    DRILLACTUATOR: "/Science/DrillActuator",
     CLAW: "/Servo/ClawActuation",
     LUMINOMETER: "/Servo/Luminometer",
     LUMIBUTTON: "/Servo/LumiButton",

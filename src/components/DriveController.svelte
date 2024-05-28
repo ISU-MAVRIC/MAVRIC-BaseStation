@@ -40,18 +40,23 @@
   let lumiLidPosition = 0;
   let lumiLidState = 0;
   let lumiLidToggle = false;
+  let drillToggle = false;
+  let drillState = 0;
+  let drillMove = 0;
 
   /// Could be moved to config
   let CLAW_POSITION_INTERVAL = 5;
   let CLAW_INTERVAL_PER_SECOND = 10;
   let CLAW_MAXIMUM = 100;
   let CLAW_MINIMUM = -100;
-  let LUMI_STRAIGHT = 5;
+  let LUMI_STRAIGHT = 7;
   let LUMI_DUMP = -36;
   let LUMIBUTTON_RELEASED = 90;
   let LUMIBUTTON_PRESSED = -10;
   let LUMILID_CLOSED = -82;
   let LUMILID_OPEN = 20;
+  let DRILL_SPEED;
+  let DRILL_MOVE_SPEED = 100;
 
   //Ros attribute change listener to send zeros when controller is disabled
   $: !controllerEnabled && setZeros()
@@ -111,6 +116,8 @@
     ELBOW_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.ELBOW_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
     WRIST_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
     WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
+    DRILL: new ROSLIB.Topic({ros, name: TOPICS.ARM.DRILL, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
+    DRILLACTUATOR: new ROSLIB.Topic({ros, name: TOPICS.ARM.DRILLACTUATOR, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
     CLAW: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CLAW, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
     LUMINOMETER: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMINOMETER, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
     LUMIBUTTON: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMIBUTTON, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
@@ -333,7 +340,53 @@
     // publish the lid position
     publishArmCommand("LUMILID", lumiLidPosition);
   }
+
+  //Function that turns on and off the drill
+  function Drill(event) {
+    if (event.detail == null) {
+      drillToggle = false;
+    }
+    else {
+      if (drillToggle == false) {
+        if (drillState == 0) {
+          drillState = 1;
+          publishArmCommand("DRILL", DRILL_SPEED);
+        }
+        else if (drillState == 1) {
+          drillState = 0;
+          publishArmCommand("DRILL", 0);
+        }
+        drillToggle = true;
+      }
+      else {
+        return
+      }
+      
+    }
+  }
+
+  //Function that moves the drill down
+  function DrillDown(event) {
+    if (event.detail == null) {
+      drillMove = 0;
+    }
+    else {
+      drillMove = DRILL_MOVE_SPEED;
+    }
+    publishArmCommand("DRILLACTUATOR", drillMove);
+  }
   
+  //Function that moves the drill up
+  function DrillUp(event) {
+    if (event.detail == null) {
+      drillMove = 0;
+    }
+    else {
+      drillMove = DRILL_MOVE_SPEED * -1;
+    }
+    publishArmCommand("DRILLACTUATOR", drillMove);
+  }
+
   // Claw Handling
   /// Function to stop setInterval handling claw opening/closing
   function stopClawInterval() {
@@ -385,6 +438,9 @@
   on:LB={LB}
   on:DPadLeft_PRESS={LuminometerStraight}
   on:DPadRight_PRESS={LuminometerDump}
+  on:DPadUp={DrillUp}
+  on:DPadDown={DrillDown}
+  on:B={Drill}
   on:Y={LumiButton}
   on:X={LumiLid}
 />
