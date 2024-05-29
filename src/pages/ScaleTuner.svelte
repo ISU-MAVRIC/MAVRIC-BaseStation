@@ -1,34 +1,26 @@
 <script>
-  //Svelte properties
+
   export let driveState;
   export let controllerBind;
-
-  //Import config
   import { SCALES, TOPICS } from "../utils/config";
-
-  //Import custom components
   import LoadingDisplay from "./LoadingDisplay.svelte";
   import CommonDisplay from "../components/CommonDisplay.svelte";
-
-  //Get the rosbriidge connection
   import connectionHandler from "../stores/connectionHandlerStore";
 
   import ROSLIB from "roslib/src/RosLib";
 
-  //Variables for holding scale data
   //Switch to null by default when retreiving scales from rover is working
-  let driveScaleData = 0;
+  let driveScaleData = null;
   //Switch to null by default when retreiving scales from rover is working
   let armScaleData = {
-    SHOULDER_ROTATION: 0,
-    SHOULDER_PITCH: 0,
-    ELBOW_PITCH: 0,
-    WRIST_ROTATION: 0,
-    WRIST_PITCH: 0,
+    SHOULDER_ROTATION: null,
+    SHOULDER_PITCH: null,
+    ELBOW_PITCH: null,
+    WRIST_ROTATION: null,
+    WRIST_PITCH: null,
   }
 
   
-  //Checks if some of the scales havent been received from rover, used for dispalying loading page
   const scalesContainNull = () => {
     let armNull = !Object.values(armScaleData).some(el => el === null);
     return !(driveScaleData == null) && armNull;
@@ -43,35 +35,56 @@
     // let message = new ROSLIB.Message({ data: driveScaleData });
     // driveScaleTopic.publish(message);
     //Figure out the armData message format...
+    let driveMessage = {
+      data: driveScaleData
+    }
+    let armMessage = {
+      ShoulderRot: armScaleData.SHOULDER_ROTATION,
+      ShoulderPitch: armScaleData.SHOULDER_PITCH,
+      ElbowPitch: armScaleData.ELBOW_PITCH,
+      WristRot: armScaleData.WRIST_ROTATION,
+      WristPitch: armScaleData.WRIST_PITCH
+    }
+
+    driveScaleTopic.publish(new ROSLIB.Message(driveMessage));
+    armScaleTopic.publish(new ROSLIB.Message(armMessage));
+
+   
+
     console.log({DRIVE: driveScaleData, ...armScaleData});
   }
 
 
-  //Ros topic for the drive scale
   const driveScaleTopic = new ROSLIB.Topic({
     ros : $connectionHandler.getROSInstance(),
     name : TOPICS.SCALES.DRIVE,
     messageType : TOPICS.SCALES.DRIVE_MSG_TYPE
   });
   
-  //Add subscriber to update the drive scale when published
-  //Mainly used for getting the values on page load
-  driveScaleTopic.subscribe(message => {
-    console.log(message)
-    driveScaleData = message.data;
-    scalesInitialized = scalesContainNull();
-  });
-
-  //Ros topic for the drive scales
   const armScaleTopic = new ROSLIB.Topic({
     ros : $connectionHandler.getROSInstance(),
     name : TOPICS.SCALES.ARM,
     messageType : TOPICS.SCALES.ARM_MSG_TYPE
   });
-  
-  armScaleTopic.subscribe(message => {
-    //UPDATE LOCAL SCALES, I dont know the armData message format right now
-    scalesInitialized = scalesContainNull();
+
+  const initialScalesTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : "/SensFeedback",
+    messageType : "/mavric/ScaleFeedback"
+  });
+
+  initialScalesTopic.subscribe(message => {
+    if (!scalesInitialized) {
+      driveScaleData = message.Drive.toFixed(2);
+      armScaleData = {
+        SHOULDER_ROTATION: message.ShoulderRot.toFixed(2),
+        SHOULDER_PITCH: message.ShoulderPitch.toFixed(2),
+        ELBOW_PITCH: message.ElbowPitch.toFixed(2),
+        WRIST_ROTATION: message.WristRot.toFixed(2),
+        WRIST_PITCH: message.WristPitch.toFixed(2),
+      }
+      scalesInitialized = scalesContainNull();
+    }
   });
 
 </script>

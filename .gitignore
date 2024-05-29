@@ -16,6 +16,7 @@ public/build/
 
 #Map Tiles
 public/tiles/
+*.zip
 
 # Electron Distribution
 dist
