@@ -57,6 +57,7 @@
   //Add subscriber to update the drive scale when published
   //Mainly used for getting the values on page load
   driveScaleTopic.subscribe(message => {
+    console.log(message)
     driveScaleData = message.data;
     scalesInitialized = scalesContainNull();
   });
@@ -72,7 +73,6 @@
     //UPDATE LOCAL SCALES, I dont know the armData message format right now
     scalesInitialized = scalesContainNull();
   });
-
 
 </script>
 
