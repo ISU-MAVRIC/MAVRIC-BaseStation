@@ -27,7 +27,7 @@
   let teleopEnabled = false;
   // let waypoints = null;
   //For testing:
-  let waypoints = [[42.0267, -93.6445],[42.0247, -93.6466],[42.0266, -93.6476]];
+  let waypoints = [[38.407,-110.793]];
   
 
   //Function to force update to waypoints and send new waypoint list to rover

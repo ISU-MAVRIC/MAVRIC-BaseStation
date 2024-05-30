@@ -98,6 +98,15 @@
 
   ///
 
+  let pasteCoordinates = () => {
+    try {
+      let coords = navigator.clipboard.readText().split(",");
+      modalLatitude = coords[0];
+      modalLongitude = coords[1];
+    } catch (e) {
+      console.error("Failed to paste clipboard to coordinates: " + e);
+    }
+  }
 
 </script>
 <!-- Main container element -->
@@ -155,6 +164,9 @@
           </div>
           <div class={!addWaypointToStart ? "modal-add-option" : "modal-add-option modal-add-selected" } on:click={() => {addWaypointToStart = true}}>
             Add to Start
+          </div>
+          <div class={"modal-add-option"} on:click={() => { pasteCoordinates }}>
+            Paste Clipboard
           </div>
         </div>
         <div class="waypoint-add-card" on:click={addWaypointButton}>+ Add</div>

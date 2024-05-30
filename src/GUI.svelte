@@ -19,7 +19,7 @@
   //Variables
   let driveState = DEFAULTS.DRIVE.DRIVE_STATE;
   let controllerBind = DEFAULTS.CONTROLLER.BIND;
-  let controllerEnabled = true;
+  let controllerEnabled = DEFAULTS.CONTROLLER.ENABLE;
   let navCollapsed = false;
   let selected  = DEFAULTS.HOME_PAGE;
 

@@ -8,8 +8,8 @@ import { DRIVE_STATES } from './driveMath.js';
 /**
  * Connection string for connecting to the websocket server hosted by rosbridge_server.
  */
-// export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";
-export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
+export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";
+// export const MAVRIC_WEB_INTERFACE = "ws://127.0.0.1:9090";
 
  /**
   * Object containing possible systems (ARM/DRIVE) for the controller to be bound to
@@ -36,7 +36,8 @@ export const CONTROLLER_BINDS = {
  */
 export const DEFAULTS = {
   CONTROLLER: {
-    BIND: CONTROLLER_BINDS.DRIVE
+    BIND: CONTROLLER_BINDS.DRIVE,
+    ENABLE: false
   },
   DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
@@ -50,6 +51,13 @@ export const DEFAULTS = {
     SOUTHWEST_BOUND: [38.406-0.02, -110.792-0.02],
     NORTHEAST_BOUND: [38.406+0.02, -110.792+0.02]
   }
+  // MAP: {
+  //   START_COORDS:[38.319,-111.382],
+  //   MAX_ZOOM: 18,
+  //   MIN_ZOOM: 10,
+  //   SOUTHWEST_BOUND: [38.319-0.02, -111.382-0.02],
+  //   NORTHEAST_BOUND: [38.319+0.02, -111.382+0.02]
+  // }
 }
 
 
