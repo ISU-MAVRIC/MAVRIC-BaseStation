@@ -34,7 +34,7 @@
 
   ///Intervals
   let clawInterval;
-  let clawPosition = -60;
+  let clawPosition = 0;
   let luminometerPosition = 5;
   let lumiButtonPosition = 90;
   let lumiLidPosition = 0;
@@ -45,7 +45,7 @@
   let drillMove = 0;
 
   /// Could be moved to config
-  let CLAW_POSITION_INTERVAL = 5;
+  let CLAW_POSITION_INTERVAL = 2;
   let CLAW_INTERVAL_PER_SECOND = 10;
   let CLAW_MAXIMUM = 100;
   let CLAW_MINIMUM = -100;

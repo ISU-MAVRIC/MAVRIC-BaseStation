@@ -23,11 +23,11 @@
   let autoCurrentHeading = null;
   let autoOffset = null;
   let autoState = null;
-  let gpsCoords = [42.0267, -93.6445];
+  let gpsCoords = [38.407,-110.793];
   let teleopEnabled = false;
   // let waypoints = null;
   //For testing:
-  let waypoints = [[38.407,-110.793]];
+  let waypoints = [[38.409,-110.796]];
   
 
   //Function to force update to waypoints and send new waypoint list to rover
