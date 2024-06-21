@@ -10,14 +10,14 @@
   import ROSLIB from "roslib/src/RosLib";
 
   //Switch to null by default when retreiving scales from rover is working
-  let driveScaleData = 0;
+  let driveScaleData = null;
   //Switch to null by default when retreiving scales from rover is working
   let armScaleData = {
-    SHOULDER_ROTATION: 0,
-    SHOULDER_PITCH: 0,
-    ELBOW_PITCH: 0,
-    WRIST_ROTATION: 0,
-    WRIST_PITCH: 0,
+    SHOULDER_ROTATION: null,
+    SHOULDER_PITCH: null,
+    ELBOW_PITCH: null,
+    WRIST_ROTATION: null,
+    WRIST_PITCH: null,
   }
 
   
@@ -35,6 +35,22 @@
     // let message = new ROSLIB.Message({ data: driveScaleData });
     // driveScaleTopic.publish(message);
     //Figure out the armData message format...
+    let driveMessage = {
+      data: driveScaleData
+    }
+    let armMessage = {
+      ShoulderRot: armScaleData.SHOULDER_ROTATION,
+      ShoulderPitch: armScaleData.SHOULDER_PITCH,
+      ElbowPitch: armScaleData.ELBOW_PITCH,
+      WristRot: armScaleData.WRIST_ROTATION,
+      WristPitch: armScaleData.WRIST_PITCH
+    }
+
+    driveScaleTopic.publish(new ROSLIB.Message(driveMessage));
+    armScaleTopic.publish(new ROSLIB.Message(armMessage));
+
+   
+
     console.log({DRIVE: driveScaleData, ...armScaleData});
   }
 
@@ -45,22 +61,31 @@
     messageType : TOPICS.SCALES.DRIVE_MSG_TYPE
   });
   
-  driveScaleTopic.subscribe(message => {
-    driveScaleData = message.data;
-    scalesInitialized = scalesContainNull();
-  });
-
   const armScaleTopic = new ROSLIB.Topic({
     ros : $connectionHandler.getROSInstance(),
     name : TOPICS.SCALES.ARM,
     messageType : TOPICS.SCALES.ARM_MSG_TYPE
   });
-  
-  armScaleTopic.subscribe(message => {
-    //UPDATE LOCAL SCALES, I dont know the armData message format right now
-    scalesInitialized = scalesContainNull();
+
+  const initialScalesTopic = new ROSLIB.Topic({
+    ros : $connectionHandler.getROSInstance(),
+    name : "/SensFeedback",
+    messageType : "/mavric/ScaleFeedback"
   });
 
+  initialScalesTopic.subscribe(message => {
+    if (!scalesInitialized) {
+      driveScaleData = message.Drive.toFixed(2);
+      armScaleData = {
+        SHOULDER_ROTATION: message.ShoulderRot.toFixed(2),
+        SHOULDER_PITCH: message.ShoulderPitch.toFixed(2),
+        ELBOW_PITCH: message.ElbowPitch.toFixed(2),
+        WRIST_ROTATION: message.WristRot.toFixed(2),
+        WRIST_PITCH: message.WristPitch.toFixed(2),
+      }
+      scalesInitialized = scalesContainNull();
+    }
+  });
 
 </script>
 
@@ -70,11 +95,13 @@
 <!-- Component to be loaded into PageDisplay component when Scale Tuner is selected in PageNavBar -->
 <div class="scale-tuner-container">
   <div class="scales-container">
+    <!-- drive scale tuner -->
     <div class="drive-tuner-container scales-column">
       <label for="lf-scale">Drive Scale: {driveScaleData}</label>
       <input bind:value={driveScaleData} id="lf-scale" type="range" min={SCALES.DRIVE.MIN} max={SCALES.DRIVE.MAX} step={SCALES.DRIVE.STEP} />
 
     </div>
+     <!-- arm scale tuner -->
     <div class="arm-tuner-container scales-column">
       <label for="shoulder-rotation-scale">Shoulder Rotation Scale: {armScaleData.SHOULDER_ROTATION}</label>
       <input bind:value={armScaleData.SHOULDER_ROTATION} id="shoulder-rotation-scale" type="range" min={SCALES.ARM.SHOULDER_ROTATION.MIN} max={SCALES.ARM.SHOULDER_ROTATION.MAX} step={SCALES.ARM.SHOULDER_ROTATION.STEP} />
@@ -88,6 +115,7 @@
       <input bind:value={armScaleData.WRIST_PITCH} id="wrist-rotation-scale" type="range" min={SCALES.ARM.WRIST_PITCH.MIN} max={SCALES.ARM.WRIST_PITCH.MAX} step={SCALES.ARM.WRIST_PITCH.STEP} />
     </div>
   </div>
+  <!-- Button that calls publishScales when clicked -->
   <div class="send-container" on:click={publishScales}>
     <label>Publish Scales</label>
   </div>

@@ -36,12 +36,28 @@ export const CONTROLLER_BINDS = {
  */
 export const DEFAULTS = {
   CONTROLLER: {
-    BIND: CONTROLLER_BINDS.DRIVE
+    BIND: CONTROLLER_BINDS.DRIVE,
+    ENABLE: false
   },
   DRIVE: {
     DRIVE_STATE: DRIVE_STATES.CAR
   },
-  HOME_PAGE: "Autonomous Debug"
+  HOME_PAGE: "Overview",
+
+  MAP: {
+    START_COORDS:[38.406,-110.792],
+    MAX_ZOOM: 18,
+    MIN_ZOOM: 10,
+    SOUTHWEST_BOUND: [38.406-2, -110.792-2],
+    NORTHEAST_BOUND: [38.406+2, -110.792+2]
+  }
+  // MAP: {
+  //   START_COORDS:[38.319,-111.382],
+  //   MAX_ZOOM: 18,
+  //   MIN_ZOOM: 10,
+  //   SOUTHWEST_BOUND: [38.319-0.02, -111.382-0.02],
+  //   NORTHEAST_BOUND: [38.319+0.02, -111.382+0.02]
+  // }
 }
 
 
@@ -66,10 +82,13 @@ export const TOPICS = {
     ELBOW_PITCH: TOPIC_BASE.ARM  + "/ElbowPitch",
     WRIST_PITCH: TOPIC_BASE.ARM  + "/WristPitch",
     WRIST_ROTATION: TOPIC_BASE.ARM + "/WristRot",
+    DRILL: "/Science/Drill",
+    DRILLACTUATOR: "/Science/DrillActuator",
     CLAW: "/Servo/ClawActuation",
     LUMINOMETER: "/Servo/Luminometer",
     LUMIBUTTON: "/Servo/LumiButton",
     LUMILID: "/Servo/LumiLid",
+    CACHE: "/Servo/Sample",
   },
   SENSORS: {
     GPS: '/HW/GPS_Data',
@@ -87,13 +106,19 @@ export const TOPICS = {
     WAYPOINTS: '/Auto/Waypoints',
     WAYPOINTS_MSG_TYPE: 'std_msgs/String',
     DEBUG: '/Auto/Debug',
-    DEBUG_MSG_TYPE: "std_msgs/String",
+    DEBUG_MSG_TYPE: 'std_msgs/String',
+    TELEOP: '/Auto/Teleop',
+    TELEOP_MSG_TYPE: 'std_msgs/Bool',
   },
   SCALES: {
     DRIVE: '/Drive/Drive_Sensitivity',
     DRIVE_MSG_TYPE: "std_msgs/Float64",
     ARM: '/Arm/Arm_Sensitivity',
-    DRIVE_MSG_TYPE: "/mavric/armData",
+    ARM_MSG_TYPE: "/mavric/ArmData",
+  },
+  CAMERAS: {
+    MAST: '/Camera/Mast',
+    MAST_MSG_TYPE: '/mavric/Cam',
   }
 }
 

@@ -1,11 +1,8 @@
 # MAVRIC Base Station
 
 ## Undocumented Files
- - ScaleTuner.svelte
- - LoadingDisplay.svelte
- - Map svelte components
- - WaypointEditor.svelte
- - AutonomousDebug.svelte
+ - New layout and nav
+
 
 ## Table of Contents
 - [Useful Documentation](#useful-documentation)

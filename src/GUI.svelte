@@ -8,15 +8,19 @@
   import PageNavBar from './pages/PageNavBar.svelte';
   import PageHeader from './pages/PageHeader.svelte';
 
-  import homeSVG from '../public/icons/home.svelte';
+  import { scaleTunerIcon, overviewIcon, topicDebugIcon, autoDebugIcon, cameraIcon } from './utils/navIcons.js';
+
   import OverviewPage from './pages/Overview.svelte';
   import AutonomousDebugPage from './pages/AutonomousDebug.svelte';
   import TopicDebugPage from './pages/TopicDebug.svelte';
   import ScaleTunerPage from './pages/ScaleTuner.svelte';
+  import CameraPage from './pages/Camera.svelte';
 
   //Variables
   let driveState = DEFAULTS.DRIVE.DRIVE_STATE;
-  let controllerBind = DEFAULTS.CONTROLLER.BIND
+  let controllerBind = DEFAULTS.CONTROLLER.BIND;
+  let controllerEnabled = DEFAULTS.CONTROLLER.ENABLE;
+  let navCollapsed = false;
   let selected  = DEFAULTS.HOME_PAGE;
 
   //List of all accessible pages, including the label, icon, and component
@@ -25,22 +29,27 @@
   const PAGES = [
     {
       label: "Overview",
-      icon: homeSVG,
+      icon: overviewIcon,
       component: OverviewPage
     },
     {
       label: "Autonomous Debug",
-      icon: homeSVG,
+      icon: autoDebugIcon,
       component: AutonomousDebugPage
     },
     {
       label: "Topic Debug",
-      icon: homeSVG,
+      icon: topicDebugIcon,
       component: TopicDebugPage
     },
     {
+      label: "Camera Control",
+      icon: cameraIcon,
+      component: CameraPage
+    },
+    {
       label: "Scale Tuner",
-      icon: homeSVG,
+      icon: scaleTunerIcon,
       component: ScaleTunerPage
     }
   ];
@@ -50,46 +59,52 @@
 
 
 
-<div class="container">
-  <DriveController bind:driveState bind:controllerBind/>
-  <PageNavBar bind:selected  PAGES={PAGES}/>
-  <div class="content">
-    <div class="page-header">
-      <PageHeader bind:selected PAGES={PAGES}/>
-    </div>
-    <div class="break"/>
-    <div class="page-display">
-      <PageDisplay bind:selected bind:driveState bind:controllerBind PAGES={PAGES}/>
-    </div>
+<div class={`container ${navCollapsed ? "layout-collapsed" : "layout"}`}>
+  <DriveController bind:driveState bind:controllerEnabled bind:controllerBind/>
+  <div class="page-nav">
+    <PageNavBar bind:selected  bind:controllerEnabled PAGES={PAGES} bind:navCollapsed/>
+  </div>
+  <div class="page-display">
+    <PageDisplay bind:selected bind:driveState bind:controllerBind PAGES={PAGES}/>
   </div>
 </div>
 
 <style>
 .container {
-  display: flex;
-  flex-wrap: wrap;
   height: 100%;
   width: 100%;
+  overflow: hidden;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 250px auto;
+  /* Container layout */
+  grid-template-areas: 
+    'nav display';
+}
+
+.layout-collapsed {
+  display: grid;
+  grid-template-columns: 100px auto;
+  /* Container layout */
+  grid-template-areas: 
+    'nav display';
 }
 
 .content{
   height: 100%;
-  width: 80%
+  flex-grow: 1;
 }
 
-.page-header {
-  width: 100%;
-  height: 10%;
-}
 
 .page-display {
-  width: 100%;
-  height: 90%;
+  grid-area: display;
   background-color: gray;
 }
 
-.break {
-  flex-basis: 100%;
-  height: 0;
+.page-nav {
+  grid-area: nav;
 }
+
 </style>

@@ -73,6 +73,7 @@ export default {
 		nodePolyfills()
 	],
 	watch: {
-		clearScreen: false
+		clearScreen: false,
+		exclude: 'public/tiles/**'
 	}
 };
