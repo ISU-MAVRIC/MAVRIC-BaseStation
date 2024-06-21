@@ -80,7 +80,7 @@ export const calculateDriveValues = (DRIVE_STATE, tdrive, tsteer, cdrive, csteer
     } else if (DRIVE_STATE == DRIVE_STATES.CAR) {
       let in_v=0, in_mid_v=0, out_mid_v=0, out_v=0, in_angle=0, out_angle=0;
       if (csteer != 0) {
-        let steer_angle = Math.abs(csteer)*max_steer_angle;
+        let steer_angle = Math.abs(csteer*senssteer)*max_steer_angle;
         let R = (wheel_length/2)/Math.tan(steer_angle);
         let in_mid_radius = R - wheel_width/2;
         let out_mid_radius = R + wheel_width/2;

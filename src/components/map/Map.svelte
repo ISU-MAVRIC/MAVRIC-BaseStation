@@ -1,5 +1,5 @@
 <script>
-	/*
+/*
 	Map element for displaying waypoints, the rover, and other information. 
 	This code was originally adapted from:
 	
@@ -19,7 +19,6 @@
 
 	import * as markerIcons from "./markers.js";
 	import * as roverIcons from "./roverMarker";
-	import LoadingDisplay from '../../pages/LoadingDisplay.svelte'
 
 	import connectionHandler from "../../stores/connectionHandlerStore";
 	import { DEFAULTS } from "../../utils/config.js";
@@ -69,12 +68,6 @@
 		);
 		let bounds = L.latLngBounds(southWestBound, northEastBound);
 		m.setMaxBounds(bounds);
-
-		//Add onclick listener to copy coordinates to clipboard
-		m.on('click', e => {
-			let coords = e.latlng;
-			navigator.clipboard.writeText(coords.lat + "," + coords.lng);
-		});
 
 		return m;
 	}
@@ -274,7 +267,6 @@
 
 <svelte:window on:resize={resizeMap} />
 
-{#if markerLocations != null} 
 <link
 	rel="stylesheet"
 	href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
@@ -282,9 +274,6 @@
 	crossorigin=""
 />
 <div class="map" style="height:100%;width:100%" use:mapAction />
-{:else}
-<LoadingDisplay text="Fetching waypoints..." />
-{/if}
 
 <style>
 	.map :global(.marker-text) {

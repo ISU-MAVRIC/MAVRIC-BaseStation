@@ -88,6 +88,7 @@ export const TOPICS = {
     LUMINOMETER: "/Servo/Luminometer",
     LUMIBUTTON: "/Servo/LumiButton",
     LUMILID: "/Servo/LumiLid",
+    CACHE: "/Servo/Sample",
   },
   SENSORS: {
     GPS: '/HW/GPS_Data',

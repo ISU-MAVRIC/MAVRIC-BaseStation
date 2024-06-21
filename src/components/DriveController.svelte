@@ -22,7 +22,7 @@
 
   /// Drive Math
   let sensdrive = 1; // 0 to 1 
-  let senssteer = 1; // 0 to 1
+  let senssteer = 0.75; // 0 to 1
   
   /// Controller
   let leftAxis = { x: 0, y: 0 };
@@ -40,22 +40,27 @@
   let lumiLidPosition = 0;
   let lumiLidState = 0;
   let lumiLidToggle = false;
+  let cachePosition = 0;
+  let cacheState = 0;
+  let cacheToggle = false;
   let drillToggle = false;
   let drillState = 0;
   let drillMove = 0;
 
   /// Could be moved to config
-  let CLAW_POSITION_INTERVAL = 2;
+  let CLAW_POSITION_INTERVAL = 5;
   let CLAW_INTERVAL_PER_SECOND = 10;
-  let CLAW_MAXIMUM = 100;
-  let CLAW_MINIMUM = -100;
+  let CLAW_MAXIMUM = 35;
+  let CLAW_MINIMUM = -65;
   let LUMI_STRAIGHT = 7;
-  let LUMI_DUMP = -36;
+  let LUMI_DUMP = -34;
   let LUMIBUTTON_RELEASED = 90;
   let LUMIBUTTON_PRESSED = -10;
   let LUMILID_CLOSED = -82;
   let LUMILID_OPEN = 20;
-  let DRILL_SPEED;
+  let CACHE_CLOSED = -50;
+  let CACHE_OPEN = 60;
+  let DRILL_SPEED = 100;
   let DRILL_MOVE_SPEED = 100;
 
   //Ros attribute change listener to send zeros when controller is disabled
@@ -122,6 +127,7 @@
     LUMINOMETER: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMINOMETER, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
     LUMIBUTTON: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMIBUTTON, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
     LUMILID: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMILID, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
+    CACHE: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CACHE, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
   }
 
   //Function to publish data value to specific joint ("SHOULDER_ROTATION" | "SHOULDER_PITCH" | ...)
@@ -386,6 +392,30 @@
     }
     publishArmCommand("DRILLACTUATOR", drillMove);
   }
+  
+  //Function to control sample cache
+  function CacheMove(event) {
+    if (event.detail == null) {
+      cacheToggle = false;
+    }
+    else {
+      if (cacheToggle == false) {
+        if (cacheState == 0) {
+          cacheState = 1;
+          cachePosition = CACHE_CLOSED;
+        }
+        else if (cacheState == 1) {
+          cacheState = 0;
+          cachePosition = CACHE_OPEN;
+        }
+        cacheToggle = true;
+      }
+      else {
+        return;
+      }
+    }
+    publishArmCommand("CACHE", cachePosition);
+  }
 
   // Claw Handling
   /// Function to stop setInterval handling claw opening/closing
@@ -440,6 +470,7 @@
   on:DPadRight_PRESS={LuminometerDump}
   on:DPadUp={DrillUp}
   on:DPadDown={DrillDown}
+  on:A={CacheMove}
   on:B={Drill}
   on:Y={LumiButton}
   on:X={LumiLid}
