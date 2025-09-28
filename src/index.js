@@ -1,11 +1,11 @@
 //loads roslib
-const ROSLIB = require("roslib");
-const { ROSBRIDGE_URL } = require("./config");
+import ROSLIB from "roslib";
+import config from "./config.js";
 
 //'instantiate'
 const ros = new ROSLIB.Ros(
   //websockets object literal, replace localhost with the remote IP for radio control
-  { url: ROSBRIDGE_URL }
+  { url: config.ROSBRIDGE_URL }
 );
 
 // 2. Log connection status
