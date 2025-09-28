@@ -1,23 +1,25 @@
 {
   "name": "rosbridge-node-dev",
   "build": {
-    "dockerfile": ".devcontainer/Dockerfile",
+    "dockerfile": "Dockerfile",
     "context": ".."
   },
-
-  //Node publishes to 3000, but ROSBridge listens to 9090
-  //"forwardPorts": [3000, 9090],
-
-    "customizations": {
-        "vscode": {
-            "settings": {
-                "terminal.integrated.defaultProfile.linux": "bash"
-            }
-        }
+  "runArgs": [
+        "--network=host"
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "ecmel.vscode-html-css",
+        "oderwat.indent-rainbow",
+        "esbenp.prettier-vscode",
+        "svelte.svelte-vscode"
+      ]
+    }
   },
   "remoteUser": "mavric",
-
-
-  "workspaceFolder": "/workspace",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind"
+  "postCreateCommand": "npm install"
 }

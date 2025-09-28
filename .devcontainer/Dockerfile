@@ -1,42 +1,26 @@
-FROM node:24-bullseye
-
+FROM node:18.18.2-alpine3.18
 
 # Build-time args for non-root user
 ARG USERNAME=mavric
 ARG USER_UID=2000
 ARG USER_GID=$USER_UID
 
-
-
-#Add ROSBridge and other dependencies
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        sudo \
-        iproute2  && \
-        rm -rf /var/lib/apt/lists/*
-
+RUN apk add --no-cache \
+    sudo \
+    iproute2 \
+    bash \
+    git
 
 #Create non-root user and enable passwordless sudo
-RUN groupadd --gid $USER_GID $USERNAME && \
-    useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash -c "$USERNAME" $USERNAME && \
-   echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME && \
+RUN addgroup -g $USER_GID $USERNAME && \
+    adduser -u $USER_UID -G $USERNAME -s /bin/bash -D $USERNAME && \
+    mkdir -p /home/$USERNAME && \
+    chown $USERNAME:$USERNAME /home/$USERNAME && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME && \
     chmod 0440 /etc/sudoers.d/$USERNAME
-
-
-WORKDIR /home/$USERNAME
-
-#copies Node dependencies information to container
-COPY package*.json ./
-
-#install dependencies to node_modules
-RUN npm install
-
-#copies everything to container
-COPY . .
 
 # Switch to non-root user
 USER $USERNAME
-# Add entrypoint of container at creation
-ENTRYPOINT ["node"]
-CMD ["index.js"]
+
+# Set bash prompt to include username
+RUN echo 'export PS1="\u@\h:\w\$ "' >> ~/.bashrc
