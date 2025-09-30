@@ -15,17 +15,17 @@ To avoid using a more complicated Docker compose setup, in your `.devcontainer.j
         "--network=host"
   ],
 ```
-Ensure this is added in this container, as well as your ROS 2 container too, see [this](https://github.com/ISU-MAVRIC/MAVRIC_Systems/blob/CySar-steering-andrew/.devcontainer/ROS%20Foxy%20Dev%20Config/devcontainer.json) for an example.
+Ensure this is added in this container, as well as your ROS 2 container too, see [this](https://github.com/ISU-MAVRIC/MAVRIC_Systems/blob/main/.devcontainer/devcontainer.json) for an example.
 
 ## Adding ROSBridge to your ROS program
-In the launch file of you ROS program, add the nodes:
+In the launch file of your ROS program, add the nodes:
 ```xml
 <node name="rosbridge_websocket" pkg="rosbridge_server" exec="rosbridge_websocket">
     <param name="port" value="9090" />
 </node>
 <node name="rosapi" pkg="rosapi" exec="rosapi_node" />
 ```
-These aren't actual ROS nodes you implement, it will work as long as you have ROSBridge suite installed, which you should automatically have if your using our ROS 2 dev container. See [this](https://github.com/ISU-MAVRIC/MAVRIC_Systems/blob/CySar-steering-andrew/CyTemp/cysar/launch/teleop.launch) for an example.
+These aren't actual ROS nodes you implement, it will work as long as you have ROSBridge suite installed, which you should automatically have if your using our ROS 2 dev container. See [this](https://github.com/ISU-MAVRIC/MAVRIC_Systems/blob/main/CyTemp/cysar/launch/teleop.launch) for an example.
 
 ## Changing the ROSBridge URL
 This shouldn't be needed, as we're running ROSBridge on localhost, port 9090 by default. To modify is open `config.js` in the `src` folder.
