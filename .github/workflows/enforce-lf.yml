@@ -1,0 +1,47 @@
+name: Enforce LF Endings
+
+on:
+  pull_request:          # runs on ALL PRs
+  push:
+    branches: [ main ]   # runs on direct pushes to main
+
+jobs:
+  fix-line-endings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Convert CRLF → LF in text files
+        run: |
+          set -e
+          
+          # List all tracked files and check their text attribute
+          # This properly handles filenames with spaces, special characters, etc.
+          git ls-files -z --cached --exclude-standard | \
+            git check-attr -z --stdin text | \
+            awk -v RS='\0' -F'\0' '
+              NR % 3 == 1 { file = $1 }
+              NR % 3 == 0 && ($1 ~ /^(set|unspecified)$/) { print file }
+            ' | while IFS= read -r -d '' file; do
+              # Skip if file doesn't exist (e.g., submodule)
+              [ -f "$file" ] || continue
+              
+              # Convert CRLF to LF in place
+              sed -i 's/\r$//' "$file"
+            done
+
+          # Check if any files were modified
+          if ! git diff --exit-code --quiet; then
+            echo "❌ Some files had CRLF endings. They have been converted to LF:"
+            echo ""
+            git diff --name-only
+            echo ""
+            echo "Files modified: $(git diff --name-only | wc -l)"
+            echo ""
+            echo "Please ensure your local repository uses LF line endings."
+            echo "Run 'git config core.autocrlf input' to prevent CRLF on commit."
+            exit 1
+          else
+            echo "✅ All text files already use LF line endings."
+          fi
