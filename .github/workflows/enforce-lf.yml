@@ -18,7 +18,7 @@ jobs:
           files=$(git ls-files | xargs file --mime | grep 'charset=us-ascii\|charset=utf-8' | cut -d: -f1)
 
           # Normalize endings in place
-          for f in $files; do
+          echo "$files" | while IFS= read -r f; do
             sed -i 's/\r$//' "$f"
           done
 
