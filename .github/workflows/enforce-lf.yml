@@ -14,8 +14,8 @@ jobs:
 
       - name: Convert CRLF → LF in text files
         run: |
-          # List all tracked text files (ignores binaries)
-          files=$(git ls-files | xargs file --mime | grep 'charset=us-ascii\|charset=utf-8' | cut -d: -f1)
+          # List all tracked text files according to Git attributes (ignores binaries)
+          files=$(git ls-files --cached --exclude-standard | xargs -d '\n' git check-attr --stdin text | awk -F: '$3 ~ /set|unspecified/ {print $1}')
 
           # Normalize endings in place
           echo "$files" | while IFS= read -r f; do
