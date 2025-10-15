@@ -9,7 +9,7 @@ import { DRIVE_STATES } from './driveMath.js';
  * Connection string for connecting to the websocket server hosted by rosbridge_server.
  */
 //export const MAVRIC_WEB_INTERFACE = "ws://192.168.1.10:9090";
-export const MAVRIC_WEB_INTERFACE = "ws://localhost:9090";
+export const MAVRIC_WEB_INTERFACE = "ws://10.12.48.147:9090";
 
  /**
   * Object containing possible systems (ARM/DRIVE) for the controller to be bound to
