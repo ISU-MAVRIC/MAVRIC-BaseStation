@@ -16,4 +16,15 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           runCmd: |
-            yarn && yarn electron-dev
+            yarn
+            yarn electron-dev &
+            ELECTRON_PID=$!
+            sleep 5
+            if ! kill -0 $ELECTRON_PID 2>/dev/null; then
+              echo "Electron app exited immediately or failed to start"
+              exit 1
+            fi
+            echo "Electron app is running (PID: $ELECTRON_PID)"
+            kill $ELECTRON_PID
+            wait $ELECTRON_PID
+            exit 0
