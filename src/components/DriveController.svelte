@@ -13,7 +13,7 @@
   // Svelte Component Properties
   export let driveState;
   export let controllerBind;
-  export let controllerEnabled = true;
+  export let controllerEnabled;
   
 
   //Variables
