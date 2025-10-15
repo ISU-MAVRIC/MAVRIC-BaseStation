@@ -69,8 +69,8 @@
   // ROS Topics and Publishers
   const drivetrainTopic = new ROSLIB.Topic({
     ros,
-    name : '/Drive/Drive_Command',
-    messageType : 'mavric/Drivetrain'
+    name : '/drive_train',
+    messageType : 'cysar/msg/DriveTrain'
   });
 
   const publishDrivetrain = data => {
@@ -80,8 +80,8 @@
 
   const steertrainTopic = new ROSLIB.Topic({
     ros,
-    name : '/Drive/Steer_Command',
-    messageType : 'mavric/Steertrain'
+    name : '/steer_train',
+    messageType : 'cysar/msg/SteerTrain'
   });
 
   const publishSteertrain = data => {
