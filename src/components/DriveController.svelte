@@ -70,7 +70,7 @@
   const drivetrainTopic = new ROSLIB.Topic({
     ros,
     name : '/drive_train',
-    messageType : 'cysar/msg/DriveTrain'
+    messageType : 'mavric_msg/msg/DriveTrain'
   });
 
   const publishDrivetrain = data => {
@@ -81,7 +81,7 @@
   const steertrainTopic = new ROSLIB.Topic({
     ros,
     name : '/steer_train',
-    messageType : 'cysar/msg/SteerTrain'
+    messageType : 'mavric_msg/msg/SteerTrain'
   });
 
   const publishSteertrain = data => {
@@ -95,22 +95,20 @@
 
     //Destructure elements from returned driveValues into their own variables
     let {
-    lf,
-    lm,
-    lb,
-    rf,
-    rm,
-    rb,
-    strLf,
-    strLb,
-    strRf,
-    strRb
+    front_left,
+    back_left,
+    front_right,
+    back_right,
+    
+    
+    
+
     } = driveValues
 
     //Publish drivetrain commands
-    publishDrivetrain({lf, lm, lb, rf, rm, rb});
+    publishDrivetrain({front_left, back_left, front_right, back_right});
     //Publish steertrain commands
-    publishSteertrain({strLf, strLb, strRf, strRb});
+    publishSteertrain({front_left, back_left, front_right, back_right});
   } 
 
   //Create a new object for all the armtrain topics
@@ -144,18 +142,16 @@
   // function that sets all drive, steer, and arm values to zero
   const setZeros = () => {
     publishDrivetrain({
-      lf: 0,
-      lm: 0,
-      lb: 0,
-      rf: 0,
-      rm: 0,
-      rb: 0
+      front_left: 0,
+      back_left: 0,
+      front_right: 0,
+      back_right: 0
     });
     publishSteertrain({
-      strLf: 0,
-      strLb: 0,
-      strRf: 0,
-      strRb: 0
+      front_left: 0,
+      back_left: 0,
+      front_right: 0,
+      back_right: 0
     });
     publishArmCommand("SHOULDER_ROTATION", 0);
     publishArmCommand("SHOULDER_PITCH", 0);
