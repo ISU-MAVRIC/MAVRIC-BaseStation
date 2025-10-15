@@ -1,0 +1,20 @@
+name: Build and Launch Electron App
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-launch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and Launch in Dev Container
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: |
+            yarn
+            yarn electron-dev
