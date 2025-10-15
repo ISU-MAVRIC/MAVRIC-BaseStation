@@ -19,7 +19,7 @@ jobs:
             yarn
             yarn electron-dev &
             ELECTRON_PID=$!
-            sleep 5
+            sleep 15
             if ! kill -0 $ELECTRON_PID 2>/dev/null; then
               echo "Electron app exited immediately or failed to start"
               exit 1
