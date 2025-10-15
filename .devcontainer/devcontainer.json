@@ -1,18 +1,13 @@
 {
     "name": "CI/CD Headless Container",
     "build": {
-        "dockerfile": "Dockerfile",
-        "context": ".."
+        "dockerfile": "node:18.18.2-alpine3.18"
     },
-    "runArgs": [
-        "--network=host"
-    ],
     "customizations": {
         "vscode": {
             "settings": {
                 "terminal.integrated.defaultProfile.linux": "bash"
             }
         }
-    },
-    "remoteUser": "mavric"
+    }
 }
