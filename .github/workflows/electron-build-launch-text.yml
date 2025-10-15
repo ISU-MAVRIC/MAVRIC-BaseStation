@@ -16,5 +16,4 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           runCmd: |
-            yarn
-            yarn electron-dev
+            sh -c "yarn && yarn electron-dev"
