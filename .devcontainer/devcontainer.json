@@ -1,12 +1,4 @@
 {
     "name": "CI/CD Headless Container",
-    "image": "node:18.18.2-alpine3.18",
-    "postCreateCommand": "apk add --no-cache bash",
-    "customizations": {
-        "vscode": {
-            "settings": {
-                "terminal.integrated.defaultProfile.linux": "bash"
-            }
-        }
-    }
+    "image": "node:18.18.2-slim"
 }
