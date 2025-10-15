@@ -8,39 +8,27 @@ on:
 jobs:
   build-and-launch:
     runs-on: ubuntu-latest
+    container:
+      image: node:18.18.2-slim
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18.18.2'
-
       - name: Install dependencies
         run: yarn
 
-      - name: Install Xvfb
-        run: sudo apt-get update && sudo apt-get install -y xvfb
-
       - name: Build and Launch Electron
         env:
-          DISPLAY: ':99.0'
           ELECTRON_DISABLE_SANDBOX: 1
         run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          XVFB_PID=$!
-          sleep 2
           yarn electron-dev &
           ELECTRON_PID=$!
           sleep 15
           if ! kill -0 $ELECTRON_PID 2>/dev/null; then
             echo "Electron app exited immediately or failed to start"
-            kill $XVFB_PID 2>/dev/null || true
             exit 1
           fi
           echo "Electron app is running (PID: $ELECTRON_PID)"
           kill $ELECTRON_PID
-          kill $XVFB_PID
           wait $ELECTRON_PID
           exit 0
