@@ -110,7 +110,7 @@
     //Publish drivetrain commands
     publishDrivetrain({front_left, back_left,front_right, back_right});
     //Publish steertrain commands
-    publishSteertrain({front_left, back_left, front_right, back_right});
+    // publishSteertrain({front_left, back_left, front_right, back_right});
   } 
 
   //Create a new object for all the armtrain topics
@@ -152,8 +152,8 @@
     publishSteertrain({
       front_left: 0,
       back_left: 0,
-      front_right: 0,
-      back_right: 0
+     front_right: 0,
+     back_right: 0
     });
     publishArmCommand("SHOULDER_ROTATION", 0);
     publishArmCommand("SHOULDER_PITCH", 0);
