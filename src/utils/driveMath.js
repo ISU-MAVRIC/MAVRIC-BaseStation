@@ -7,18 +7,14 @@ const wheel_width = 28.5;
 const max_steer_angle = Math.atan(wheel_length/wheel_width) - 10*Math.PI/180;
 
 //Function to format calcDriveValues return into consistent object
-const formatReturn = (lf, lm, lb, rf, rm, rb, strLf, strLb, strRf, strRb) => {
+const formatReturn = (front_left, back_left, front_right, back_right ) => {
   return {
-    lf,
-    lm,
-    lb,
-    rf,
-    rm,
-    rb,
-    strLf,
-    strLb,
-    strRf,
-    strRb
+    front_left,
+    back_left,
+    front_right,
+    back_right
+  
+    
   }
 }
 

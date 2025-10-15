@@ -19,6 +19,10 @@
   //Variables
   /// ROS
   let ros = $connectionHandler.getROSInstance();
+  ros.on('connection', () => console.log("✅ Connected to ROS"));
+ros.on('error', err => console.error("❌ ROS Error:", err));
+ros.on('close', () => console.warn("⚠️ ROS Connection closed"));
+
 
   /// Drive Math
   let sensdrive = 1; // 0 to 1 
