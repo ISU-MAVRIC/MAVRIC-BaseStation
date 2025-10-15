@@ -108,7 +108,7 @@
     } = driveValues
 
     //Publish drivetrain commands
-    publishDrivetrain({front_left: 1, back_left: 1,front_right: 1 back_right: 1});
+    publishDrivetrain({front_left: 1, back_left: 1,front_right: 1, back_right: 1});
     //Publish steertrain commands
     publishSteertrain({front_left: 1, back_left: 1, front_right: 1, back_right: 1});
   } 
