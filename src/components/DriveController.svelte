@@ -19,9 +19,49 @@
   //Variables
   /// ROS
   let ros = $connectionHandler.getROSInstance();
-  ros.on('connection', () => console.log("✅ Connected to ROS"));
-ros.on('error', err => console.error("❌ ROS Error:", err));
+ // -------------------------------
+// ✅ ROS CONNECTION DEBUG + TEST
+// -------------------------------
+ros.on('connection', () => {
+  console.log("✅ Connected to ROS");
+
+  // List all available topics once connected
+  ros.getTopics((topics) => {
+    console.log("📡 Available topics:", topics);
+  });
+
+  // --- Create a simple test publisher/subscriber ---
+  const drive_train_topic = new ROSLIB.Topic({
+    ros: ros,
+    name: "/drive_train",
+    messageType: "mavric_msg/msg/DriveTrain", // change if your actual package differs
+  });
+
+  // Subscribe to see if we can hear messages back
+  drive_train_topic.subscribe((message) => {
+    console.log("📨 Received message on /drive_train:", message);
+  });
+
+  // Publish a test message every 1 second
+  const intervalId = setInterval(() => {
+    const drivePercent = new ROSLIB.Message({
+      front_left: 0.1,
+      front_right: 0.1,
+      back_left: 0.1,
+      back_right: 0.1,
+    });
+
+    console.log("🚀 Publishing test message to /drive_train");
+    drive_train_topic.publish(drivePercent);
+  }, 1000);
+
+  // Optional: stop publishing after 30 seconds
+  setTimeout(() => clearInterval(intervalId), 30000);
+});
+
+ros.on('error', (err) => console.error("❌ ROS Error:", err));
 ros.on('close', () => console.warn("⚠️ ROS Connection closed"));
+
 
 
   /// Drive Math
