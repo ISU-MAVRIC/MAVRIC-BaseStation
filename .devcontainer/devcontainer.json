@@ -1,8 +1,6 @@
 {
     "name": "CI/CD Headless Container",
-    "build": {
-        "dockerfile": "node:18.18.2-alpine3.18"
-    },
+    "image": "node:18.18.2-alpine3.18",
     "customizations": {
         "vscode": {
             "settings": {
