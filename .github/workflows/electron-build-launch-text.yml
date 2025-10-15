@@ -21,6 +21,8 @@ jobs:
         run: yarn
 
       - name: Build and Launch Electron
+        env:
+          ELECTRON_DISABLE_SANDBOX: 1
         run: |
           yarn electron-dev &
           ELECTRON_PID=$!
