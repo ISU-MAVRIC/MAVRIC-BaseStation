@@ -1,4 +1,0 @@
-{
-    "name": "CI/CD Headless Container",
-    "image": "node:18.18.2-slim"
-}
