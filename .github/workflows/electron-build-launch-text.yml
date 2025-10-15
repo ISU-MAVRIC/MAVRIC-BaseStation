@@ -15,5 +15,6 @@ jobs:
       - name: Build and Launch in Dev Container
         uses: devcontainers/ci@v0.3
         with:
+          push: never
           runCmd: |
             sh -c "yarn && yarn electron-dev"
