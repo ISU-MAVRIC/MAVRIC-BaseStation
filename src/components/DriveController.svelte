@@ -13,7 +13,7 @@
   // Svelte Component Properties
   export let driveState;
   export let controllerBind;
-  export let controllerEnabled;
+  export let controllerEnabled = true;
   
 
   //Variables
@@ -108,9 +108,9 @@
     } = driveValues
 
     //Publish drivetrain commands
-    publishDrivetrain({front_left: 1, back_left: 1,front_right: 1, back_right: 1});
+    publishDrivetrain({front_left, back_left,front_right, back_right});
     //Publish steertrain commands
-    publishSteertrain({front_left: 1, back_left: 1, front_right: 1, back_right: 1});
+    publishSteertrain({front_left, back_left, front_right, back_right});
   } 
 
   //Create a new object for all the armtrain topics
