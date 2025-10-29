@@ -96,8 +96,8 @@
   });
   const armTopic = new ROSLIB.Topic({
     ros,
-    name: TOPICS.ARM.CONTROL,
-    messageType: TOPICS.ARM.ARM_MSG_TYPE
+    name: '/arm_control',
+    messageType:'mavric_msg/msg/Arm'
   });
 
   const publishSteertrain = data => {
@@ -125,6 +125,7 @@
     publishDrivetrain({front_left, back_left,front_right, back_right});
     //Publish steertrain commands
     // publishSteertrain({front_left, back_left, front_right, back_right});
+
     
     
 
