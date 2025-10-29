@@ -65,6 +65,15 @@
   let DRILL_SPEED = 100;
   let DRILL_MOVE_SPEED = 100;
 
+  let armState = {
+    shoulder_pitch: 0,
+    shoulder_rot: 0,
+    elbow_pitch: 0,
+    wrist_pitch: 0,
+    wrist_rot: 0,
+    claw: 0
+  };
+
   //Ros attribute change listener to send zeros when controller is disabled
   $: !controllerEnabled && setZeros()
 
@@ -84,6 +93,11 @@
     ros,
     name : '/steer_train',
     messageType : 'mavric_msg/msg/SteerTrain'
+  });
+  const armTopic = new ROSLIB.Topic({
+    ros,
+    name: TOPICS.ARM.CONTROL,
+    messageType: TOPICS.ARM.ARM_MSG_TYPE
   });
 
   const publishSteertrain = data => {
@@ -111,30 +125,24 @@
     publishDrivetrain({front_left, back_left,front_right, back_right});
     //Publish steertrain commands
     // publishSteertrain({front_left, back_left, front_right, back_right});
+    
+    
+
   } 
 
-  //Create a new object for all the armtrain topics
-  //Each joint is its own topic, so for code cleanliness store in an object instead of separate variables
-  const armtrainTopics = {
-    SHOULDER_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    SHOULDER_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    ELBOW_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.ELBOW_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    WRIST_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    DRILL: new ROSLIB.Topic({ros, name: TOPICS.ARM.DRILL, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
-    DRILLACTUATOR: new ROSLIB.Topic({ros, name: TOPICS.ARM.DRILLACTUATOR, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
-    CLAW: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CLAW, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    LUMINOMETER: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMINOMETER, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    LUMIBUTTON: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMIBUTTON, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    LUMILID: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMILID, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    CACHE: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CACHE, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
+ 
+    //Update and publish current arm state
+    function updateArmState(joint, data) {
+    armState[joint] = data;
+    publishArmCommand(armState);
   }
 
   //Function to publish data value to specific joint ("SHOULDER_ROTATION" | "SHOULDER_PITCH" | ...)
-  const publishArmCommand = (joint, data) => {
-    let message = new ROSLIB.Message({data});
-    armtrainTopics[joint].publish(message);
-  }
+  const publishArmCommand = (data) => {
+  let message = new ROSLIB.Message(data);
+  armTopic.publish(message);
+}
+
 
   //Function to switch drive state to next drive state
   const cycleDriveState = () => {
@@ -155,11 +163,8 @@
      front_right: 0,
      back_right: 0
     });
-    publishArmCommand("SHOULDER_ROTATION", 0);
-    publishArmCommand("SHOULDER_PITCH", 0);
-    publishArmCommand("ELBOW_PITCH", 0);
-    publishArmCommand("WRIST_PITCH", 0);
-    publishArmCommand("WRIST_ROTATION", 0);
+    armState = { shoulder_pitch:0, shoulder_rot:0, elbow_pitch:0, wrist_pitch:0, wrist_rot:0, claw:0 };
+    publishArmCommand(armState);
   }
 
   //CONTROLLER HANDLING
@@ -180,10 +185,10 @@
       publishDriveSteerCommand(event.detail);
     //Controller logic, if its a arm command or there is no type and the controller bind is arm
     } else if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
-      let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
-      publishArmCommand("SHOULDER_ROTATION", shoulderRot);
+      let shoulder_rot = mapRange(event.detail.x, -1, 1, -100, 100);
+      updateArmState("shoulder_rot", shoulder_rot);
       let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
-      publishArmCommand("SHOULDER_PITCH", shoulderPitch);
+      updateArmState("shoulder_pitch", shoulder_pitch);
     } 
   }
 
@@ -193,10 +198,10 @@
     rightAxis = event.detail;
     //If its an arm command or there is no type and the controller bind is arm
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
-      let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
-      publishArmCommand("WRIST_ROTATION", shoulderRot);
-      let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
-      publishArmCommand("WRIST_PITCH", shoulderPitch);
+      let shoulder_rot = mapRange(event.detail.x, -1, 1, -100, 100);
+      updateArmState("wrist_rot", shoulder_rot);
+      let shoulder_pitch = mapRange(event.detail.y, -1, 1, -100, 100);
+      updateArmState("wrist_pitch", shoulder_pitch);
     }
   }
 
@@ -218,8 +223,8 @@
     //If controller is bound to arm, send as arm command
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       //Map the two trigger values to between -100 and 100
-      let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
-      publishArmCommand("ELBOW_PITCH", shoulderRot);
+      let shoulder_rot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
+      updateArmState("elbow_pitch", shoulder_rot);
     }
   }
 
@@ -234,8 +239,8 @@
     //If controller is bound to arm, send as arm command
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       //Map the two trigger values to between -100 and 100
-      let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
-      publishArmCommand("ELBOW_PITCH", shoulderRot);
+      let shoulder_rot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
+      updateArmState("elbow_pitch", shoulder_rot);
     }
   }
 
