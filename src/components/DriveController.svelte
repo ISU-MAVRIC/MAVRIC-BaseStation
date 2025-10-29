@@ -24,7 +24,7 @@
 
   /// Drive Math
   let sensdrive = 1; // 0 to 1 
-  let senssteer = 0.75; // 0 to 1
+  let senssteer = 1.0/9.0; // 0 to 1
   
   /// Controller
   let leftAxis = { x: 0, y: 0 };
@@ -115,18 +115,18 @@
     back_left,
     front_right,
     back_right,
-    
-    
-    
-
+    tmp1,
+    tmp2,
+    steer_front_left,
+    steer_back_left,
+    steer_front_right,
+    steer_back_right
     } = driveValues
-
+    
     //Publish drivetrain commands
     publishDrivetrain({front_left, back_left,front_right, back_right});
     //Publish steertrain commands
-    // publishSteertrain({front_left, back_left, front_right, back_right});
-
-    
+    publishSteertrain({steer_front_left, steer_back_left, steer_front_right, steer_back_right});
     
 
   } 
