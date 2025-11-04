@@ -24,7 +24,7 @@
 
   /// Drive Math
   let sensdrive = 1; // 0 to 1 
-  let senssteer = 1; // 0 to 1
+  let senssteer = 0.75; // 0 to 1
   
   /// Controller
   let leftAxis = { x: 0, y: 0 };
