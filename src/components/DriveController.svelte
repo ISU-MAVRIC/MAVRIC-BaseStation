@@ -277,7 +277,7 @@
 
   //Callback function for when the LB button is pressed
   function LB(event) {
-    //If button released
+     //If button released
     if (event.detail == null) {
       lBumperPressed = false;
       //If the other bumper isnt pressed, stop the wrist interval
@@ -424,14 +424,19 @@
   // Claw Handling
   /// Function to stop setInterval handling claw opening/closing
   function stopClawInterval() {
-    clearInterval(clawInterval);
+    // clearInterval(clawInterval);
+    updateArmState("claw", 0);
   }
 
   /// Function to start setInterval handling claw opening/closing
   function startClawInterval() {
     clawInterval = setInterval(() => {
       //If both bumpers are pressed, we dont want to increase or decrease claw position
-      if (rBumperPressed && lBumperPressed) return;
+      if (!rBumperPressed && !lBumperPressed) {
+        stopClawInterval();
+        return;
+      }
+
       //If the left bumper is pressed, decrement clawInterval
       if (lBumperPressed) {
         clawPosition = 1;
