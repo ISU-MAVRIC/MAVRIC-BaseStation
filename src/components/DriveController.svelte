@@ -186,7 +186,7 @@
       publishDriveSteerCommand(event.detail);
     //Controller logic, if its a arm command or there is no type and the controller bind is arm
     } else if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
-      let shoulder_rot = mapRange(event.detail.x, -1, 1, -20, 20);
+      let shoulder_rot = mapRange(event.detail.x, -1, 1, -100, 100);
       updateArmState("shoulder_rot", shoulder_rot);
       let shoulder_pitch = mapRange(event.detail.y, -1, 1, -100, 100);
       updateArmState("shoulder_pitch", shoulder_pitch);
@@ -199,9 +199,9 @@
     rightAxis = event.detail;
     //If its an arm command or there is no type and the controller bind is arm
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
-      let shoulder_rot = mapRange(event.detail.x, -1, 1, -20, 20);
+      let shoulder_rot = mapRange(event.detail.x, -1, 1, -100, 100);
       updateArmState("wrist_rot", shoulder_rot);
-      let shoulder_pitch = mapRange(event.detail.y, -1, 1, -10, 10);
+      let shoulder_pitch = mapRange(event.detail.y, -1, 1, -100, 100);
       updateArmState("wrist_pitch", shoulder_pitch);
     }
   }
@@ -224,7 +224,7 @@
     //If controller is bound to arm, send as arm command
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       //Map the two trigger values to between -100 and 100
-      let shoulder_rot = mapRange(rTrigger-lTrigger, -1, 1, -20, 20) 
+      let shoulder_rot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100) 
       updateArmState("elbow_pitch", shoulder_rot);
     }
   }
@@ -240,7 +240,7 @@
     //If controller is bound to arm, send as arm command
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       //Map the two trigger values to between -100 and 100
-      let shoulder_rot = mapRange(rTrigger-lTrigger, -1, 1, -50, 50);
+      let shoulder_rot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
       updateArmState("elbow_pitch", shoulder_rot);
     }
   }
