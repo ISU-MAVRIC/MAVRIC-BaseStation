@@ -34,9 +34,7 @@
   let rBumperPressed = false;
   let lBumperPressed = false;
 
-  ///Intervals
-  let clawInterval;
-  let clawPosition = 0;
+  ///Intervals and states for other components
   let luminometerPosition = 5;
   let lumiButtonPosition = 90;
   let lumiLidPosition = 0;
@@ -50,10 +48,6 @@
   let drillMove = 0;
 
   /// Could be moved to config
-  let CLAW_POSITION_INTERVAL = 5;
-  let CLAW_INTERVAL_PER_SECOND = 10;
-  let CLAW_MAXIMUM = 35;
-  let CLAW_MINIMUM = -65;
   let LUMI_STRAIGHT = 7;
   let LUMI_DUMP = -34;
   let LUMIBUTTON_RELEASED = 90;
@@ -262,35 +256,35 @@
     //If button released
     if (event.detail == null) {
       rBumperPressed = false;
-      //If the other bumper isnt pressed, stop the wrist interval
-      !lBumperPressed && stopClawInterval();
-    // else if button is pressed
     } else {
-      //If it wasnt previously pressed, update and start wrist interval
-      if (!rBumperPressed) {
-        rBumperPressed = true;
-        //Start wrist runnable
-        !lBumperPressed && startClawInterval();
-      } 
+      rBumperPressed = true;
     }
+    //Update claw based on bumper states (similar to triggers for elbow)
+    updateClawState();
   }
 
   //Callback function for when the LB button is pressed
   function LB(event) {
-     //If button released
+    //If button released
     if (event.detail == null) {
       lBumperPressed = false;
-      //If the other bumper isnt pressed, stop the wrist interval
-      !rBumperPressed && stopClawInterval();
-    // else if button is pressed
     } else {
-      //If it wasnt previously pressed, update and start wrist interval
-      if (!lBumperPressed) {
-        lBumperPressed = true;
-        //Start wrist runnable
-        !rBumperPressed && startClawInterval();
-      } 
+      lBumperPressed = true;
     }
+    //Update claw based on bumper states (similar to triggers for elbow)
+    updateClawState();
+  }
+
+  //Function to update claw state based on bumper presses
+  function updateClawState() {
+    let clawValue = 0;
+    if (rBumperPressed && !lBumperPressed) {
+      clawValue = -1; // Close claw
+    } else if (lBumperPressed && !rBumperPressed) {
+      clawValue = 1; // Open claw
+    }
+    // If both pressed or both released, clawValue stays 0
+    updateArmState("claw", clawValue);
   }
 
   //Callback function to set luminometer to upright position
@@ -419,37 +413,6 @@
       }
     }
     publishArmCommand("CACHE", cachePosition);
-  }
-
-  // Claw Handling
-  /// Function to stop setInterval handling claw opening/closing
-  function stopClawInterval() {
-    // clearInterval(clawInterval);
-    updateArmState("claw", 0);
-  }
-
-  /// Function to start setInterval handling claw opening/closing
-  function startClawInterval() {
-    clawInterval = setInterval(() => {
-      //If both bumpers are pressed, we dont want to increase or decrease claw position
-      if (!rBumperPressed && !lBumperPressed) {
-        stopClawInterval();
-        return;
-      }
-
-      //If the left bumper is pressed, decrement clawInterval
-      if (lBumperPressed) {
-        clawPosition = 1;
-      } else if (rBumperPressed) {
-      //If the right bumper is pressed, increment clawInterval
-        clawPosition = -1;
-      }
-      //Adjust for over/under shooting domain of clawInterval [-100 to 100]
-      // if (clawPosition < CLAW_MINIMUM) clawPosition = CLAW_MINIMUM;
-      // if (clawPosition > CLAW_MAXIMUM) clawPosition = CLAW_MAXIMUM;
-      //Send claw update
-      updateArmState("claw", clawPosition);
-    }, 1000 / CLAW_INTERVAL_PER_SECOND);
   }
 
 </script>
