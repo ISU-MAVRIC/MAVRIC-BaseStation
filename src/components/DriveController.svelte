@@ -449,7 +449,7 @@
       // if (clawPosition > CLAW_MAXIMUM) clawPosition = CLAW_MAXIMUM;
       //Send claw update
       updateArmState("claw", clawPosition);
-    }, );
+    }, 1000 / CLAW_INTERVAL_PER_SECOND);
   }
 
 </script>
