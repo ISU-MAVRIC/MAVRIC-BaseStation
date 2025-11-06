@@ -51,41 +51,39 @@
 
    
 
-    console.log({DRIVE: driveScaleData, ...armScaleData});
+    console.log({drive: driveScaleData, ...armScaleData});
   }
 
 
   const driveScaleTopic = new ROSLIB.Topic({
-    ros,
-    name : '/arm_scales',
-    messageType : 'std_msgs/msg/Float64'
-  });
-  
+  ros,
+  name: "/drive_scale",
+  messageType: "std_msgs/msg/Float64"
+});
+
   const armScaleTopic = new ROSLIB.Topic({
-    ros,
-    name : '/arm_scale',
-    messageType : '/mavric_msg/msg/ArmScales'
-  });
+  ros,
+  name: "/arm_scales",
+  messageType: "mavric_msg/msg/ArmScales"
+});
 
   const initialScalesTopic = new ROSLIB.Topic({
-    ros,
-    name : "/scale_feedback",
-    messageType : "/mavric_msg/msg/ScaleFeedback"
-  });
-
-  initialScalesTopic.subscribe(message => {
-    if (!scalesInitialized) {
-      driveScaleData = message.Drive.toFixed(2);
-      armScaleData = {
-        shoulder_rot: message.shoulder_rot.toFixed(2),
-        shoulder_pitch: message.shoulder_pitch.toFixed(2),
-        elbow_pitch: message.elbow_pitch.toFixed(2),
-        wrist_rot: message.wrist_rot.toFixed(2),
-        wrist_pitch: message.wrist_pitch.toFixed(2),
-      }
-      scalesInitialized = scalesContainNull();
-    }
-  });
+  ros,
+  name: "/scale_feedback",
+  messageType: "mavric_msg/msg/ScaleFeedback"
+});
+initialScalesTopic.subscribe(message => {
+  driveScaleData = Number(message.drive.toFixed(2));
+  armScaleData = {
+    shoulder_rot: Number(message.shoulder_rot.toFixed(2)),
+    shoulder_pitch: Number(message.shoulder_pitch.toFixed(2)),
+    elbow_pitch: Number(message.elbow_pitch.toFixed(2)),
+    wrist_rot: Number(message.wrist_rot.toFixed(2)),
+    wrist_pitch: Number(message.wrist_pitch.toFixed(2))
+  };
+  scalesInitialized = scalesContainNull();
+  console.log("Scale feedback received:", message);
+});
 
 </script>
 
@@ -97,8 +95,15 @@
   <div class="scales-container">
     <!-- drive scale tuner -->
     <div class="drive-tuner-container scales-column">
-      <label for="lf-scale">Drive Scale: {driveScaleData}</label>
-      <input bind:value={driveScaleData} id="lf-scale" type="range" min={SCALES.DRIVE.MIN} max={SCALES.DRIVE.MAX} step={SCALES.DRIVE.STEP} />
+      <label for="lf-scale">drive Scale: {driveScaleData}</label>
+      <input
+      bind:value={driveScaleData}
+      id="lf-scale"
+      type="range"
+      min={SCALES.DRIVE.MIN}
+      max={SCALES.DRIVE.MAX}
+      step={SCALES.DRIVE.STEP}
+    />
 
     </div>
      <!-- arm scale tuner -->
