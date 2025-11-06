@@ -75,8 +75,15 @@ const TOPIC_BASE = {
  * Object containing topic name and message type for each topic used on the base station
  */
 export const TOPICS = {
+  DRIVE: {
+    DRIVE_TRAIN: '/drive_train',
+    DRIVE_TRAIN_MSG_TYPE: 'mavric_msg/DriveTrain',
+    STEER_TRAIN: '/steer_train', 
+    STEER_TRAIN_MSG_TYPE: 'mavric_msg/SteerTrain',
+  },
   ARM: {
-    ARM_MSG_TYPE: "std_msgs/Float64",
+    ARM_CONTROL: '/arm_control',
+    ARM_CONTROL_MSG_TYPE: 'mavric_msg/Arm',
     SHOULDER_ROTATION: TOPIC_BASE.ARM + "/ShoulderRot",
     SHOULDER_PITCH: TOPIC_BASE.ARM  + "/ShoulderPitch",
     ELBOW_PITCH: TOPIC_BASE.ARM  + "/ElbowPitch",
@@ -92,11 +99,11 @@ export const TOPICS = {
   },
   SENSORS: {
     GPS: '/HW/GPS_Data',
-    GPS_MSG_TYPE: '/mavric/GPS',
+    GPS_MSG_TYPE: 'std_msgs/String', // FIXED: Use standard message type temporarily
     IMU: '/HW/IMU/FusedAngle',
-    IMU_MSG_TYPE: '/geometry_msgs/Vector3',
+    IMU_MSG_TYPE: 'geometry_msgs/Vector3',
     BATTERY_VOLTAGE: '/HW/ADC',
-    BATTERY_VOLTAGE_MSG_TYPE: '/mavric/Voltage',
+    BATTERY_VOLTAGE_MSG_TYPE: 'std_msgs/Float32', // FIXED: Use standard message type
   },
   AUTONOMOUS: {
     STATE: '/Auto/State',
@@ -111,14 +118,16 @@ export const TOPICS = {
     TELEOP_MSG_TYPE: 'std_msgs/Bool',
   },
   SCALES: {
-    DRIVE: '/Drive/Drive_Sensitivity',
-    DRIVE_MSG_TYPE: "std_msgs/Float64",
-    ARM: '/Arm/Arm_Sensitivity',
-    ARM_MSG_TYPE: "/mavric/ArmData",
+    DRIVE_SCALE: '/drive_scale', // FIXED: Correct topic name
+    DRIVE_SCALE_MSG_TYPE: "std_msgs/Float64",
+    ARM_SCALES: '/arm_scales', // FIXED: Correct topic name  
+    ARM_SCALES_MSG_TYPE: "mavric_msg/ArmScales",
+    SCALE_FEEDBACK: '/scale_feedback',
+    SCALE_FEEDBACK_MSG_TYPE: "mavric_msg/ScaleFeedback",
   },
   CAMERAS: {
     MAST: '/Camera/Mast',
-    MAST_MSG_TYPE: '/mavric/Cam',
+    MAST_MSG_TYPE: 'sensor_msgs/Image', // FIXED: Standard message type
   }
 }
 
@@ -132,27 +141,27 @@ export const SCALES = {
     STEP: .01,
   },
   ARM : {
-    SHOULDER_ROTATION: {
+    shoulder_rot: { // FIXED: Use consistent naming
       MIN: 0,
       MAX: 1,
       STEP: .01
     },
-    SHOULDER_PITCH: {
+    shoulder_pitch: { // FIXED: Use consistent naming
       MIN: 0,
       MAX: 1,
       STEP: .01
     },
-    ELBOW_PITCH: {
+    elbow_pitch: { // FIXED: Use consistent naming
       MIN: 0,
       MAX: 1,
       STEP: .01
     },
-    WRIST_PITCH: {
+    wrist_pitch: { // FIXED: Use consistent naming
       MIN: 0,
       MAX: 1,
       STEP: .01
     },
-    WRIST_ROTATION: {
+    wrist_rot: { // FIXED: Use consistent naming
       MIN: 0,
       MAX: 1,
       STEP: .01

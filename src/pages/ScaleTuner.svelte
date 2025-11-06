@@ -96,17 +96,17 @@ initialScalesTopic.subscribe(message => {
     <!-- drive scale tuner -->
     <div class="drive-tuner-container scales-column">
       <label for="lf-scale">drive Scale: {driveScaleData}</label>
-      <input
-      bind:value={driveScaleData}
-      id="lf-scale"
-      type="range"
-      min={SCALES.DRIVE.MIN}
-      max={SCALES.DRIVE.MAX}
-      step={SCALES.DRIVE.STEP}
-    />
+<input
+  bind:value={driveScaleData}
+  id="lf-scale"
+  type="range"
+  min={SCALES.DRIVE.MIN}
+  max={SCALES.DRIVE.MAX}
+  step={SCALES.DRIVE.STEP}
+/>
 
     </div>
-     <!-- arm scale tuner -->
+
     <div class="arm-tuner-container scales-column">
       <label for="shoulder-rotation-scale">Shoulder Rotation Scale: {armScaleData.shoulder_rot}</label>
       <input bind:value={armScaleData.shoulder_rot} id="shoulder-rotation-scale" type="range" min={SCALES.ARM.shoulder_rot.MIN} max={SCALES.ARM.shoulder_rot.MAX} step={SCALES.ARM.shoulder_rot.STEP} />
