@@ -1,9 +1,9 @@
 name: Enforce LF Endings
 
 on:
-  pull_request:          # runs on ALL PRs
+  pull_request: # runs on ALL PRs
   push:
-    branches: [ main ]   # runs on direct pushes to main
+    branches: [main] # runs on direct pushes to main
 
 jobs:
   fix-line-endings:
@@ -15,7 +15,7 @@ jobs:
       - name: Convert CRLF → LF in text files
         run: |
           set -e
-          
+
           # List all tracked files and check their text attribute
           # This properly handles filenames with spaces, special characters, etc.
           git ls-files -z --cached --exclude-standard | \
