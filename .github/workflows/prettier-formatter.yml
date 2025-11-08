@@ -17,7 +17,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Prettier
-        uses: creyD/prettier_action@v4.6
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          prettier_options: --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,yaml,yml,html}"
+          node-version: '18'
+
+      - name: Install Prettier + Svelte plugin
+        run: npm install --no-save prettier prettier-plugin-svelte
+
+      - name: Run Prettier
+        run: npx prettier --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,yaml,yml,html}"
