@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  prettier-fix:
+  prettier-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,7 @@ jobs:
         run: |
           npm install --no-save --legacy-peer-deps prettier prettier-plugin-svelte
 
-      - name: Run Prettier and commit changes
+      - name: Run Prettier Check
         uses: creyD/prettier_action@v4.6
         with:
           prettier_options: --check "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore
