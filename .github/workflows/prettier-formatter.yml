@@ -32,5 +32,5 @@ jobs:
       - name: Run Prettier
         uses: creyD/prettier_action@v4.6
         with:
-          prettier_options: --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,yaml,yml,html}"
+          prettier_options: --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore
           only_changed: false
