@@ -2,9 +2,6 @@ name: Enforce LF Endings
 
 on:
   workflow_call:         # allows this workflow to be called by other workflows
-  pull_request:          # runs on ALL PRs
-  push:
-    branches: [ main ]   # runs on direct pushes to main
 
 jobs:
   fix-line-endings:
