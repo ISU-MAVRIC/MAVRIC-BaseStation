@@ -1,25 +1,15 @@
-name: Prettier Formatter
+name: Prettier Check
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: write
-  pull-requests: write
 
 jobs:
-  prettier:
+  prettier-check:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,9 +20,6 @@ jobs:
         run: |
           npm install --no-save --legacy-peer-deps prettier prettier-plugin-svelte
 
-      - name: Run Prettier
-        uses: creyD/prettier_action@v4.6
-        with:
-          prettier_options: --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore
-          only_changed: false
-          same_commit: true
+      - name: Check Prettier formatting
+        run: |
+          npx prettier --check "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore
