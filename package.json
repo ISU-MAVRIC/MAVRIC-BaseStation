@@ -43,6 +43,8 @@
     "concurrently": "^7.5.0",
     "electron": "^21.2.0",
     "electron-builder": "^23.6.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-svelte": "^3.4.0",
     "rollup": "^3.2.3",
     "rollup-plugin-css-only": "^4.2.0",
     "rollup-plugin-livereload": "^2.0.5",
