@@ -1,24 +1,38 @@
 //This utility helps for calculating drive and steer values to be published to their respective ros topics on the rover.
 //Also exports an enum containing drive states
 
-// Variables
-const wheel_length = 37.5;
+//Variables
+//wheel_length is the distance (inches) from the front edge of the a front wheel to back edge of a back wheel.
+//wheel_width is the distance (inches) from outer edge of a left wheel to outer edge of a right wheel.
+
+const wheel_length = 36;
 const wheel_width = 28.5;
 const max_steer_angle = Math.atan(wheel_length/wheel_width) - 10*Math.PI/180;
 
 //Function to format calcDriveValues return into consistent object
-const formatReturn = (lf, lm, lb, rf, rm, rb, strLf, strLb, strRf, strRb) => {
+const formatReturn = (
+    front_left,
+    back_left,
+    front_right,
+    back_right,
+    tmp1,
+    tmp2,
+    steer_front_left,
+    steer_back_left,
+    steer_front_right,
+    steer_back_right 
+) => {
   return {
-    lf,
-    lm,
-    lb,
-    rf,
-    rm,
-    rb,
-    strLf,
-    strLb,
-    strRf,
-    strRb
+    front_left,
+    back_left,
+    front_right,
+    back_right,
+    tmp1,
+    tmp2,
+    steer_front_left,
+    steer_back_left,
+    steer_front_right,
+    steer_back_right
   }
 }
 

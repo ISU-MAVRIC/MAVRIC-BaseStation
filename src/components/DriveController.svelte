@@ -19,6 +19,8 @@
   //Variables
   /// ROS
   let ros = $connectionHandler.getROSInstance();
+ 
+
 
   /// Drive Math
   let sensdrive = 1; // 0 to 1 
@@ -32,9 +34,7 @@
   let rBumperPressed = false;
   let lBumperPressed = false;
 
-  ///Intervals
-  let clawInterval;
-  let clawPosition = 0;
+  ///Intervals and states for other components
   let luminometerPosition = 5;
   let lumiButtonPosition = 90;
   let lumiLidPosition = 0;
@@ -48,10 +48,6 @@
   let drillMove = 0;
 
   /// Could be moved to config
-  let CLAW_POSITION_INTERVAL = 5;
-  let CLAW_INTERVAL_PER_SECOND = 10;
-  let CLAW_MAXIMUM = 35;
-  let CLAW_MINIMUM = -65;
   let LUMI_STRAIGHT = 7;
   let LUMI_DUMP = -34;
   let LUMIBUTTON_RELEASED = 90;
@@ -63,14 +59,23 @@
   let DRILL_SPEED = 100;
   let DRILL_MOVE_SPEED = 100;
 
+  let armState = {
+    shoulder_pitch: 0,
+    shoulder_rot: 0,
+    elbow_pitch: 0,
+    wrist_pitch: 0,
+    wrist_rot: 0,
+    claw: 0
+  };
+
   //Ros attribute change listener to send zeros when controller is disabled
   $: !controllerEnabled && setZeros()
 
   // ROS Topics and Publishers
   const drivetrainTopic = new ROSLIB.Topic({
     ros,
-    name : '/Drive/Drive_Command',
-    messageType : 'mavric/Drivetrain'
+    name : '/drive_train',
+    messageType : 'mavric_msg/msg/DriveTrain'
   });
 
   const publishDrivetrain = data => {
@@ -80,8 +85,13 @@
 
   const steertrainTopic = new ROSLIB.Topic({
     ros,
-    name : '/Drive/Steer_Command',
-    messageType : 'mavric/Steertrain'
+    name : '/steer_train',
+    messageType : 'mavric_msg/msg/SteerTrain'
+  });
+  const armTopic = new ROSLIB.Topic({
+    ros,
+    name: '/arm_control',
+    messageType:'mavric_msg/msg/Arm'
   });
 
   const publishSteertrain = data => {
@@ -95,46 +105,39 @@
 
     //Destructure elements from returned driveValues into their own variables
     let {
-    lf,
-    lm,
-    lb,
-    rf,
-    rm,
-    rb,
-    strLf,
-    strLb,
-    strRf,
-    strRb
+    front_left,
+    back_left,
+    front_right,
+    back_right,
+    tmp1,
+    tmp2,
+    steer_front_left,
+    steer_back_left,
+    steer_front_right,
+    steer_back_right
     } = driveValues
-
+    
     //Publish drivetrain commands
-    publishDrivetrain({lf, lm, lb, rf, rm, rb});
+    publishDrivetrain({front_left, back_left, front_right, back_right});
     //Publish steertrain commands
-    publishSteertrain({strLf, strLb, strRf, strRb});
+    publishSteertrain({steer_front_left, steer_back_left, steer_front_right, steer_back_right});
+    
+
   } 
 
-  //Create a new object for all the armtrain topics
-  //Each joint is its own topic, so for code cleanliness store in an object instead of separate variables
-  const armtrainTopics = {
-    SHOULDER_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    SHOULDER_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    ELBOW_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.ELBOW_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    WRIST_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    DRILL: new ROSLIB.Topic({ros, name: TOPICS.ARM.DRILL, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
-    DRILLACTUATOR: new ROSLIB.Topic({ros, name: TOPICS.ARM.DRILLACTUATOR, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
-    CLAW: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CLAW, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    LUMINOMETER: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMINOMETER, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    LUMIBUTTON: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMIBUTTON, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    LUMILID: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMILID, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    CACHE: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CACHE, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
+ 
+    //Update and publish current arm state
+    function updateArmState(joint, data) {
+    armState[joint] = data;
+    publishArmCommand(armState);
   }
 
   //Function to publish data value to specific joint ("SHOULDER_ROTATION" | "SHOULDER_PITCH" | ...)
-  const publishArmCommand = (joint, data) => {
-    let message = new ROSLIB.Message({data});
-    armtrainTopics[joint].publish(message);
-  }
+  const publishArmCommand = (data) => {
+  let message = new ROSLIB.Message(data);
+  armTopic.publish(message);
+}
+
 
   //Function to switch drive state to next drive state
   const cycleDriveState = () => {
@@ -144,24 +147,19 @@
   // function that sets all drive, steer, and arm values to zero
   const setZeros = () => {
     publishDrivetrain({
-      lf: 0,
-      lm: 0,
-      lb: 0,
-      rf: 0,
-      rm: 0,
-      rb: 0
+      front_left: 0,
+      back_left: 0,
+      front_right: 0,
+      back_right: 0
     });
     publishSteertrain({
-      strLf: 0,
-      strLb: 0,
-      strRf: 0,
-      strRb: 0
+      front_left: 0,
+      back_left: 0,
+     front_right: 0,
+     back_right: 0
     });
-    publishArmCommand("SHOULDER_ROTATION", 0);
-    publishArmCommand("SHOULDER_PITCH", 0);
-    publishArmCommand("ELBOW_PITCH", 0);
-    publishArmCommand("WRIST_PITCH", 0);
-    publishArmCommand("WRIST_ROTATION", 0);
+    armState = { shoulder_pitch:0, shoulder_rot:0, elbow_pitch:0, wrist_pitch:0, wrist_rot:0, claw:0 };
+    publishArmCommand(armState);
   }
 
   //CONTROLLER HANDLING
@@ -182,10 +180,10 @@
       publishDriveSteerCommand(event.detail);
     //Controller logic, if its a arm command or there is no type and the controller bind is arm
     } else if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
-      let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
-      publishArmCommand("SHOULDER_ROTATION", shoulderRot);
-      let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
-      publishArmCommand("SHOULDER_PITCH", shoulderPitch);
+      let shoulder_rot = mapRange(event.detail.x, -1, 1, -100, 100);
+      updateArmState("shoulder_rot", shoulder_rot);
+      let shoulder_pitch = mapRange(event.detail.y, -1, 1, -100, 100);
+      updateArmState("shoulder_pitch", shoulder_pitch);
     } 
   }
 
@@ -195,10 +193,10 @@
     rightAxis = event.detail;
     //If its an arm command or there is no type and the controller bind is arm
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
-      let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
-      publishArmCommand("WRIST_ROTATION", shoulderRot);
-      let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
-      publishArmCommand("WRIST_PITCH", shoulderPitch);
+      let shoulder_rot = mapRange(event.detail.x, -1, 1, -100, 100);
+      updateArmState("wrist_rot", shoulder_rot);
+      let shoulder_pitch = mapRange(event.detail.y, -1, 1, -100, 100);
+      updateArmState("wrist_pitch", shoulder_pitch);
     }
   }
 
@@ -220,8 +218,8 @@
     //If controller is bound to arm, send as arm command
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       //Map the two trigger values to between -100 and 100
-      let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
-      publishArmCommand("ELBOW_PITCH", shoulderRot);
+      let shoulder_rot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100) 
+      updateArmState("elbow_pitch", shoulder_rot);
     }
   }
 
@@ -236,8 +234,8 @@
     //If controller is bound to arm, send as arm command
     if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
       //Map the two trigger values to between -100 and 100
-      let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
-      publishArmCommand("ELBOW_PITCH", shoulderRot);
+      let shoulder_rot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
+      updateArmState("elbow_pitch", shoulder_rot);
     }
   }
 
@@ -258,17 +256,11 @@
     //If button released
     if (event.detail == null) {
       rBumperPressed = false;
-      //If the other bumper isnt pressed, stop the wrist interval
-      !lBumperPressed && stopClawInterval();
-    // else if button is pressed
     } else {
-      //If it wasnt previously pressed, update and start wrist interval
-      if (!rBumperPressed) {
-        rBumperPressed = true;
-        //Start wrist runnable
-        !lBumperPressed && startClawInterval();
-      } 
+      rBumperPressed = true;
     }
+    //Update claw based on bumper states (similar to triggers for elbow)
+    updateClawState();
   }
 
   //Callback function for when the LB button is pressed
@@ -276,17 +268,23 @@
     //If button released
     if (event.detail == null) {
       lBumperPressed = false;
-      //If the other bumper isnt pressed, stop the wrist interval
-      !rBumperPressed && stopClawInterval();
-    // else if button is pressed
     } else {
-      //If it wasnt previously pressed, update and start wrist interval
-      if (!lBumperPressed) {
-        lBumperPressed = true;
-        //Start wrist runnable
-        !rBumperPressed && startClawInterval();
-      } 
+      lBumperPressed = true;
     }
+    //Update claw based on bumper states (similar to triggers for elbow)
+    updateClawState();
+  }
+
+  //Function to update claw state based on bumper presses
+  function updateClawState() {
+    let clawValue = 0;
+    if (rBumperPressed && !lBumperPressed) {
+      clawValue = -1; // Close claw
+    } else if (lBumperPressed && !rBumperPressed) {
+      clawValue = 1; // Open claw
+    }
+    // If both pressed or both released, clawValue stays 0
+    updateArmState("claw", clawValue);
   }
 
   //Callback function to set luminometer to upright position
@@ -415,32 +413,6 @@
       }
     }
     publishArmCommand("CACHE", cachePosition);
-  }
-
-  // Claw Handling
-  /// Function to stop setInterval handling claw opening/closing
-  function stopClawInterval() {
-    clearInterval(clawInterval);
-  }
-
-  /// Function to start setInterval handling claw opening/closing
-  function startClawInterval() {
-    clawInterval = setInterval(() => {
-      //If both bumpers are pressed, we dont want to increase or decrease claw position
-      if (rBumperPressed && lBumperPressed) return;
-      //If the left bumper is pressed, decrement clawInterval
-      if (lBumperPressed) {
-        clawPosition -= CLAW_POSITION_INTERVAL;
-      } else if (rBumperPressed) {
-      //If the right bumper is pressed, increment clawInterval
-        clawPosition += CLAW_POSITION_INTERVAL;
-      }
-      //Adjust for over/under shooting domain of clawInterval [-100 to 100]
-      if (clawPosition < CLAW_MINIMUM) clawPosition = CLAW_MINIMUM;
-      if (clawPosition > CLAW_MAXIMUM) clawPosition = CLAW_MAXIMUM;
-      //Send claw update
-      publishArmCommand("CLAW", clawPosition);
-    }, 1000 / CLAW_INTERVAL_PER_SECOND);
   }
 
 </script>
