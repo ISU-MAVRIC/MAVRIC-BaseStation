@@ -1,13 +1,10 @@
-name: Prettier Auto-fix
+name: Prettier Check
 
 on:
   pull_request:
   push:
     branches:
       - main
-
-permissions:
-  contents: write
 
 jobs:
   prettier-fix:
@@ -31,5 +28,4 @@ jobs:
       - name: Run Prettier and commit changes
         uses: creyD/prettier_action@v4.6
         with:
-          prettier_options: --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore
-          commit_message: 'style: apply prettier formatting'
+          prettier_options: --check "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore

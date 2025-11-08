@@ -1,7 +1,10 @@
 name: Enforce LF Endings
 
 on:
-  workflow_call:         # allows this workflow to be called by other workflows
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   fix-line-endings:
