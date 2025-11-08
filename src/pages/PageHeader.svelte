@@ -3,9 +3,7 @@
   //Component properties
   export let selected;
   export let PAGES;
-
 </script>
-
 
 <!-- Display page label by looping through all pages until the label matches selected and displaying that label.
 This could be done by just displaying the value of the selected property, but we decided to do it like this instead in case we want to add

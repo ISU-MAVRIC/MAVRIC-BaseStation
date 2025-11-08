@@ -1,5 +1,5 @@
 <script>
-	/*
+  /*
 	Map element for a waypoint or rover location popup. 
 	This code was originally adapted from:
 	
@@ -9,13 +9,11 @@
 
 	heroicons.dev for all the icons used here.
 	*/
-	export let coords;
-	
+  export let coords;
 </script>
 
-
 <div style="width:100%;text-align:center;font-weight:600">
-	Latitude: {coords[0]} 
-	<br/>
-	Longitude: {coords[1]}
+  Latitude: {coords[0]}
+  <br />
+  Longitude: {coords[1]}
 </div>
