@@ -1,34 +1,35 @@
-name: Prettier Auto-fix
+# name: Prettier Auto-fix
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   pull_request:
+#   push:
+#     branches:
+#       - main
 
-permissions:
-  contents: write
+# permissions:
+#   contents: write
 
-jobs:
-  prettier-fix:
-    runs-on: ubuntu-latest
+# jobs:
+#   prettier-fix:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: main
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           ref: ${{ github.head_ref || github.ref }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '18'
 
-      - name: Install dependencies
-        run: |
-          npm install --no-save --legacy-peer-deps prettier prettier-plugin-svelte
+#       - name: Install dependencies
+#         run: |
+#           npm install --no-save --legacy-peer-deps prettier prettier-plugin-svelte
 
-      - name: Run Prettier and commit changes
-        uses: creyD/prettier_action@v4.6
-        with:
-          prettier_options: --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore
-          commit_message: 'style: apply prettier formatting'
+#       - name: Run Prettier and commit changes
+#         uses: creyD/prettier_action@v4.6
+#         with:
+#           prettier_options: --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore
+#           commit_message: 'style: apply prettier formatting'
