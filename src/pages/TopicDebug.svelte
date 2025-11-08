@@ -1,8 +1,8 @@
 <script>
-  import ROSLIB from "roslib/src/RosLib";
+  import ROSLIB from 'roslib/src/RosLib';
 
-  import TopicDisplay from "../components/TopicDisplay.svelte";
-  import connectionHandler from "../stores/connectionHandlerStore";
+  import TopicDisplay from '../components/TopicDisplay.svelte';
+  import connectionHandler from '../stores/connectionHandlerStore';
 
   let topicList = [
     //EXAMPLE Entry
@@ -20,54 +20,53 @@
 
   let id = 0;
 
+
   let refreshTopics = () => {
     $connectionHandler.getROSInstance().getTopics((data) => {
       topicSelectList = [];
       data.topics.map((_, index) => {
-        topicSelectList.push({
-          topic_name: data.topics[index],
-          topic_msg_type: data.types[index],
-        });
+        topicSelectList.push({topic_name: data.topics[index], topic_msg_type: data.types[index]})
       });
       topicSelectList = topicSelectList;
     });
-  };
+  }
+
 
   let addTopic = () => {
     if (topicSelected) {
       let newTopic = {
-        id: (id += 1),
-        autoscroll: true,
-        topic_name: topicSelected.topic_name,
-        topic_msg_type: topicSelected.topic_msg_type,
-        data_log: [],
-        topic: new ROSLIB.Topic({
-          ros: $connectionHandler.getROSInstance(),
-          name: topicSelected.topic_name,
-          messageType: topicSelected.topic_msg_type,
-        }),
+          id: id += 1,
+          autoscroll: true,
+          topic_name: topicSelected.topic_name,
+          topic_msg_type: topicSelected.topic_msg_type,
+          data_log: [],
+          topic: new ROSLIB.Topic({
+            ros: $connectionHandler.getROSInstance(),
+            name : topicSelected.topic_name,
+            messageType : topicSelected.topic_msg_type
+          })
       };
 
-      newTopic.topic.subscribe((data) => {
-        newTopic.data_log.push(data);
+      newTopic.topic.subscribe(data => {
+        newTopic.data_log.push(data)
         topicList = topicList;
       });
 
       topicList.push(newTopic);
     }
     topicList = topicList;
-  };
+  }
 
   let getIndexByID = (desiredId) => {
-    return topicList.findIndex((topic) => desiredId == topic.id);
-  };
+    return topicList.findIndex(topic => desiredId == topic.id);
+  }
 
   let deleteTopic = (id) => {
-    console.log(id);
+    console.log(id)
     let index = getIndexByID(id);
-    topicList.splice(index, 1);
+    topicList.splice(index, 1)
     topicList = topicList;
-  };
+  }
 
   let moveTopicAbsolute = (id, newIndex) => {
     let index = getIndexByID(id);
@@ -75,15 +74,18 @@
     topicList.splice(index, 1);
     topicList.splice(newIndex, 0, topic);
     topicList = topicList;
-  };
+  }
 
   let moveTopicRelative = (id, offset) => {
     let index = getIndexByID(id);
-    console.log(index);
-    console.log(id, index + offset);
+    console.log(index)
+    console.log(id, index + offset)
     moveTopicAbsolute(id, index + offset);
     console.log(topicList);
-  };
+  }
+
+
+
 
   refreshTopics();
 </script>
@@ -98,32 +100,31 @@
         </option>
       {/each}
     </select>
-    <p class="selector-topic">
-      {topicSelected ? topicSelected.topic_msg_type : "Select Topic to add"}
-    </p>
+    <p class="selector-topic">{topicSelected ? topicSelected.topic_msg_type : "Select Topic to add"}</p>
     <p class="selector-add" on:click={addTopic}>add</p>
   </div>
   {#each topicList as topic}
-    <TopicDisplay
-      deleteFunction={deleteTopic.bind(this, topic.id)}
-      moveUp={moveTopicRelative.bind(this, topic.id, -1)}
-      moveDown={moveTopicRelative.bind(this, topic.id, 1)}
-      moveStart={moveTopicAbsolute.bind(this, topic.id, 0)}
-      {topic}
+    <TopicDisplay 
+      deleteFunction={deleteTopic.bind(this, topic.id)} 
+      moveUp={moveTopicRelative.bind(this, topic.id, -1)} 
+      moveDown={moveTopicRelative.bind(this, topic.id, 1)} 
+      moveStart={moveTopicAbsolute.bind(this, topic.id, 0)} 
+      topic={topic} 
     />
   {/each}
 </div>
 
 <style>
+
   p {
     padding: 0;
-    margin: 0;
+		margin: 0;
   }
 
   .container {
     width: 100%;
     height: 100%;
-    background-color: gray;
+    background-color:  gray;
     overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
@@ -145,7 +146,7 @@
     width: 70%;
   }
 
-  .selector-topic x {
+  .selector-topic x{
     width: 10%;
   }
 
@@ -185,4 +186,5 @@
     flex-grow: 1;
     opacity: 1;
   }
+
 </style>

@@ -14,6 +14,10 @@
   let dropIndex = null;
   let dragStartIndex = null;
 
+
+
+
+
   //Might need to do $: waypoints && with a function listening for changes on the lat and long input data binds
   //Function that will update and set waypoints
   let updateWaypoints = (waypoints) => {
@@ -21,42 +25,43 @@
     //Just modifying array might not update svelte component
     waypointsList = waypointsList;
     setWaypoints(waypointsList);
-  };
+  }
 
   //This method adds a waypoint to list and forces an update
   let addWaypoint = (newWaypoint) => {
     waypointsList.push(newWaypoint);
     updateWaypoints(waypointsList);
-  };
+
+  }
 
   //This function adds a waypoint to a specific index in the list
   let addWaypointAtIndex = (newWaypoint, index) => {
     waypointsList.splice(index, 0, newWaypoint);
     updateWaypoints(waypointsList);
-  };
+  }
 
   //This function removes a waypoint from the list and forces an update
   let deleteWaypoint = (index) => {
-    waypointsList.splice(index, 1);
+    waypointsList.splice(index, 1)
     updateWaypoints(waypointsList);
-  };
+  }
 
   //Function to open the add waypoint popup modal
   let openWaypointModal = () => {
     waypointModalOpen = true;
-  };
+  }
 
   //Function to close the add waypoint popup modal
   let closeWaypointModal = () => {
     waypointModalOpen = false;
-  };
+  }
 
   //Function called when add waypoint is clicked in modal
   let addWaypointButton = () => {
     //If they selected add to waypoint list start
     if (addWaypointToStart) {
-      addWaypointAtIndex([modalLongitude, modalLatitude], 0);
-      // if they selected to add to end
+      addWaypointAtIndex([modalLongitude, modalLatitude], 0)
+    // if they selected to add to end
     } else {
       addWaypoint([modalLongitude, modalLatitude]);
     }
@@ -64,19 +69,19 @@
     updateWaypoints(waypointsList);
     //Close modal
     closeWaypointModal();
-  };
+  }
 
   /// DRAG AND DROP HANDLING
 
   //onDragOver listener for waypoint elements that sets where drag and drop will be dropped
   let dragOver = (index) => {
     dropIndex = index;
-  };
+  }
 
   //onDragStart listener that sets the dragStartIndex to the element that is being dragged
   let dragStart = (index) => {
     dragStartIndex = index;
-  };
+  }
 
   //listener for when the drag ends
   let dragEnd = () => {
@@ -89,7 +94,7 @@
     //Reset drag and drop variables
     dragStartIndex = null;
     dropIndex = null;
-  };
+  }
 
   ///
 
@@ -101,51 +106,36 @@
     } catch (e) {
       console.error("Failed to paste clipboard to coordinates: " + e);
     }
-  };
-</script>
+  }
 
+</script>
 <!-- Main container element -->
 <div class="waypoint-container">
   <!-- Set Waypoint header at top of element -->
-  <h1 class="title">Waypoints</h1>
+  <h1 class="title"> Waypoints </h1>
   <!-- If we have loaded the waypointList -->
-  {#if waypointsList != null}
+  {#if waypointsList != null} 
     <!-- Create waypoint card for each waypoint -->
     {#each waypointsList as waypoint, index}
-      <div
-        class="waypoint-card"
+      <div 
+        class="waypoint-card" 
         on:dragover={dragOver.bind(this, index)}
-        on:dragstart={dragStart.bind(this, index)}
+        on:dragstart={dragStart.bind(this, index)} 
         on:dragend={dragEnd}
-        draggable="true"
-      >
+        draggable="true">
+
         <div>
           <!-- Waypoint delete button -->
-          <span
-            class="waypoint-delete"
-            on:click={deleteWaypoint.bind(this, index)}>&times;</span
-          >
+          <span class="waypoint-delete" on:click={deleteWaypoint.bind(this, index)}>&times;</span>
           <!-- Display/Inputs for long and lat -->
           <div>
             <span>Lon:</span>
-            <input
-              class="waypoint-input"
-              type="number"
-              min="-90"
-              max="90"
-              bind:value={waypoint[0]}
-            />
+            <input class="waypoint-input" type="number" min="-90" max="90" bind:value={waypoint[0]} />
           </div>
-
+          
           <div>
             <span>Lat:</span>
-            <input
-              class="waypoint-input"
-              type="number"
-              min="-90"
-              max="90"
-              bind:value={waypoint[1]}
-            />
+            <input class="waypoint-input" type="number" min="-90" max="90" bind:value={waypoint[1]} />
           </div>
         </div>
       </div>
@@ -156,83 +146,53 @@
     </div>
 
     <!-- Modal for adding a waypoint, hidden unless waypointModalOpen is true -->
-    <div
-      id="waypoint-modal"
-      class="modal"
-      style={waypointModalOpen ? "display: block;" : "display: none;"}
-    >
+    <div id="waypoint-modal" class="modal" style={ waypointModalOpen ? "display: block;" : "display: none;"}>
+
       <!-- Modal content -->
       <div class="modal-content">
         <span class="close" on:click={closeWaypointModal}>&times;</span>
         <h3>Enter Waypoint</h3>
         <span>Longitude</span>
-        <input
-          class="modal-input"
-          type="number"
-          max="90"
-          min="-90"
-          bind:value={modalLongitude}
-        />
-        <br />
+        <input class="modal-input" type="number" max="90" min="-90" bind:value={modalLongitude}/> 
+        <br/>
         <span>Latitude</span>
-        <input
-          class="modal-input"
-          type="number"
-          max="90"
-          min="-90"
-          bind:value={modalLatitude}
-        />
+        <input class="modal-input" type="number" max="90" min="-90"  bind:value={modalLatitude}/>
         <br />
         <div class="modal-add-behavior">
-          <div
-            class={addWaypointToStart
-              ? "modal-add-option"
-              : "modal-add-option modal-add-selected"}
-            on:click={() => {
-              addWaypointToStart = false;
-            }}
-          >
+          <div class={addWaypointToStart ? "modal-add-option" : "modal-add-option modal-add-selected" } on:click={() => {addWaypointToStart = false}}>
             Add to End
           </div>
-          <div
-            class={!addWaypointToStart
-              ? "modal-add-option"
-              : "modal-add-option modal-add-selected"}
-            on:click={() => {
-              addWaypointToStart = true;
-            }}
-          >
+          <div class={!addWaypointToStart ? "modal-add-option" : "modal-add-option modal-add-selected" } on:click={() => {addWaypointToStart = true}}>
             Add to Start
           </div>
-          <div
-            class={"modal-add-option"}
-            on:click={() => {
-              pasteCoordinates;
-            }}
-          >
+          <div class={"modal-add-option"} on:click={() => { pasteCoordinates }}>
             Paste Clipboard
           </div>
         </div>
         <div class="waypoint-add-card" on:click={addWaypointButton}>+ Add</div>
       </div>
+    
     </div>
-    <!-- if waypoint list is null (hasnt been received), set page to loading instead -->
+  <!-- if waypoint list is null (hasnt been received), set page to loading instead -->
   {:else}
-    <div class="waypoint-card">
-      <p>Waiting to receive waypoints from rover...</p>
-    </div>
+  <div class="waypoint-card">
+    <p>Waiting to receive waypoints from rover...</p>    
+  </div>
+
   {/if}
 </div>
 
+
 <style>
+
   .waypoint-container {
-    width: 100%;
+    width: 100%; 
     height: 100%;
     overflow: hidden scroll;
   }
 
   .title {
-    margin: 0;
+    margin:0;
     text-align: center;
   }
 
@@ -268,15 +228,15 @@
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0); /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   }
 
   .modal-add-behavior {
     display: flex;
     width: 100%;
     justify-content: space-around;
-    transition: all 0.5s ease-out;
+    transition: all .5s ease-out;
   }
 
   .modal-add-option {
@@ -285,7 +245,7 @@
   }
 
   .modal-add-option:hover {
-    transition: all 0.3s ease-out;
+    transition: all .3s ease-out;
     opacity: 50%;
   }
 
@@ -321,4 +281,7 @@
     text-decoration: none;
     cursor: pointer;
   }
+
+
+
 </style>
