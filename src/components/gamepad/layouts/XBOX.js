@@ -1,4 +1,4 @@
-/**
+/** 
  * This file defines the mappings between XBOX controller names and the javascript Gamepad API
  * For example, button[0] of the Gamepad API corresponds to the "A" button on an xbox controller.
  */
@@ -19,7 +19,7 @@ export default {
     "DPadUp",
     "DPadDown",
     "DPadLeft",
-    "DPadRight",
+    "DPadRight"
   ],
-  axis: ["LeftStickX", "LeftStickY", "RightStickX", "RightStickY"],
+  axis: ["LeftStickX", "LeftStickY", "RightStickX", "RightStickY"]
 };

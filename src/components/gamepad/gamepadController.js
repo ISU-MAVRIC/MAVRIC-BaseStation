@@ -11,7 +11,7 @@ let gamepads = {
   0: { layout: null },
   1: { layout: null },
   2: { layout: null },
-  3: { layout: null },
+  3: { layout: null }
 };
 
 //Variable to keep track if gamepad watcher is running

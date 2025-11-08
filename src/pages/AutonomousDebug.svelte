@@ -2,13 +2,17 @@
 <script>
   import ROSLIB from "roslib/src/RosLib";
 
+
+  
   //Project Imports
   import { TOPICS } from "../utils/config";
   import connectionHandler from "../stores/connectionHandlerStore";
-  import CommonDisplay from "../components/CommonDisplay.svelte";
-  import Map from "../components/map/Map.svelte";
-  import WaypointEditor from "../components/waypoints/WaypointEditor.svelte";
+  import CommonDisplay from '../components/CommonDisplay.svelte';
+  import Map from '../components/map/Map.svelte';
+  import WaypointEditor from '../components/waypoints/WaypointEditor.svelte';
 
+
+  
   //Component Properties
   export let driveState;
   export let controllerBind;
@@ -19,39 +23,44 @@
   let autoCurrentHeading = null;
   let autoOffset = null;
   let autoState = null;
-  let gpsCoords = [38.407, -110.793];
+  let gpsCoords = [38.407,-110.793];
   let teleopEnabled = false;
   // let waypoints = null;
   //For testing:
-  let waypoints = [[38.409, -110.796]];
+  let waypoints = [[38.409,-110.796]];
+  
 
   //Function to force update to waypoints and send new waypoint list to rover
   let setWaypoints = (waypointList) => {
     waypoints = waypointList;
     sendWaypoints();
-  };
+  }
+  
+
+
 
   //Ros topic for autonomous state debug topic
   const autoStateTopic = new ROSLIB.Topic({
-    ros: $connectionHandler.getROSInstance(),
-    name: TOPICS.AUTONOMOUS.STATE,
-    messageType: TOPICS.AUTONOMOUS.STATE_MSG_TYPE,
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.AUTONOMOUS.STATE,
+    messageType : TOPICS.AUTONOMOUS.STATE_MSG_TYPE
   });
 
+
   //Listener to update autoState on topic update
-  autoStateTopic.subscribe((message) => {
+  autoStateTopic.subscribe(message => {
     autoState = message.data;
   });
 
   //Ros topic for autonomous waypoint list
   const autoWaypointTopic = new ROSLIB.Topic({
-    ros: $connectionHandler.getROSInstance(),
-    name: TOPICS.AUTONOMOUS.WAYPOINTS,
-    messageType: TOPICS.AUTONOMOUS.WAYPOINTS_MSG_TYPE,
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.AUTONOMOUS.WAYPOINTS,
+    messageType : TOPICS.AUTONOMOUS.WAYPOINTS_MSG_TYPE
   });
-
+  
   //Listener to parse and set waypoint list
-  autoWaypointTopic.subscribe((message) => {
+  autoWaypointTopic.subscribe(message => {
     waypoints = JSON.parse(message.data);
   });
 
@@ -60,17 +69,17 @@
     let waypointString = JSON.stringify(waypoints);
     let message = new ROSLIB.Message({ data: waypointString });
     autoWaypointTopic.publish(message);
-  };
-
+  }
+  
   //Ros topic for autonomous enabled topic
   const autoEnableTopic = new ROSLIB.Topic({
-    ros: $connectionHandler.getROSInstance(),
-    name: TOPICS.AUTONOMOUS.ENABLE,
-    messageType: TOPICS.AUTONOMOUS.ENABLE_MSG_TYPE,
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.AUTONOMOUS.ENABLE,
+    messageType : TOPICS.AUTONOMOUS.ENABLE_MSG_TYPE
   });
-
+  
   //Listener to update autoEnabled when topic message received
-  autoEnableTopic.subscribe((message) => {
+  autoEnableTopic.subscribe(message => {
     autoEnabled = message.data;
   });
 
@@ -79,72 +88,66 @@
     autoEnabled = !autoEnabled;
     let message = new ROSLIB.Message({ data: autoEnabled });
     autoEnableTopic.publish(message);
-  };
+  }
 
   //Ros topic for teleop enabled topic
   const teleopEnableTopic = new ROSLIB.Topic({
-    ros: $connectionHandler.getROSInstance(),
-    name: TOPICS.AUTONOMOUS.TELEOP,
-    messageType: TOPICS.AUTONOMOUS.TELEOP_MSG_TYPE,
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.AUTONOMOUS.TELEOP,
+    messageType : TOPICS.AUTONOMOUS.TELEOP_MSG_TYPE
   });
 
   //Listener to update teleopEnabled when topic message is recieved
-  teleopEnableTopic.subscribe((message) => {
+  teleopEnableTopic.subscribe(message => {
     teleopEnabled = message.data;
   });
 
   //function to toggle teleop enabled
   let teleopToggle = () => {
     teleopEnabled = !teleopEnabled;
-    let message = new ROSLIB.Message({ data: teleopEnabled });
+    let message = new ROSLIB.Message({ data: teleopEnabled});
     teleopEnableTopic.publish(message);
-  };
+  }
 
   /// Ros Topic - GPS
   const gpsTopic = new ROSLIB.Topic({
-    ros: $connectionHandler.getROSInstance(),
-    name: TOPICS.SENSORS.GPS,
-    messageType: TOPICS.SENSORS.GPS_MSG_TYPE,
+    ros : $connectionHandler.getROSInstance(),
+    name : TOPICS.SENSORS.GPS,
+    messageType : TOPICS.SENSORS.GPS_MSG_TYPE
   });
 
-  gpsTopic.subscribe((message) => {
+  gpsTopic.subscribe(message => {
     //TODO: update gpsLatitude and gpsLongitude parameters
     gpsCoords[0] = message.latitude;
     gpsCoords[1] = message.longitude;
     gpsCoords = gpsCoords;
   });
+
+
 </script>
 
 <div class="container">
   <!-- Load common display (Lat, Long, Heading, Battery charge, etc) -->
   <div class="common-display">
-    <CommonDisplay {driveState} {controllerBind} />
+    <CommonDisplay driveState={driveState} controllerBind={controllerBind}/>
   </div>
   <!-- autonomous enabled section -->
-  <div
-    class={autoEnabled ? "auto-toggle bg-green" : "auto-toggle bg-red"}
-    on:click={autoToggle}
-  >
-    {autoEnabled ? "AUTONOMOUS ENABLED" : "AUTONOMOUS DISABLED"}
-  </div>
+  <div class={autoEnabled ? "auto-toggle bg-green" : "auto-toggle bg-red"} on:click={autoToggle}>{autoEnabled ? "AUTONOMOUS ENABLED" : "AUTONOMOUS DISABLED"}</div>
   <!-- autonomous state section -->
   <div class="auto-state">{autoState}</div>
   <!-- Teleoperation state section -->
-  <div
-    class={teleopEnabled ? "teleop-toggle bg-green" : "teleop-toggle bg-red"}
-    on:click={teleopToggle}
-  >
-    {teleopEnabled ? "TELEOP ENABLED" : "TELEOP DISABLED"}
-  </div>
+  <div class={teleopEnabled ? "teleop-toggle bg-green" : "teleop-toggle bg-red"} on:click={teleopToggle}>{teleopEnabled ? "TELEOP ENABLED" : "TELEOP DISABLED"}</div>
   <!-- autonomous debug section -->
   <div class="auto-map">
-    <Map markerLocations={waypoints} roverHeading="0" roverCoords={gpsCoords} />
+    <Map markerLocations={waypoints} roverHeading=0 roverCoords={gpsCoords}/>
   </div>
   <!-- Autonomous waypoint section -->
   <div class="auto-waypoint">
-    <WaypointEditor waypointsList={waypoints} {setWaypoints}></WaypointEditor>
+    <WaypointEditor waypointsList={waypoints} setWaypoints={setWaypoints}></WaypointEditor>
   </div>
+  
 </div>
+
 
 <style>
   .container {
@@ -155,54 +158,60 @@
     grid-template-columns: 20% 20% 20% 40%;
     grid-template-rows: 10% 30% 30% 30%;
     /* Container layout */
-    grid-template-areas:
-      "common-display common-display common-display common-display"
-      "auto-toggle auto-state teleop-toggle auto-waypoint"
-      "auto-map auto-map auto-map auto-waypoint"
-      "auto-map auto-map auto-map auto-waypoint";
-  }
+    grid-template-areas: 
+      'common-display common-display common-display common-display'
+      'auto-toggle auto-state teleop-toggle auto-waypoint'
+      'auto-map auto-map auto-map auto-waypoint'
+      'auto-map auto-map auto-map auto-waypoint';
+}
 
-  .common-display {
-    grid-area: common-display;
-  }
+.common-display {
+  grid-area: common-display;
 
-  .auto-toggle {
-    grid-area: auto-toggle;
-    background: red;
-    border-radius: 20px;
-    margin: 10px 10px;
-    user-select: none;
-    text-align: center;
-  }
+}
 
-  .teleop-toggle {
-    grid-area: teleop-toggle;
-    background: red;
-    border-radius: 20px;
-    margin: 10px 10px;
-    user-select: none;
-    text-align: center;
-  }
+.auto-toggle {
+  grid-area: auto-toggle;
+  background: red;
+  border-radius: 20px;
+  margin: 10px 10px;
+  user-select: none;
+  text-align: center;
+}
 
-  .auto-map {
-    grid-area: auto-map;
-  }
-  .auto-waypoint {
-    grid-area: auto-waypoint;
-  }
+.teleop-toggle {
+  grid-area: teleop-toggle;
+  background: red;
+  border-radius: 20px;
+  margin: 10px 10px;
+  user-select: none;
+  text-align: center;
+}
 
-  .auto-state {
-    background-color: aliceblue;
-    border-radius: 20px;
-    margin: 10px 10px;
-    text-align: center;
-  }
+.auto-map {
+  grid-area: auto-map;
+}
+.auto-waypoint {
+  grid-area: auto-waypoint;
+}
 
-  .bg-green {
-    background-color: lime;
-  }
+.auto-state {
+  background-color: aliceblue;
+  border-radius: 20px;
+  margin: 10px 10px;
+  text-align: center;
+}
 
-  .bg-red {
-    background-color: red;
-  }
+
+.bg-green {
+  background-color: lime;
+}
+
+.bg-red {
+  background-color: red;
+}
+
+
+
+
 </style>
