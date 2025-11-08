@@ -22,7 +22,7 @@
     }
 
     // handle buttons
-    Object.keys(newGamepadState.buttons).forEach(key => {
+    Object.keys(newGamepadState.buttons).forEach((key) => {
       const button = newGamepadState.buttons[key];
       //If the button isnt null and it is pressed
       if (button && button.pressed) {
@@ -31,11 +31,16 @@
       }
 
       //Event that is called once per button hold
-      if (button && button.pressed && gamepadState && gamepadState.buttons && !gamepadState.buttons[key].pressed) {
+      if (
+        button &&
+        button.pressed &&
+        gamepadState &&
+        gamepadState.buttons &&
+        !gamepadState.buttons[key].pressed
+      ) {
         //Dispatch event
         dispatch(key + "_PRESS", button); // e.g. "RT" , {pressed: true, value: 0.2}
       }
-
 
       // Send null when player stops pressing button
       // Needs to check if the previous state is marked as pressed
@@ -50,7 +55,7 @@
     });
 
     // handle axes
-    Object.keys(newGamepadState.axes).forEach(key => {
+    Object.keys(newGamepadState.axes).forEach((key) => {
       const axis = newGamepadState.axes[key];
 
       if (axis) {
@@ -66,7 +71,7 @@
   const args = {
     layout,
     onChange,
-    stickThreshold
+    stickThreshold,
   };
 
   //When svelte component is added to screen

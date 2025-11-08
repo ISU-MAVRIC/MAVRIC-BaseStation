@@ -1,29 +1,28 @@
 <!-- This component doesn't visually display anything on screen, however it handles setting up controllers and publishing drive and arm commands -->
 <script>
   //Library Imports
-  import ROSLIB from 'roslib/src/RosLib';
+  import ROSLIB from "roslib/src/RosLib";
 
   //Project Imports
-  import connectionHandler from '../stores/connectionHandlerStore';
-  import { calculateDriveValues, DRIVE_STATES } from '../utils/driveMath';
-  import Gamepad from './gamepad/Gamepad.svelte';
-  import { DEFAULTS, TOPICS, CONTROLLER_BINDS } from '../utils/config.js'
-  import mapRange from '../utils/mapRange';
+  import connectionHandler from "../stores/connectionHandlerStore";
+  import { calculateDriveValues, DRIVE_STATES } from "../utils/driveMath";
+  import Gamepad from "./gamepad/Gamepad.svelte";
+  import { DEFAULTS, TOPICS, CONTROLLER_BINDS } from "../utils/config.js";
+  import mapRange from "../utils/mapRange";
 
   // Svelte Component Properties
   export let driveState;
   export let controllerBind;
   export let controllerEnabled;
-  
 
   //Variables
   /// ROS
   let ros = $connectionHandler.getROSInstance();
 
   /// Drive Math
-  let sensdrive = 1; // 0 to 1 
+  let sensdrive = 1; // 0 to 1
   let senssteer = 0.75; // 0 to 1
-  
+
   /// Controller
   let leftAxis = { x: 0, y: 0 };
   let rightAxis = { x: 0, y: 0 };
@@ -64,82 +63,131 @@
   let DRILL_MOVE_SPEED = 100;
 
   //Ros attribute change listener to send zeros when controller is disabled
-  $: !controllerEnabled && setZeros()
+  $: !controllerEnabled && setZeros();
 
   // ROS Topics and Publishers
   const drivetrainTopic = new ROSLIB.Topic({
     ros,
-    name : '/Drive/Drive_Command',
-    messageType : 'mavric/Drivetrain'
+    name: "/Drive/Drive_Command",
+    messageType: "mavric/Drivetrain",
   });
 
-  const publishDrivetrain = data => {
+  const publishDrivetrain = (data) => {
     let message = new ROSLIB.Message(data);
     drivetrainTopic.publish(message);
-  }
+  };
 
   const steertrainTopic = new ROSLIB.Topic({
     ros,
-    name : '/Drive/Steer_Command',
-    messageType : 'mavric/Steertrain'
+    name: "/Drive/Steer_Command",
+    messageType: "mavric/Steertrain",
   });
 
-  const publishSteertrain = data => {
+  const publishSteertrain = (data) => {
     let message = new ROSLIB.Message(data);
     steertrainTopic.publish(message);
-  }
-  
-  const publishDriveSteerCommand = data => {
+  };
+
+  const publishDriveSteerCommand = (data) => {
     //Calculate drive values to be published to drivetrain and steertrain topics
-    let driveValues = calculateDriveValues(driveState, leftAxis.y, leftAxis.x, leftAxis.y, leftAxis.x, leftAxis.x, [0,0,0,0,0,0,0,0,0,0], leftAxis.y, leftAxis.x, sensdrive, senssteer)
+    let driveValues = calculateDriveValues(
+      driveState,
+      leftAxis.y,
+      leftAxis.x,
+      leftAxis.y,
+      leftAxis.x,
+      leftAxis.x,
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      leftAxis.y,
+      leftAxis.x,
+      sensdrive,
+      senssteer,
+    );
 
     //Destructure elements from returned driveValues into their own variables
-    let {
-    lf,
-    lm,
-    lb,
-    rf,
-    rm,
-    rb,
-    strLf,
-    strLb,
-    strRf,
-    strRb
-    } = driveValues
+    let { lf, lm, lb, rf, rm, rb, strLf, strLb, strRf, strRb } = driveValues;
 
     //Publish drivetrain commands
-    publishDrivetrain({lf, lm, lb, rf, rm, rb});
+    publishDrivetrain({ lf, lm, lb, rf, rm, rb });
     //Publish steertrain commands
-    publishSteertrain({strLf, strLb, strRf, strRb});
-  } 
+    publishSteertrain({ strLf, strLb, strRf, strRb });
+  };
 
   //Create a new object for all the armtrain topics
   //Each joint is its own topic, so for code cleanliness store in an object instead of separate variables
   const armtrainTopics = {
-    SHOULDER_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    SHOULDER_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.SHOULDER_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    ELBOW_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.ELBOW_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    WRIST_PITCH: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_PITCH, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    WRIST_ROTATION: new ROSLIB.Topic({ ros, name : TOPICS.ARM.WRIST_ROTATION, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    DRILL: new ROSLIB.Topic({ros, name: TOPICS.ARM.DRILL, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
-    DRILLACTUATOR: new ROSLIB.Topic({ros, name: TOPICS.ARM.DRILLACTUATOR, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
-    CLAW: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CLAW, messageType : TOPICS.ARM.ARM_MSG_TYPE }),
-    LUMINOMETER: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMINOMETER, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    LUMIBUTTON: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMIBUTTON, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    LUMILID: new ROSLIB.Topic({ ros, name : TOPICS.ARM.LUMILID, messageType : TOPICS.ARM.ARM_MSG_TYPE}),
-    CACHE: new ROSLIB.Topic({ ros, name : TOPICS.ARM.CACHE, messageType: TOPICS.ARM.ARM_MSG_TYPE}),
-  }
+    SHOULDER_ROTATION: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.SHOULDER_ROTATION,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    SHOULDER_PITCH: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.SHOULDER_PITCH,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    ELBOW_PITCH: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.ELBOW_PITCH,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    WRIST_PITCH: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.WRIST_PITCH,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    WRIST_ROTATION: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.WRIST_ROTATION,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    DRILL: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.DRILL,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    DRILLACTUATOR: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.DRILLACTUATOR,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    CLAW: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.CLAW,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    LUMINOMETER: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.LUMINOMETER,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    LUMIBUTTON: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.LUMIBUTTON,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    LUMILID: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.LUMILID,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+    CACHE: new ROSLIB.Topic({
+      ros,
+      name: TOPICS.ARM.CACHE,
+      messageType: TOPICS.ARM.ARM_MSG_TYPE,
+    }),
+  };
 
   //Function to publish data value to specific joint ("SHOULDER_ROTATION" | "SHOULDER_PITCH" | ...)
   const publishArmCommand = (joint, data) => {
-    let message = new ROSLIB.Message({data});
+    let message = new ROSLIB.Message({ data });
     armtrainTopics[joint].publish(message);
-  }
+  };
 
   //Function to switch drive state to next drive state
   const cycleDriveState = () => {
     driveState = DRIVE_STATES.getNext(driveState);
-  }
+  };
 
   // function that sets all drive, steer, and arm values to zero
   const setZeros = () => {
@@ -149,20 +197,20 @@
       lb: 0,
       rf: 0,
       rm: 0,
-      rb: 0
+      rb: 0,
     });
     publishSteertrain({
       strLf: 0,
       strLb: 0,
       strRf: 0,
-      strRb: 0
+      strRb: 0,
     });
     publishArmCommand("SHOULDER_ROTATION", 0);
     publishArmCommand("SHOULDER_PITCH", 0);
     publishArmCommand("ELBOW_PITCH", 0);
     publishArmCommand("WRIST_PITCH", 0);
     publishArmCommand("WRIST_ROTATION", 0);
-  }
+  };
 
   //CONTROLLER HANDLING
 
@@ -172,29 +220,37 @@
   }
 
   //Callback function for when the left joystick is moved
-  function LeftStick(event, TYPE=null) {
+  function LeftStick(event, TYPE = null) {
     //If controllerEnabled is false, return to not publish anything
-    if(!controllerEnabled) return;
+    if (!controllerEnabled) return;
 
     leftAxis = event.detail;
     //Controller logic, if its a drive command or there is no type and the controller bind is drive
-    if (TYPE == "DRIVE" || (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)) {
+    if (
+      TYPE == "DRIVE" ||
+      (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)
+    ) {
       publishDriveSteerCommand(event.detail);
-    //Controller logic, if its a arm command or there is no type and the controller bind is arm
-    } else if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
+      //Controller logic, if its a arm command or there is no type and the controller bind is arm
+    } else if (
+      TYPE == "ARM" ||
+      (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)
+    ) {
       let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
       publishArmCommand("SHOULDER_ROTATION", shoulderRot);
       let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
       publishArmCommand("SHOULDER_PITCH", shoulderPitch);
-    } 
+    }
   }
 
   //Callback function for when the right joystick is moved
-  function RightStick(event, TYPE=null) {
-    
+  function RightStick(event, TYPE = null) {
     rightAxis = event.detail;
     //If its an arm command or there is no type and the controller bind is arm
-    if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
+    if (
+      TYPE == "ARM" ||
+      (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)
+    ) {
       let shoulderRot = mapRange(event.detail.x, -1, 1, -100, 100);
       publishArmCommand("WRIST_ROTATION", shoulderRot);
       let shoulderPitch = mapRange(event.detail.y, -1, 1, -100, 100);
@@ -202,48 +258,59 @@
     }
   }
 
-  function DriveSensitivity(event, TYPE=null) {
-    if (TYPE == "DRIVE" || (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)) {
-      sensdrive = (1 - event.detail.x)/2;
+  function DriveSensitivity(event, TYPE = null) {
+    if (
+      TYPE == "DRIVE" ||
+      (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)
+    ) {
+      sensdrive = (1 - event.detail.x) / 2;
     }
   }
 
   //Callback function for when the left trigger is moved
-  function LeftTrigger(event, TYPE=null) {
-    
-    //Controller will return null when button is no longer pressed, set to zero 
+  function LeftTrigger(event, TYPE = null) {
+    //Controller will return null when button is no longer pressed, set to zero
     if (event.detail == null) {
       lTrigger = 0;
     } else {
       lTrigger = event.detail.value;
     }
     //If controller is bound to arm, send as arm command
-    if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
+    if (
+      TYPE == "ARM" ||
+      (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)
+    ) {
       //Map the two trigger values to between -100 and 100
-      let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
+      let shoulderRot = mapRange(rTrigger - lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
     }
   }
 
   //Callback function for when the right trigger is moved
-  function RightTrigger(event, TYPE=null) {
-    //Controller will return null when button is no longer pressed, set to zero 
+  function RightTrigger(event, TYPE = null) {
+    //Controller will return null when button is no longer pressed, set to zero
     if (event.detail == null) {
       rTrigger = 0;
     } else {
       rTrigger = event.detail.value;
     }
     //If controller is bound to arm, send as arm command
-    if (TYPE == "ARM" || (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)) {
+    if (
+      TYPE == "ARM" ||
+      (TYPE == null && controllerBind == CONTROLLER_BINDS.ARM)
+    ) {
       //Map the two trigger values to between -100 and 100
-      let shoulderRot = mapRange(rTrigger-lTrigger, -1, 1, -100, 100);
+      let shoulderRot = mapRange(rTrigger - lTrigger, -1, 1, -100, 100);
       publishArmCommand("ELBOW_PITCH", shoulderRot);
     }
   }
 
   //Callback function for when the A button is pressed
-  function buttonA(event, TYPE=null) {
-    if (TYPE == "DRIVE" || (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)) {
+  function buttonA(event, TYPE = null) {
+    if (
+      TYPE == "DRIVE" ||
+      (TYPE == null && controllerBind == CONTROLLER_BINDS.DRIVE)
+    ) {
       cycleDriveState();
     }
   }
@@ -260,14 +327,14 @@
       rBumperPressed = false;
       //If the other bumper isnt pressed, stop the wrist interval
       !lBumperPressed && stopClawInterval();
-    // else if button is pressed
+      // else if button is pressed
     } else {
       //If it wasnt previously pressed, update and start wrist interval
       if (!rBumperPressed) {
         rBumperPressed = true;
         //Start wrist runnable
         !lBumperPressed && startClawInterval();
-      } 
+      }
     }
   }
 
@@ -278,14 +345,14 @@
       lBumperPressed = false;
       //If the other bumper isnt pressed, stop the wrist interval
       !rBumperPressed && stopClawInterval();
-    // else if button is pressed
+      // else if button is pressed
     } else {
       //If it wasnt previously pressed, update and start wrist interval
       if (!lBumperPressed) {
         lBumperPressed = true;
         //Start wrist runnable
         !rBumperPressed && startClawInterval();
-      } 
+      }
     }
   }
 
@@ -323,24 +390,22 @@
     if (event.detail == null) {
       //toggle is turned off, meaning button can be pressed again
       lumiLidToggle = false;
-    }
-    else {
+    } else {
       // if the button isn't currently being pressed
       if (lumiLidToggle == false) {
         // if in one state, switch to next state. 0 is open, 1 is closed
         if (lumiLidState == 0) {
           lumiLidState = 1;
           lumiLidPosition = LUMILID_CLOSED;
-        }
-        else if (lumiLidState == 1) {
+        } else if (lumiLidState == 1) {
           lumiLidState = 0;
           lumiLidPosition = LUMILID_OPEN;
         }
         lumiLidToggle = true; // button is being pressed/held down
-      }
-      else { // lumiLidToggle is true
+      } else {
+        // lumiLidToggle is true
         // if button is still being held down, exit function
-        return
+        return;
       }
     }
     // publish the lid position
@@ -351,23 +416,19 @@
   function Drill(event) {
     if (event.detail == null) {
       drillToggle = false;
-    }
-    else {
+    } else {
       if (drillToggle == false) {
         if (drillState == 0) {
           drillState = 1;
           publishArmCommand("DRILL", DRILL_SPEED);
-        }
-        else if (drillState == 1) {
+        } else if (drillState == 1) {
           drillState = 0;
           publishArmCommand("DRILL", 0);
         }
         drillToggle = true;
+      } else {
+        return;
       }
-      else {
-        return
-      }
-      
     }
   }
 
@@ -375,42 +436,37 @@
   function DrillDown(event) {
     if (event.detail == null) {
       drillMove = 0;
-    }
-    else {
+    } else {
       drillMove = DRILL_MOVE_SPEED;
     }
     publishArmCommand("DRILLACTUATOR", drillMove);
   }
-  
+
   //Function that moves the drill up
   function DrillUp(event) {
     if (event.detail == null) {
       drillMove = 0;
-    }
-    else {
+    } else {
       drillMove = DRILL_MOVE_SPEED * -1;
     }
     publishArmCommand("DRILLACTUATOR", drillMove);
   }
-  
+
   //Function to control sample cache
   function CacheMove(event) {
     if (event.detail == null) {
       cacheToggle = false;
-    }
-    else {
+    } else {
       if (cacheToggle == false) {
         if (cacheState == 0) {
           cacheState = 1;
           cachePosition = CACHE_CLOSED;
-        }
-        else if (cacheState == 1) {
+        } else if (cacheState == 1) {
           cacheState = 0;
           cachePosition = CACHE_OPEN;
         }
         cacheToggle = true;
-      }
-      else {
+      } else {
         return;
       }
     }
@@ -432,7 +488,7 @@
       if (lBumperPressed) {
         clawPosition -= CLAW_POSITION_INTERVAL;
       } else if (rBumperPressed) {
-      //If the right bumper is pressed, increment clawInterval
+        //If the right bumper is pressed, increment clawInterval
         clawPosition += CLAW_POSITION_INTERVAL;
       }
       //Adjust for over/under shooting domain of clawInterval [-100 to 100]
@@ -442,35 +498,40 @@
       publishArmCommand("CLAW", clawPosition);
     }, 1000 / CLAW_INTERVAL_PER_SECOND);
   }
-
 </script>
-
-
-
 
 <!-- Add first controller, only for DRIVE commands -->
 <Gamepad
   gamepadIndex={0}
   on:A_PRESS={buttonA}
-  on:LeftStick={(event) => { LeftStick(event, "DRIVE")}}
+  on:LeftStick={(event) => {
+    LeftStick(event, "DRIVE");
+  }}
   on:RightStick={DriveSensitivity}
 />
 
 <!-- Add second controller, only bound to ARM commands -->
 <Gamepad
   gamepadIndex={1}
-  on:A_PRESS={(event) => { buttonA(event, "ARM")}}
-  on:LeftStick={(event) => { LeftStick(event, "ARM")}}
-  on:RightStick={(event) => { RightStick(event, "ARM")}}
-  on:RT={(event) => { RightTrigger(event, "ARM")}}
-  on:LT={(event) => { LeftTrigger(event, "ARM")}}
+  on:A_PRESS={(event) => {
+    buttonA(event, "ARM");
+  }}
+  on:LeftStick={(event) => {
+    LeftStick(event, "ARM");
+  }}
+  on:RightStick={(event) => {
+    RightStick(event, "ARM");
+  }}
+  on:RT={(event) => {
+    RightTrigger(event, "ARM");
+  }}
+  on:LT={(event) => {
+    LeftTrigger(event, "ARM");
+  }}
   on:RB={RB}
   on:LB={LB}
   on:DPadLeft_PRESS={LuminometerStraight}
-  on:DPadRight_PRESS={LuminometerDump}
-  on:DPadUp={DrillUp}
-  on:DPadDown={DrillDown}
-  on:A={CacheMove}
+  on:DPadRight_PRESS={LuminometerDump} on:DPadUp={DrillUp} on:DPadDown={DrillDown} on:A={CacheMove}
   on:B={Drill}
   on:Y={LumiButton}
   on:X={LumiLid}
