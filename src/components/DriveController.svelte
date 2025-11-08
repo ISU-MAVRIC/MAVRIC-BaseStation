@@ -530,7 +530,8 @@
   }}
   on:RB={RB}
   on:LB={LB}
-  on:DPadLeft_PRESS={LuminometerStraight} on:DPadRight_PRESS={LuminometerDump}
+  on:DPadLeft_PRESS={LuminometerStraight}
+  on:DPadRight_PRESS={LuminometerDump}
   on:DPadUp={DrillUp}
   on:DPadDown={DrillDown}
   on:A={CacheMove}
