@@ -12,6 +12,8 @@ permissions:
 jobs:
   prettier:
     runs-on: ubuntu-latest
+    # Skip if the commit was made by the prettier action itself
+    if: github.event.head_commit.author.name != 'github-actions[bot]'
 
     steps:
       - name: Checkout
@@ -19,6 +21,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -34,3 +37,4 @@ jobs:
         with:
           prettier_options: --write "**/*.{js,ts,tsx,jsx,svelte,css,scss,md,json,html}" --ignore-path .prettierignore
           only_changed: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
