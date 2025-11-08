@@ -1,0 +1,14 @@
+name: Required Checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  enforce-lf:
+    uses: ./.github/workflows/enforce-lf.yml
+
+  electron-build:
+    uses: ./.github/workflows/electron-build-launch-text.yml
