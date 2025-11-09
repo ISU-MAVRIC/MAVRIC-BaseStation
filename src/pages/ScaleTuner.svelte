@@ -11,7 +11,7 @@
 
   let scaleCommandMessage = {
     drive: null,
-    shoulder_rot:null,
+    shoulder_rot: null,
     shoulder_pitch: null,
     elbow_pitch: null,
     wrist_rot: null,
@@ -25,25 +25,21 @@
   let scalesInitialized = scalesContainNull();
 
   let publishScales = () => {
-    scaleCommandTopic
-    .publish(new ROSLIB.Message(scaleCommandMessage));
+    scaleCommandTopic.publish(new ROSLIB.Message(scaleCommandMessage));
   };
 
-  const scaleCommandTopic
-   = new ROSLIB.Topic({
+  const scaleCommandTopic = new ROSLIB.Topic({
     ros,
     name: "/scale_command",
     messageType: "mavric_msg/msg/ScaleCommand",
   });
 
-  const scaleFeedbackTopic
-   = new ROSLIB.Topic({
+  const scaleFeedbackTopic = new ROSLIB.Topic({
     ros,
     name: "/scale_feedback",
     messageType: "mavric_msg/msg/ScaleFeedback",
   });
-  scaleFeedbackTopic
-  .subscribe((message) => {
+  scaleFeedbackTopic.subscribe((message) => {
     scaleCommandMessage = {
       drive: Number(message.drive.toFixed(2)),
       shoulder_rot: Number(message.shoulder_rot.toFixed(2)),
@@ -135,7 +131,12 @@
       </div>
     </div>
     <!-- Button that calls publishScales when clicked -->
-    <button type="button" class="send-container" on:click={publishScales} aria-label="Publish Scales">
+    <button
+      type="button"
+      class="send-container"
+      on:click={publishScales}
+      aria-label="Publish Scales"
+    >
       Publish Scales
     </button>
   </div>
