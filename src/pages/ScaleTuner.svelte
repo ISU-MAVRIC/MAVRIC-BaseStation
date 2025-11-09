@@ -9,34 +9,42 @@
   import ROSLIB from "roslib/src/RosLib";
   let ros = $connectionHandler.getROSInstance();
 
-  let scaleFeedbackMessage = {
-      drive: null,
-      shoulder_rot:null,
-      shoulder_pitch: null,
-      elbow_pitch: null,
-      wrist_rot: null,
-      wrist_pitch: null,
-    };
-
-  const scalesContainNull = () => {
-    return !Object.values(scaleFeedbackMessage).some((el) => el === null);
+  let scaleCommandMessage = {
+    drive: null,
+    shoulder_rot:null,
+    shoulder_pitch: null,
+    elbow_pitch: null,
+    wrist_rot: null,
+    wrist_pitch: null,
   };
 
+  const scalesContainNull = () => {
+    return !Object.values(scaleCommandMessage).some((el) => el === null);
+  };
 
   let scalesInitialized = scalesContainNull();
 
   let publishScales = () => {
-    initialScalesTopic.publish(new ROSLIB.Message(scaleFeedbackMessage));
+    scaleCommandTopic
+    .publish(new ROSLIB.Message(scaleCommandMessage));
   };
 
+  const scaleCommandTopic
+   = new ROSLIB.Topic({
+    ros,
+    name: "/scale_command",
+    messageType: "mavric_msg/msg/ScaleCommand",
+  });
 
-  const initialScalesTopic = new ROSLIB.Topic({
+  const scaleFeedbackTopic
+   = new ROSLIB.Topic({
     ros,
     name: "/scale_feedback",
     messageType: "mavric_msg/msg/ScaleFeedback",
   });
-  initialScalesTopic.subscribe((message) => {
-    scaleFeedbackMessage = {
+  scaleFeedbackTopic
+  .subscribe((message) => {
+    scaleCommandMessage = {
       drive: Number(message.drive.toFixed(2)),
       shoulder_rot: Number(message.shoulder_rot.toFixed(2)),
       shoulder_pitch: Number(message.shoulder_pitch.toFixed(2)),
@@ -57,9 +65,9 @@
     <div class="scales-container">
       <!-- drive scale tuner -->
       <div class="drive-tuner-container scales-column">
-        <label for="lf-scale">drive Scale: {scaleFeedbackMessage.drive}</label>
+        <label for="lf-scale">drive Scale: {scaleCommandMessage.drive}</label>
         <input
-          bind:value={scaleFeedbackMessage.drive}
+          bind:value={scaleCommandMessage.drive}
           id="lf-scale"
           type="range"
           min={SCALES.DRIVE.MIN}
@@ -70,10 +78,10 @@
 
       <div class="arm-tuner-container scales-column">
         <label for="shoulder-rotation-scale"
-          >Shoulder Rotation Scale: {scaleFeedbackMessage.shoulder_rot}</label
+          >Shoulder Rotation Scale: {scaleCommandMessage.shoulder_rot}</label
         >
         <input
-          bind:value={scaleFeedbackMessage.shoulder_rot}
+          bind:value={scaleCommandMessage.shoulder_rot}
           id="shoulder-rotation-scale"
           type="range"
           min={SCALES.ARM.shoulder_rot.MIN}
@@ -81,10 +89,10 @@
           step={SCALES.ARM.shoulder_rot.STEP}
         />
         <label for="shoulder-pitch-scale"
-          >Shoulder Pitch Scale: {scaleFeedbackMessage.shoulder_pitch}</label
+          >Shoulder Pitch Scale: {scaleCommandMessage.shoulder_pitch}</label
         >
         <input
-          bind:value={scaleFeedbackMessage.shoulder_pitch}
+          bind:value={scaleCommandMessage.shoulder_pitch}
           id="shoulder-pitch-scale"
           type="range"
           min={SCALES.ARM.shoulder_pitch.MIN}
@@ -92,10 +100,10 @@
           step={SCALES.ARM.shoulder_pitch.STEP}
         />
         <label for="elbow-pitch-scale"
-          >Elbow Pitch Scale: {scaleFeedbackMessage.elbow_pitch}</label
+          >Elbow Pitch Scale: {scaleCommandMessage.elbow_pitch}</label
         >
         <input
-          bind:value={scaleFeedbackMessage.elbow_pitch}
+          bind:value={scaleCommandMessage.elbow_pitch}
           id="elbow-pitch-scale"
           type="range"
           min={SCALES.ARM.elbow_pitch.MIN}
@@ -103,10 +111,10 @@
           step={SCALES.ARM.elbow_pitch.STEP}
         />
         <label for="wrist-rotation-scale"
-          >Wrist Rotation Scale: {scaleFeedbackMessage.wrist_rot}</label
+          >Wrist Rotation Scale: {scaleCommandMessage.wrist_rot}</label
         >
         <input
-          bind:value={scaleFeedbackMessage.wrist_rot}
+          bind:value={scaleCommandMessage.wrist_rot}
           id="wrist-rotation-scale"
           type="range"
           min={SCALES.ARM.wrist_rot.MIN}
@@ -114,10 +122,10 @@
           step={SCALES.ARM.wrist_rot.STEP}
         />
         <label for="wrist-pitch-scale"
-          >Wrist Pitch Scale: {scaleFeedbackMessage.wrist_pitch}</label
+          >Wrist Pitch Scale: {scaleCommandMessage.wrist_pitch}</label
         >
         <input
-          bind:value={scaleFeedbackMessage.wrist_pitch}
+          bind:value={scaleCommandMessage.wrist_pitch}
           id="wrist-rotation-scale"
           type="range"
           min={SCALES.ARM.wrist_pitch.MIN}
@@ -127,9 +135,9 @@
       </div>
     </div>
     <!-- Button that calls publishScales when clicked -->
-    <div class="send-container" on:click={publishScales}>
-      <label>Publish Scales</label>
-    </div>
+    <button type="button" class="send-container" on:click={publishScales} aria-label="Publish Scales">
+      Publish Scales
+    </button>
   </div>
 {/if}
 
