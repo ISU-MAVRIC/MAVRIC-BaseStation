@@ -8,57 +8,27 @@
 
   import ROSLIB from "roslib/src/RosLib";
   let ros = $connectionHandler.getROSInstance();
-  //Switch to null by default when retreiving scales from rover is working
-  let driveScaleData = null;
-  //Switch to null by default when retreiving scales from rover is working
-  let armScaleData = {
-    shoulder_rot: null,
-    shoulder_pitch: null,
-    elbow_pitch: null,
-    wrist_rot: null,
-    wrist_pitch: null,
-  };
+
+  let scaleFeedbackMessage = {
+      drive: null,
+      shoulder_rot:null,
+      shoulder_pitch: null,
+      elbow_pitch: null,
+      wrist_rot: null,
+      wrist_pitch: null,
+    };
 
   const scalesContainNull = () => {
-    let armNull = !Object.values(armScaleData).some((el) => el === null);
-    return !(driveScaleData == null) && armNull;
+    return !Object.values(scaleFeedbackMessage).some((el) => el === null);
   };
+
 
   let scalesInitialized = scalesContainNull();
 
   let publishScales = () => {
-    //This function is where we will publish the scales to the rover using roslibjs
-    // let message = new ROSLIB.Message({ data: driveScaleData });
-    // driveScaleTopic.publish(message);
-    //Figure out the armData message format...
-    let driveMessage = {
-      data: driveScaleData,
-    };
-    let armMessage = {
-      shoulder_rot: armScaleData.shoulder_rot,
-      shoulder_pitch: armScaleData.shoulder_pitch,
-      elbow_pitch: armScaleData.elbow_pitch,
-      wrist_rot: armScaleData.wrist_rot,
-      wrist_pitch: armScaleData.wrist_pitch,
-    };
-
-    driveScaleTopic.publish(new ROSLIB.Message(driveMessage));
-    armScaleTopic.publish(new ROSLIB.Message(armMessage));
-
-    console.log({ drive: driveScaleData, ...armScaleData });
+    initialScalesTopic.publish(new ROSLIB.Message(scaleFeedbackMessage));
   };
 
-  const driveScaleTopic = new ROSLIB.Topic({
-    ros,
-    name: "/drive_scale",
-    messageType: "std_msgs/msg/Float64",
-  });
-
-  const armScaleTopic = new ROSLIB.Topic({
-    ros,
-    name: "/arm_scales",
-    messageType: "mavric_msg/msg/ArmScales",
-  });
 
   const initialScalesTopic = new ROSLIB.Topic({
     ros,
@@ -66,8 +36,8 @@
     messageType: "mavric_msg/msg/ScaleFeedback",
   });
   initialScalesTopic.subscribe((message) => {
-    driveScaleData = Number(message.drive.toFixed(2));
-    armScaleData = {
+    scaleFeedbackMessage = {
+      drive: Number(message.drive.toFixed(2)),
       shoulder_rot: Number(message.shoulder_rot.toFixed(2)),
       shoulder_pitch: Number(message.shoulder_pitch.toFixed(2)),
       elbow_pitch: Number(message.elbow_pitch.toFixed(2)),
@@ -87,9 +57,9 @@
     <div class="scales-container">
       <!-- drive scale tuner -->
       <div class="drive-tuner-container scales-column">
-        <label for="lf-scale">drive Scale: {driveScaleData}</label>
+        <label for="lf-scale">drive Scale: {scaleFeedbackMessage.drive}</label>
         <input
-          bind:value={driveScaleData}
+          bind:value={scaleFeedbackMessage.drive}
           id="lf-scale"
           type="range"
           min={SCALES.DRIVE.MIN}
@@ -100,10 +70,10 @@
 
       <div class="arm-tuner-container scales-column">
         <label for="shoulder-rotation-scale"
-          >Shoulder Rotation Scale: {armScaleData.shoulder_rot}</label
+          >Shoulder Rotation Scale: {scaleFeedbackMessage.shoulder_rot}</label
         >
         <input
-          bind:value={armScaleData.shoulder_rot}
+          bind:value={scaleFeedbackMessage.shoulder_rot}
           id="shoulder-rotation-scale"
           type="range"
           min={SCALES.ARM.shoulder_rot.MIN}
@@ -111,10 +81,10 @@
           step={SCALES.ARM.shoulder_rot.STEP}
         />
         <label for="shoulder-pitch-scale"
-          >Shoulder Pitch Scale: {armScaleData.shoulder_pitch}</label
+          >Shoulder Pitch Scale: {scaleFeedbackMessage.shoulder_pitch}</label
         >
         <input
-          bind:value={armScaleData.shoulder_pitch}
+          bind:value={scaleFeedbackMessage.shoulder_pitch}
           id="shoulder-pitch-scale"
           type="range"
           min={SCALES.ARM.shoulder_pitch.MIN}
@@ -122,10 +92,10 @@
           step={SCALES.ARM.shoulder_pitch.STEP}
         />
         <label for="elbow-pitch-scale"
-          >Elbow Pitch Scale: {armScaleData.elbow_pitch}</label
+          >Elbow Pitch Scale: {scaleFeedbackMessage.elbow_pitch}</label
         >
         <input
-          bind:value={armScaleData.elbow_pitch}
+          bind:value={scaleFeedbackMessage.elbow_pitch}
           id="elbow-pitch-scale"
           type="range"
           min={SCALES.ARM.elbow_pitch.MIN}
@@ -133,10 +103,10 @@
           step={SCALES.ARM.elbow_pitch.STEP}
         />
         <label for="wrist-rotation-scale"
-          >Wrist Rotation Scale: {armScaleData.wrist_rot}</label
+          >Wrist Rotation Scale: {scaleFeedbackMessage.wrist_rot}</label
         >
         <input
-          bind:value={armScaleData.wrist_rot}
+          bind:value={scaleFeedbackMessage.wrist_rot}
           id="wrist-rotation-scale"
           type="range"
           min={SCALES.ARM.wrist_rot.MIN}
@@ -144,10 +114,10 @@
           step={SCALES.ARM.wrist_rot.STEP}
         />
         <label for="wrist-pitch-scale"
-          >Wrist Pitch Scale: {armScaleData.wrist_pitch}</label
+          >Wrist Pitch Scale: {scaleFeedbackMessage.wrist_pitch}</label
         >
         <input
-          bind:value={armScaleData.wrist_pitch}
+          bind:value={scaleFeedbackMessage.wrist_pitch}
           id="wrist-rotation-scale"
           type="range"
           min={SCALES.ARM.wrist_pitch.MIN}
