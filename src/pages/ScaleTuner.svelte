@@ -31,7 +31,7 @@
   const scaleCommandTopic = new ROSLIB.Topic({
     ros,
     name: "/scale_command",
-    messageType: "mavric_msg/msg/ScaleCommand",
+    messageType: "mavric_msg/msg/ScaleFeedback",
   });
 
   const scaleFeedbackTopic = new ROSLIB.Topic({
