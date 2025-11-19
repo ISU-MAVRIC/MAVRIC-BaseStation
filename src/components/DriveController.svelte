@@ -115,11 +115,11 @@
     //Destructure elements from returned driveValues into their own variables
     let {
       front_left,
+      temp1,
       back_left,
       front_right,
+      temp2,
       back_right,
-      tmp1,
-      tmp2,
       steer_front_left,
       steer_back_left,
       steer_front_right,
